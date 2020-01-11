@@ -1,6 +1,10 @@
 {
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "pino": "^5.15.0",
+    "pino-http": "^4.3.0",
+    "uuid": "^3.3.3"
+  },
   "devDependencies": {
     "chromedriver": "^79.0.0",
     "licensee": "^8.0.2",
