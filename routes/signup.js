@@ -12,7 +12,6 @@ var passwordCriteria = require('./password-criteria')
 var passwordInputs = require('./partials/password-inputs')
 var runSeries = require('run-series')
 var storage = require('../storage')
-var uuid = require('uuid')
 
 module.exports = function (request, response) {
   var method = request.method

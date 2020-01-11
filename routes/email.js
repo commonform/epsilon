@@ -60,7 +60,6 @@ function get (request, response) {
 }
 
 function post (request, response) {
-  var oldEMail = request.account.email
   var handle = request.account.handle
   var newEMail
   runSeries([
