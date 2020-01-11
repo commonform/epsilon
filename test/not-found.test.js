@@ -2,11 +2,13 @@ var http = require('http')
 var server = require('./server')
 var tape = require('tape')
 
-tape('GET /', (test) => {
+var path = '/not-found'
+
+tape('GET ' + path, (test) => {
   server((port, done) => {
-    http.request({ path: '/', port })
+    http.request({ path, port })
       .once('response', (response) => {
-        test.equal(response.statusCode, 200, '200')
+        test.equal(response.statusCode, 404, '404')
         test.end()
         done()
       })
@@ -14,16 +16,16 @@ tape('GET /', (test) => {
   })
 })
 
-tape('browse /', (test) => {
+tape('browse ' + path, (test) => {
   server((port, done) => {
     var browser
     require('./webdriver')()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.url('http://localhost:' + port))
-      .then(() => browser.$('h1'))
+      .then(() => browser.url('http://localhost:' + port + path))
+      .then(() => browser.$('h2'))
       .then((title) => title.getText())
       .then((text) => {
-        test.equal(text, 'Common Form')
+        test.equal(text, 'Not Found')
         test.end()
         browser.deleteSession()
         done()

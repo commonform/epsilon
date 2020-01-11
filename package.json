@@ -1,8 +1,10 @@
 {
   "private": true,
   "dependencies": {
+    "http-hash": "^2.0.1",
     "pino": "^5.15.0",
     "pino-http": "^4.3.0",
+    "url-parse": "^1.4.7",
     "uuid": "^3.3.3"
   },
   "devDependencies": {
