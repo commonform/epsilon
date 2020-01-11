@@ -158,10 +158,7 @@ function post (request, response) {
         to: email,
         subject: 'Confirm Your Account',
         text: href
-      }, function (error) {
-        if (error) return done(error)
-        done()
-      })
+      }, done)
     })
   }
 }

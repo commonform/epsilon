@@ -49,8 +49,8 @@ tape('sign up', (test) => {
     var browser
     require('./webdriver')()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.url('http://localhost:' + port + path))
       .then(() => browser.setTimeouts(1000))
+      .then(() => browser.url('http://localhost:' + port + path))
       .then(() => browser.$('input[name="email"]'))
       .then((input) => input.setValue(EMAIL))
       .then(() => browser.$('input[name="handle"]'))
@@ -61,16 +61,8 @@ tape('sign up', (test) => {
       .then((input) => input.setValue(PASSWORD))
       .then(() => browser.$('button[type="submit"]'))
       .then((submit) => submit.click())
-      /*
-      .then(() => browser.$('p.message'))
-      .then((p) => p.getText())
-      .then((text) => {
-        test.assert(text.includes('e-mail'), 'mentions e-mail')
-        browser.deleteSession()
-      })
-      */
       .catch((error) => {
-        test.fail(error)
+        test.fail(error, 'catch')
         browser.deleteSession()
         test.end()
         done()
