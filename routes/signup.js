@@ -139,7 +139,10 @@ function post (request, response) {
         created: new Date().toISOString(),
         confirmed: false
       }
-      storage.account.write(handle, account, done)
+      runSeries([
+        (done) => { storage.account.write(handle, account, done) },
+        (done) => { storage.email.write(email, handle, done) }
+      ], done)
     })
   }
 

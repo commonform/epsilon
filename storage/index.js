@@ -4,6 +4,7 @@ var path = require('path')
 
 module.exports = {
   account: simpleFiles('accounts'),
+  email: simpleFiles('emails'),
   token: simpleFiles('tokens'),
   session: simpleFiles('sessions')
 }
