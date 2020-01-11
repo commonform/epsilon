@@ -134,6 +134,7 @@ function post (request, response) {
     passwordHashing.hash(passwordBuffer, function (error, passwordHashBuffer) {
       if (error) return done(error)
       var account = {
+        handle,
         email,
         passwordHash: passwordHashBuffer.toString('hex'),
         created: new Date().toISOString(),
