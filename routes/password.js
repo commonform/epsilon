@@ -6,6 +6,7 @@ var hashPassword = require('../util/hash-password')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var internalError = require('./internal-error')
+var mail = require('../mail')
 var nav = require('./partials/nav')
 var passwordCriteria = require('./password-criteria')
 var passwordInputs = require('./partials/password-inputs')
@@ -113,11 +114,12 @@ function invalidToken (request, response) {
 }
 
 function post (request, response) {
-  var password, repeat, token
+  var password, repeat, token, email
   runSeries([
     readPostBody,
     validateInputs,
-    changePassword
+    changePassword,
+    sendEMail
   ], function (error) {
     if (error) {
       if (error.statusCode === 400) {
@@ -198,6 +200,7 @@ function post (request, response) {
           var properties = { passwordHash: hash }
           storage.account.update(handle, properties, (error, updated) => {
             if (error) return done(error)
+            email = updated.email
             done()
           })
         })
@@ -209,6 +212,7 @@ function post (request, response) {
         unauthorized.statusCode = 401
         return done(unauthorized)
       }
+      email = request.account.email
       hashPassword(password, (error, hash) => {
         if (error) return done(error)
         var properties = { passwordHash: hash }
@@ -218,6 +222,19 @@ function post (request, response) {
           done()
         })
       })
+    })
+  }
+
+  function sendEMail (done) {
+    // TODO: Improve password-change notification e-mails.
+    mail({
+      to: email,
+      subject: 'Password Change',
+      text: 'The password for your account was changed.'
+    }, (error) => {
+      // Log and eat errors.
+      if (error) request.log.error(error)
+      done()
     })
   }
 }

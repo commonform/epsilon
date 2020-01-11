@@ -1,3 +1,4 @@
+var mail = require('../mail').events
 var server = require('./server')
 var signup = require('./signup')
 var tape = require('tape')
@@ -37,6 +38,12 @@ tape('change password', (test) => {
             .then((input) => input.setValue(newPassword))
             .then(() => browser.$('input[name="repeat"]'))
             .then((input) => input.setValue(newPassword))
+            .then(() => {
+              mail.once('sent', (options) => {
+                test.equal(options.to, email, 'email')
+                test.equal(options.subject, 'Password Change', 'Password Change')
+              })
+            })
             .then(() => browser.$('button[type="submit"]'))
             .then((submit) => submit.click())
             .then(() => browser.$('p.message'))
