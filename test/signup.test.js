@@ -2,6 +2,8 @@ var http = require('http')
 var mail = require('../mail').events
 var server = require('./server')
 var tape = require('tape')
+var verifyLogin = require('./verify-login')
+var webdriver = require('./webdriver')
 
 var path = '/signup'
 
@@ -20,7 +22,7 @@ tape('GET ' + path, (test) => {
 tape('browse ' + path, (test) => {
   server((port, done) => {
     var browser
-    require('./webdriver')()
+    webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.url('http://localhost:' + port))
       .then(() => browser.$('a=Sign Up'))
@@ -44,25 +46,25 @@ tape('browse ' + path, (test) => {
 })
 
 tape('sign up', (test) => {
-  var EMAIL = 'test@example.com'
-  var HANDLE = 'tester'
-  var PASSWORD = 'test password'
+  var email = 'test@example.com'
+  var handle = 'tester'
+  var password = 'test password'
   server((port, done) => {
     var browser
-    require('./webdriver')()
+    webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.setTimeouts(1000))
       .then(() => browser.url('http://localhost:' + port))
       .then(() => browser.$('a=Sign Up'))
       .then((a) => a.click())
       .then(() => browser.$('input[name="email"]'))
-      .then((input) => input.setValue(EMAIL))
+      .then((input) => input.setValue(email))
       .then(() => browser.$('input[name="handle"]'))
-      .then((input) => input.setValue(HANDLE))
+      .then((input) => input.setValue(handle))
       .then(() => browser.$('input[name="password"]'))
-      .then((input) => input.setValue(PASSWORD))
+      .then((input) => input.setValue(password))
       .then(() => browser.$('input[name="repeat"]'))
-      .then((input) => input.setValue(PASSWORD))
+      .then((input) => input.setValue(password))
       .then(() => browser.$('button[type="submit"]'))
       .then((submit) => submit.click())
       .catch((error) => {
@@ -72,35 +74,34 @@ tape('sign up', (test) => {
         done()
       })
     mail.once('sent', (options) => {
-      test.equal(options.to, EMAIL, 'sends e-mail')
+      test.equal(options.to, email, 'sends e-mail')
       test.equal(options.subject, 'Confirm Your Account', 'subject')
       test.assert(options.text.includes('/confirm?token='), 'link')
       browser.url(options.text)
         .then(() => browser.$('input[name="handle"]'))
-        .then((input) => input.setValue(HANDLE))
+        .then((input) => input.setValue(handle))
         .then(() => browser.$('input[name="password"]'))
-        .then((input) => input.setValue(PASSWORD))
+        .then((input) => input.setValue(password))
         .then(() => browser.$('button[type="submit"]'))
         .then((submit) => submit.click())
-        .then(() => browser.$('.welcome'))
-        .then((p) => p.getText())
-        .then((text) => {
-          test.assert(text.includes(HANDLE), 'weclomed by handle')
-          browser.deleteSession()
-          test.end()
-          done()
-        })
+        .then(() => verifyLogin({
+          browser, port, test, handle, email
+        }))
+        .then(() => finish())
         .catch((error) => {
           test.fail(error)
-          browser.deleteSession()
-          test.end()
-          done()
+          finish()
         })
       mail.once('sent', (options) => {
         test.equal(options.subject, 'Sign Up', 'admin notification')
-        test.assert(options.text.includes(HANDLE), 'includes handle')
-        test.assert(options.text.includes(EMAIL), 'includes email')
+        test.assert(options.text.includes(handle), 'includes handle')
+        test.assert(options.text.includes(email), 'includes email')
       })
     })
+    function finish () {
+      browser.deleteSession()
+      test.end()
+      done()
+    }
   })
 })

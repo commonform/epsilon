@@ -3,6 +3,7 @@ var mail = require('../mail').events
 var server = require('./server')
 var signup = require('./signup')
 var tape = require('tape')
+var verifyLogin = require('./verify-login')
 var webdriver = require('./webdriver')
 
 var path = '/reset'
@@ -67,12 +68,10 @@ tape('reset password', (test) => {
               .then((input) => input.setValue(password))
               .then(() => browser.$('button[type="submit"]'))
               .then((submit) => submit.click())
-              .then(() => browser.$('.welcome'))
-              .then((p) => p.getText())
-              .then((text) => {
-                test.assert(text.includes(handle), 'weclomed by handle')
-                finish()
-              })
+              .then(() => verifyLogin({
+                browser, port, test, handle, email
+              }))
+              .then(() => finish())
               .catch((error) => {
                 test.fail(error, 'catch')
                 finish()

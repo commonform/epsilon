@@ -1,6 +1,7 @@
 var http = require('http')
 var server = require('./server')
 var tape = require('tape')
+var webdriver = require('./webdriver')
 
 tape('GET /', (test) => {
   server((port, done) => {
@@ -17,7 +18,7 @@ tape('GET /', (test) => {
 tape('browse /', (test) => {
   server((port, done) => {
     var browser
-    require('./webdriver')()
+    webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.url('http://localhost:' + port))
       .then(() => browser.$('h1'))

@@ -2,6 +2,7 @@ var http = require('http')
 var server = require('./server')
 var signup = require('./signup')
 var tape = require('tape')
+var verifyLogin = require('./verify-login')
 var webdriver = require('./webdriver')
 
 var path = '/account'
@@ -43,16 +44,9 @@ tape('browse ' + path, (test) => {
             .then((input) => input.setValue(password))
             .then(() => browser.$('button[type="submit"]'))
             .then((submit) => submit.click())
-            // Navigate to account page.
-            .then(() => browser.$('a=Account'))
-            .then((a) => a.click())
-            // Check page contents.
-            .then(() => browser.$('.handle'))
-            .then((element) => element.getText())
-            .then((text) => test.equal(text, handle, 'handle'))
-            .then(() => browser.$('.email'))
-            .then((element) => element.getText())
-            .then((text) => test.equal(text, email, 'email'))
+            .then(() => verifyLogin({
+              browser, test, port, email, handle
+            }))
             .then(() => finish())
             .catch((error) => {
               test.fail(error, 'catch')

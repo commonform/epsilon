@@ -2,6 +2,7 @@ var mail = require('../mail').events
 var server = require('./server')
 var signup = require('./signup')
 var tape = require('tape')
+var verifyLogin = require('./verify-login')
 var webdriver = require('./webdriver')
 
 tape('change password', (test) => {
@@ -61,10 +62,10 @@ tape('change password', (test) => {
             .then((input) => input.setValue(newPassword))
             .then(() => browser.$('button[type="submit"]'))
             .then((submit) => submit.click())
-            .then(() => browser.$('.welcome'))
-            .then((p) => p.getText())
-            .then((text) => {
-              test.assert(text.includes(handle), 'weclomed by handle')
+            .then(() => verifyLogin({
+              browser, test, port, handle, email
+            }))
+            .then(() => {
               browser.deleteSession()
               test.end()
               done()
