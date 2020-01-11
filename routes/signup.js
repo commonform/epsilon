@@ -1,6 +1,7 @@
 var Busboy = require('busboy')
 var escapeHTML = require('escape-html')
 var hashPassword = require('../util/hash-password')
+var head = require('./partials/head')
 var header = require('./partials/header')
 var internalError = require('./internal-error')
 var mail = require('../mail')
@@ -26,10 +27,7 @@ function get (request, response, data) {
   response.end(`
 <!doctype html>
 <html lang=en-US>
-  <head>
-    <meta charset=UTF-8>
-    <title>Common Form</title>
-  </head>
+  ${head()}
   <body>
     ${header()}
     <main role=main>
@@ -63,10 +61,7 @@ function post (request, response) {
     response.end(`
 <!doctype html>
 <html lang=en-US>
-  <head>
-    <meta charset=UTF-8>
-    <title>Common Form</title>
-  </head>
+  ${head()}
   <body>
     ${header()}
     <main role=main>

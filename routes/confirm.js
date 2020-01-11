@@ -1,4 +1,5 @@
 var UUID_RE = require('../util/uuid-re')
+var head = require('./partials/head')
 var header = require('./partials/header')
 var internalError = require('./internal-error')
 var seeOther = require('./see-other')
@@ -16,10 +17,7 @@ module.exports = function (request, response) {
     return response.end(`
 <!doctype html>
 <html lang=en-US>
-  <head>
-    <meta charset=UTF-8>
-    <title>Common Form</title>
-  </head>
+  ${head()}
   <body>
     ${header()}
     <main role=main>

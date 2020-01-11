@@ -1,6 +1,7 @@
 var Busboy = require('busboy')
 var clearCookie = require('./clear-cookie')
 var escapeHTML = require('escape-html')
+var head = require('./partials/head')
 var header = require('./partials/header')
 var runSeries = require('run-series')
 var seeOther = require('./see-other')
@@ -27,10 +28,7 @@ function get (request, response, error) {
   response.end(`
 <!doctype html>
 <html lang=en-US>
-  <head>
-    <meta charset=UTF-8>
-    <title>Common Form</title>
-  </head>
+  ${head()}
   <body>
     ${header()}
     <main role=main>

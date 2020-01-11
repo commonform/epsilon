@@ -1,3 +1,4 @@
+var head = require('./partials/head')
 var header = require('./partials/header')
 
 module.exports = function (request, response, error) {
@@ -7,10 +8,7 @@ module.exports = function (request, response, error) {
   response.end(`
 <!doctype html>
 <html lang=en-US>
-  <head>
-    <meta charset=UTF-8>
-    <title>Common Form</title>
-  </head>
+  ${head()}
   <body>
     ${header()}
     <main role=main>

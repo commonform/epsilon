@@ -1,5 +1,6 @@
 var Busboy = require('busboy')
 var escapeHTML = require('escape-html')
+var head = require('./partials/head')
 var header = require('./partials/header')
 var mail = require('../mail')
 var runSeries = require('run-series')
@@ -23,10 +24,7 @@ function get (request, response, error) {
   response.end(`
 <!doctype html>
 <html lang=en-US>
-  <head>
-    <meta charset=UTF-8>
-    <title>Common Form</title>
-  </head>
+  ${head()}
   <body>
     ${header()}
     <main role=main>
@@ -64,10 +62,7 @@ function post (request, response) {
     response.end(`
 <!doctype html>
 <html lang=en-US>
-  <head>
-    <meta charset=UTF-8>
-    <title>Common Form</title>
-  </head>
+  ${head()}
   <body>
     ${header()}
     <main role=main>

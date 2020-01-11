@@ -3,6 +3,7 @@ var UUID_RE = require('../util/uuid-re')
 var authenticate = require('./authenticate')
 var escapeHTML = require('escape-html')
 var hashPassword = require('../util/hash-password')
+var head = require('./partials/head')
 var header = require('./partials/header')
 var internalError = require('./internal-error')
 var nav = require('./partials/nav')
@@ -41,10 +42,7 @@ function getAuthenticated (request, response) {
   response.end(`
 <!doctype html>
 <html lang=en-US>
-  <head>
-    <meta charset=UTF-8>
-    <title>Common Form</title>
-  </head>
+  ${head()}
   <body>
     ${header()}
     <main role=main>
@@ -79,10 +77,7 @@ function getWithToken (request, response) {
     response.end(`
 <!doctype html>
 <html lang=en-US>
-  <head>
-    <meta charset=UTF-8>
-    <title>Common Form</title>
-  </head>
+  ${head()}
   <body>
     ${header()}
     <main role=main>
@@ -105,10 +100,7 @@ function invalidToken (request, response) {
   return response.end(`
 <!doctype html>
 <html lang=en-US>
-  <head>
-    <meta charset=UTF-8>
-    <title>Common Form</title>
-  </head>
+  ${head()}
   <body>
     ${header()}
     <main role=main>
@@ -140,10 +132,7 @@ function post (request, response) {
     response.end(`
 <!doctype html>
 <html lang=en-US>
-  <head>
-    <meta charset=UTF-8>
-    <title>Common Form</title>
-  </head>
+  ${head()}
   <body>
     ${header()}
     ${nav(request.session)}

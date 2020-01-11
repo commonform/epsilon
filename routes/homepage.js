@@ -1,5 +1,6 @@
 var authenticate = require('./authenticate')
 var escapeHTML = require('escape-html')
+var head = require('./partials/head')
 var header = require('./partials/header')
 var nav = require('./partials/nav')
 
@@ -8,10 +9,7 @@ module.exports = (request, response) => {
     response.end(`
 <!doctype html>
 <html lang=en-US>
-  <head>
-    <meta charset=UTF-8>
-    <title>Common Form</title>
-  </head>
+  ${head()}
   <body>
     ${header()}
     ${nav(request.session)}
