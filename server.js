@@ -6,14 +6,14 @@ var uuid = require('uuid')
 
 var log = pino({ server: uuid.v4() })
 
-var server = http.createServer(function (request, response) {
+var server = http.createServer((request, response) => {
   pinoHTTP({ logger: log, genReqId: uuid.v4 })(request, response)
   handler(request, response)
 })
 
 function close () {
   log.info('closing')
-  server.close(function () {
+  server.close(() => {
     log.info('closed')
     process.exit(0)
   })
@@ -22,7 +22,7 @@ function close () {
 process.on('SIGINT', close)
 process.on('SIGQUIT', close)
 process.on('SIGTERM', close)
-process.on('uncaughtException', function (exception) {
+process.on('uncaughtException', (exception) => {
   log.error(exception)
   close()
 })

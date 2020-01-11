@@ -1,4 +1,4 @@
-module.exports = function (request, response) {
+module.exports = (request, response) => {
   response.end(`
 <!doctype html>
 <html lang=en-US>

@@ -7,18 +7,18 @@ var pinoHTTP = require('pino-http')
 var rimraf = require('rimraf')
 var uuid = require('uuid')
 
-module.exports = function testServer (callback) {
+module.exports = (callback) => {
   assert(typeof callback === 'function')
   var log = pino({}, fs.createWriteStream('test-server.log'))
-  fs.mkdtemp('/tmp/', function withDirectory (ignore, directory) {
+  fs.mkdtemp('/tmp/', (ignore, directory) => {
     process.env.DIRECTORY = directory
     var server = http.createServer((request, response) => {
       pinoHTTP({ logger: log, genReqId: uuid.v4 })(request, response)
       handler(request, response)
     })
     server.listen(0, function () {
-      callback(this.address().port, function () {
-        server.close(function () {
+      callback(this.address().port, () => {
+        server.close(() => {
           rimraf.sync(directory)
         })
       })
