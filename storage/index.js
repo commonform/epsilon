@@ -72,6 +72,14 @@ function simpleFiles (subdirectory) {
         })
       })
     },
+    list: (callback) => {
+      var directory = path.dirname(filePath('x'))
+      fs.readdir(directory, (error, entries) => {
+        if (error) return callback(error)
+        var ids = entries.map((entry) => path.basename(entry, '.json'))
+        callback(null, ids)
+      })
+    },
     delete: (id, callback) => {
       var file = filePath(id)
       lock(file, (unlock) => {
@@ -85,6 +93,6 @@ function simpleFiles (subdirectory) {
     filePath
   }
   function filePath (id) {
-    return path.join(process.env.DIRECTORY, subdirectory, id)
+    return path.join(process.env.DIRECTORY, subdirectory, id + '.json')
   }
 }
