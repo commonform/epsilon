@@ -1,1 +1,5 @@
-npm run licenses && npm run lint
+#!/bin/bash
+set -e
+npm run licenses
+npm run lint
+! grep -F \"tape.only\" test/**.test.js
