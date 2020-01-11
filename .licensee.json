@@ -1,0 +1,11 @@
+{
+  "licenses": {
+    "blueOak": "silver",
+    "spdx": [
+      "CC-BY-3.0",
+      "CC0-1.0"
+    ]
+  },
+  "packages": {},
+  "corrections": true
+}
