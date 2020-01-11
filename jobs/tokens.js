@@ -1,6 +1,4 @@
-var JSONFile = require('../storage/json-file')
 var assert = require('assert')
-var fs = require('fs')
 var runParallelLimit = require('run-parallel-limit')
 var storage = require('../storage')
 
@@ -21,11 +19,11 @@ exports.handler = function (log, callback) {
       var file = storage.token.filePath(id)
       storage.lock(file, (unlock) => {
         done = unlock(done)
-        JSONFile.read(file, (error, record) => {
+        storage.token.readWithoutLocking(id, (error, record) => {
           if (error) return done(error)
           if (expired(record)) {
             log.info({ token: id }, 'deleting')
-            fs.unlink(file, done)
+            storage.token.deletWithoutLocking(id, done)
           }
           done()
         })

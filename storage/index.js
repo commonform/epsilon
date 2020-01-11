@@ -40,23 +40,13 @@ token.use = (id, type, callback) => {
 function simpleFiles (subdirectory) {
   return {
     write: (id, value, callback) => {
-      var file = filePath(id)
-      lock(file, (unlock) => {
-        callback = unlock(callback)
-        var directory = path.dirname(file)
-        mkdirp(directory, (error) => {
-          if (error) return callback(error)
-          JSONFile.write(file, value, callback)
-        })
-      })
+      lock(filePath(id), (unlock) => writeWithoutLocking(id, value, unlock(callback)))
     },
+    writeWithoutLocking,
     read: (id, callback) => {
-      var file = filePath(id)
-      lock(file, (unlock) => {
-        callback = unlock(callback)
-        JSONFile.read(file, callback)
-      })
+      lock(filePath(id), (unlock) => readWithoutLocking(id, unlock(callback)))
     },
+    readWithoutLocking,
     update: (id, properties, callback) => {
       var file = filePath(id)
       lock(file, (unlock) => {
@@ -81,17 +71,32 @@ function simpleFiles (subdirectory) {
       })
     },
     delete: (id, callback) => {
-      var file = filePath(id)
-      lock(file, (unlock) => {
-        callback = unlock(callback)
-        fs.unlink(filePath(id), (error) => {
-          if (error && error.code === 'ENOENT') return callback()
-          return callback(error)
-        })
-      })
+      lock(filePath(id), (unlock) => deleteWithoutLocking(id, unlock(callback)))
     },
+    deleteWithoutLocking,
     filePath
   }
+
+  function writeWithoutLocking (id, value, callback) {
+    var file = filePath(id)
+    var directory = path.dirname(file)
+    mkdirp(directory, (error) => {
+      if (error) return callback(error)
+      JSONFile.write(file, value, callback)
+    })
+  }
+
+  function readWithoutLocking (id, callback) {
+    JSONFile.read(filePath(id), callback)
+  }
+
+  function deleteWithoutLocking (id, callback) {
+    fs.unlink(filePath(id), (error) => {
+      if (error && error.code === 'ENOENT') return callback()
+      return callback(error)
+    })
+  }
+
   function filePath (id) {
     return path.join(process.env.DIRECTORY, subdirectory, id + '.json')
   }

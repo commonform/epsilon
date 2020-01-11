@@ -1,4 +1,3 @@
-var JSONFile = require('../storage/json-file')
 var passwordHashing = require('./password-hashing')
 var securePassword = require('secure-password')
 var storage = require('../storage')
@@ -7,7 +6,7 @@ module.exports = (handle, password, callback) => {
   var file = storage.account.filePath(handle)
   storage.lock(file, (unlock) => {
     callback = unlock(callback)
-    JSONFile.read(file, function (error, account) {
+    storage.account.readWithoutLocking(handle, function (error, account) {
       if (error) {
         error.statusCode = 500
         return callback(error)
@@ -41,7 +40,7 @@ module.exports = (handle, password, callback) => {
                   return callback(error)
                 }
                 account.passwordHash = newHash.toString('hex')
-                JSONFile.write(file, account, callback)
+                storage.account.writeWithoutLocking(handle, account, callback)
               })
             case securePassword.VALID:
               return callback(null)
