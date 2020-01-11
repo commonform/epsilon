@@ -4,12 +4,14 @@
   "devDependencies": {
     "chromedriver": "^79.0.0",
     "licensee": "^8.0.2",
+    "standard": "^14.3.1",
     "tape": "^4.13.0",
     "webdriverio": "^5.18.5"
   },
   "scripts": {
     "pretest": "chromedriver >/dev/null &",
     "test": "tape test/*.test.js ; killall chromedriver",
-    "licenses": "licensee --errors-only"
+    "licenses": "licensee --errors-only",
+    "lint": "standard"
   }
 }

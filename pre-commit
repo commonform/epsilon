@@ -1,1 +1,1 @@
-npm run licenses
+npm run licenses && npm run lint
