@@ -1,11 +1,12 @@
 {
   "licenses": {
-    "blueOak": "silver",
+    "blueOak": "bronze",
     "spdx": [
-      "CC-BY-3.0",
-      "CC0-1.0"
+      "CC-BY-3.0"
     ]
   },
-  "packages": {},
+  "packages": {
+    "css-value": "0.0.1"
+  },
   "corrections": true
 }
