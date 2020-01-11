@@ -17,7 +17,9 @@ module.exports = (callback) => {
       handler(request, response)
     })
     server.listen(0, function () {
-      callback(this.address().port, () => {
+      var port = this.address().port
+      process.env.BASE_HREF = 'http://localhost:' + port
+      callback(port, () => {
         server.close(() => {
           rimraf.sync(directory)
         })
