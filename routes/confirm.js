@@ -1,8 +1,7 @@
+var UUID_RE = require('../util/uuid-re')
 var internalError = require('./internal-error')
 var seeOther = require('./see-other')
 var storage = require('../storage')
-
-var UUID_RE = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/
 
 module.exports = function (request, response) {
   if (request.method !== 'GET') {
@@ -29,10 +28,14 @@ module.exports = function (request, response) {
     `.trim())
   }
 
-  storage.token.use(token, 'confirm', function (error, success, record) {
+  storage.token.use(token, 'confirm', (error, success, record) => {
     if (error) return internalError(request, response, error)
+    if (!success) {
+      response.statusCode = 400
+      return response.end()
+    }
     var handle = record.handle
-    storage.account.confirm(handle, function (error) {
+    storage.account.confirm(handle, (error) => {
       if (error) return internalError(request, response, error)
       var location = (
         '/login?message=' +

@@ -1,10 +1,11 @@
 var Busboy = require('busboy')
 var escapeHTML = require('escape-html')
+var hashPassword = require('../util/hash-password')
 var internalError = require('./internal-error')
 var mail = require('../mail')
 var methodNotAllowed = require('./method-not-allowed')
-var passwordHashing = require('./password-hashing')
 var passwordCriteria = require('./password-criteria')
+var passwordInputs = require('./partials/password-inputs')
 var runSeries = require('run-series')
 var storage = require('../storage')
 var uuid = require('uuid')
@@ -130,13 +131,12 @@ function post (request, response) {
   }
 
   function createAccount (done) {
-    var passwordBuffer = Buffer.from(password)
-    passwordHashing.hash(passwordBuffer, function (error, passwordHashBuffer) {
+    hashPassword(password, (error, hash) => {
       if (error) return done(error)
       var account = {
         handle,
         email,
-        passwordHash: passwordHashBuffer.toString('hex'),
+        passwordHash: hash,
         created: new Date().toISOString(),
         confirmed: false
       }
@@ -188,20 +188,7 @@ function signUpForm (data) {
             value="${value('handle')}"
             required>
       </p>
-      <p>
-        <label for=password>Password</label>
-        <input
-            name=password
-            type=password
-            required>
-      </p>
-      <p>
-        <label for=repeat>Repeat Password</label>
-        <input
-            name=repeat
-            type=password
-            required>
-      </p>
+      ${passwordInputs()}
       <p>${escapeHTML(passwordCriteria.explanation)}</p>
       <button type=submit>Join</button>
     </form>

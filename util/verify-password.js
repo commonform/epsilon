@@ -1,0 +1,59 @@
+var JSONFile = require('../storage/json-file')
+var passwordHashing = require('./password-hashing')
+var securePassword = require('secure-password')
+var storage = require('../storage')
+
+module.exports = (handle, password, callback) => {
+  var file = storage.account.filePath(handle)
+  storage.lock(file, (unlock) => {
+    callback = unlock(callback)
+    JSONFile.read(file, function (error, account) {
+      if (error) {
+        error.statusCode = 500
+        return callback(error)
+      }
+      if (account === null || account.confirmed === false) {
+        var invalid = new Error('invalid handle or password')
+        invalid.statusCode = 401
+        return callback(invalid)
+      }
+      var passwordHash = Buffer.from(account.passwordHash, 'hex')
+      var passwordBuffer = Buffer.from(password, 'utf8')
+      passwordHashing.verify(
+        passwordBuffer, passwordHash, (error, result) => {
+          if (error) {
+            error.statusCode = 500
+            return callback(error)
+          }
+          switch (result) {
+            case securePassword.INVALID_UNRECOGNIZED_HASH:
+              var unrecognized = new Error('unrecognized hash')
+              unrecognized.statusCode = 500
+              return callback(unrecognized)
+            case securePassword.INVALID:
+              var invalid = new Error('invalid password')
+              invalid.statusCode = 403
+              return callback(invalid)
+            case securePassword.VALID_NEEDS_REHASH:
+              return passwordHashing.hash(passwordBuffer, (error, newHash) => {
+                if (error) {
+                  error.statusCode = 500
+                  return callback(error)
+                }
+                account.passwordHash = newHash.toString('hex')
+                JSONFile.write(file, account, callback)
+              })
+            case securePassword.VALID:
+              return callback(null)
+            default:
+              var otherError = new Error(
+                'unexpected password hash result: ' + result
+              )
+              otherError.statusCode = 500
+              return callback(otherError)
+          }
+        }
+      )
+    })
+  })
+}

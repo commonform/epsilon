@@ -1,12 +1,9 @@
 var Busboy = require('busboy')
-var clearCookie = require('./clear-cookie')
 var escapeHTML = require('escape-html')
+var mail = require('../mail')
 var runSeries = require('run-series')
-var seeOther = require('./see-other')
-var setCookie = require('./set-cookie')
 var storage = require('../storage')
 var uuid = require('uuid')
-var verifyPassword = require('../util/verify-password')
 
 module.exports = function (request, response) {
   var method = request.method
@@ -17,7 +14,6 @@ module.exports = function (request, response) {
 }
 
 function get (request, response, error) {
-  clearCookie(response)
   var message = request.query.message || error
   var messageParagraph = message
     ? `<p class=message>${escapeHTML(message)}</p>`
@@ -32,44 +28,50 @@ function get (request, response, error) {
   </head>
   <body>
     <h1>Common Form</h1>
-    <h2>Log In</h2>
+    <h2>Reset Password</h2>
     ${messageParagraph}
-    <form action=/login method=post>
+    <form action=reset method=post>
       <p>
         <label for=handle>Handle</label>
-        <input name=handle type=text required autofocus>
+        <input name=handle type=text required autofocus autocomplete=off>
       </p>
-      <p>
-        <label for=password>Password</label>
-        <input name=password type=password required>
-      </p>
-      <button type=submit>Log In</button>
+      <button type=submit>Send E-Mail</button>
     </form>
-    <a href=/forgot>Forgot Handle</a>
-    <a href=/reset>Reset Password</a>
   </body>
 </html>
   `.trim())
 }
 
 function post (request, response) {
-  var handle, password, sessionID
+  var handle
   runSeries([
     readPostBody,
-    authenticate,
-    createSession,
-    issueCookie,
-    redirect
+    sendResetLink
   ], function (error) {
     if (error) {
-      if (error.statusCode === 401) {
-        response.statusCode = 401
+      if (error.statusCode === 400) {
+        response.statusCode = 400
         return get(request, response, error.message)
       }
       request.log.error(error)
       response.statusCode = error.statusCode || 500
-      response.end()
+      return response.end()
     }
+    response.setHeader('Content-Type', 'text/html')
+    response.end(`
+<!doctype html>
+<html lang=en-US>
+  <head>
+    <meta charset=UTF-8>
+    <title>Common Form</title>
+  </head>
+  <body>
+    <h1>Common Form</h1>
+    <h2>Reset Password</h2>
+    <p class=message>An e-mail has been sent.</p>
+  </body>
+</html>
+    `.trim())
   })
 
   function readPostBody (done) {
@@ -77,42 +79,39 @@ function post (request, response) {
       new Busboy({
         headers: request.headers,
         limits: {
-          fieldNameSize: 8,
-          fieldSize: 128,
-          fields: 2,
+          fieldNameSize: 6,
+          fieldSize: 64,
+          fields: 1,
           parts: 1
         }
       })
         .on('field', function (name, value, truncated, encoding, mime) {
           if (name === 'handle') handle = value.toLowerCase()
-          else if (name === 'password') password = value
         })
         .once('finish', done)
     )
   }
 
-  function authenticate (done) {
-    verifyPassword(handle, password, done)
-  }
-
-  function createSession (done) {
-    sessionID = uuid.v4()
-    storage.session.write(sessionID, {
-      handle,
-      created: new Date().toISOString()
-    }, done)
-  }
-
-  function issueCookie (done) {
-    var expires = new Date(
-      Date.now() + (30 * 24 * 60 * 60 * 1000) // thirty days
-    )
-    setCookie(response, sessionID, expires)
-    done()
-  }
-
-  function redirect (done) {
-    seeOther(request, response, '/')
-    done()
+  function sendResetLink (done) {
+    storage.account.read(handle, (error, account) => {
+      if (error) return done(error)
+      if (!account) {
+        var invalid = new Error('invalid handle')
+        invalid.statusCode = 400
+        return done(invalid)
+      }
+      var tokenID = uuid.v4()
+      var token = { type: 'reset', handle }
+      storage.token.write(tokenID, token, (error, token) => {
+        if (error) return done(error)
+        var href = `${process.env.BASE_HREF}/password?token=${tokenID}`
+        // TODO: Flesh out password-reset e-mail text.
+        mail({
+          to: account.email,
+          subject: 'Reset Your Password',
+          text: href
+        }, done)
+      })
+    })
   }
 }
