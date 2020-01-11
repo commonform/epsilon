@@ -1,6 +1,7 @@
 var Busboy = require('busboy')
-var mail = require('../mail')
 var escapeHTML = require('escape-html')
+var header = require('./partials/header')
+var mail = require('../mail')
 var runSeries = require('run-series')
 var storage = require('../storage')
 
@@ -26,16 +27,18 @@ function get (request, response, error) {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Forgot Handle</h2>
-    ${messageParagraph}
-    <form action=forgot method=post>
-      <p>
-        <label for=email>E-Mail</label>
-        <input name=email type=email required autofocus autocomplete=off>
-      </p>
-      <button type=submit>Send Handle</button>
-    </form>
+    ${header()}
+    <main role=main>
+      <h2>Forgot Handle</h2>
+      ${messageParagraph}
+      <form action=forgot method=post>
+        <p>
+          <label for=email>E-Mail</label>
+          <input name=email type=email required autofocus autocomplete=off>
+        </p>
+        <button type=submit>Send Handle</button>
+      </form>
+    </main>
   </body>
 </html>
   `.trim())
@@ -65,9 +68,11 @@ function post (request, response) {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Forgot Handle</h2>
-    <p class=message>If the e-mail you entered corresponds to an account, an e-mail was just sent to it.</p>
+    ${header()}
+    <main role=main>
+      <h2>Forgot Handle</h2>
+      <p class=message>If the e-mail you entered corresponds to an account, an e-mail was just sent to it.</p>
+    </main>
   </body>
 </html>
     `.trim())

@@ -1,5 +1,6 @@
 var Busboy = require('busboy')
 var escapeHTML = require('escape-html')
+var header = require('./partials/header')
 var mail = require('../mail')
 var runSeries = require('run-series')
 var storage = require('../storage')
@@ -27,16 +28,18 @@ function get (request, response, error) {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Reset Password</h2>
-    ${messageParagraph}
-    <form action=reset method=post>
-      <p>
-        <label for=handle>Handle</label>
-        <input name=handle type=text required autofocus autocomplete=off>
-      </p>
-      <button type=submit>Send E-Mail</button>
-    </form>
+    ${header()}
+    <main role=main>
+      <h2>Reset Password</h2>
+      ${messageParagraph}
+      <form action=reset method=post>
+        <p>
+          <label for=handle>Handle</label>
+          <input name=handle type=text required autofocus autocomplete=off>
+        </p>
+        <button type=submit>Send E-Mail</button>
+      </form>
+    </main>
   </body>
 </html>
   `.trim())
@@ -66,9 +69,11 @@ function post (request, response) {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Reset Password</h2>
-    <p class=message>An e-mail has been sent.</p>
+    ${header()}
+    <main role=main>
+      <h2>Reset Password</h2>
+      <p class=message>An e-mail has been sent.</p>
+    </main>
   </body>
 </html>
     `.trim())

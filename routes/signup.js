@@ -1,6 +1,7 @@
 var Busboy = require('busboy')
 var escapeHTML = require('escape-html')
 var hashPassword = require('../util/hash-password')
+var header = require('./partials/header')
 var internalError = require('./internal-error')
 var mail = require('../mail')
 var methodNotAllowed = require('./method-not-allowed')
@@ -30,9 +31,11 @@ function get (request, response, data) {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Sign Up</h2>
-    ${signUpForm(data)}
+    ${header()}
+    <main role=main>
+      <h2>Sign Up</h2>
+      ${signUpForm(data)}
+    </main>
   </body>
 </html>
   `.trim())
@@ -65,9 +68,11 @@ function post (request, response) {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Success</h2>
-    <p class=message>Check your e-mail for a link to confirm your new account.</p>
+    ${header()}
+    <main role=main>
+      <h2>Success</h2>
+      <p class=message>Check your e-mail for a link to confirm your new account.</p>
+    </main>
   </body>
 </html>
     `.trim())

@@ -46,13 +46,15 @@ function getAuthenticated (request, response) {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Change Password</h2>
-    ${messageParagraph}
-    <form action=password method=post>
-      ${passwordInputs('New Password')}
-      <button type=submit>Change Password</button>
-    </form>
+    ${header()}
+    <main role=main>
+      <h2>Change Password</h2>
+      ${messageParagraph}
+      <form action=password method=post>
+        ${passwordInputs('New Password')}
+        <button type=submit>Change Password</button>
+      </form>
+    </main>
   </body>
 </html>
   `.trim())
@@ -82,14 +84,16 @@ function getWithToken (request, response) {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Change Password</h2>
-    ${messageParagraph}
-    <form action=password method=post>
-      <input type=hidden name=token value="${token}">
-      ${passwordInputs('New Password')}
-      <button type=submit>Change Password</button>
-    </form>
+    ${header()}
+    <main role=main>
+      <h2>Change Password</h2>
+      ${messageParagraph}
+      <form action=password method=post>
+        <input type=hidden name=token value="${token}">
+        ${passwordInputs('New Password')}
+        <button type=submit>Change Password</button>
+      </form>
+    </main>
   </body>
 </html>
     `.trim())
@@ -106,9 +110,11 @@ function invalidToken (request, response) {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Change Password</h2>
-    <p class=message>The link you followed is invalid or expired.</p>
+    ${header()}
+    <main role=main>
+      <h2>Change Password</h2>
+      <p class=message>The link you followed is invalid or expired.</p>
+    </main>
   </body>
 </html>
   `.trim())

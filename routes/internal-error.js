@@ -1,3 +1,5 @@
+var header = require('./partials/header')
+
 module.exports = function (request, response, error) {
   request.log.error(error)
   response.statusCode = 500
@@ -10,9 +12,11 @@ module.exports = function (request, response, error) {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Error</h2>
-    <p>${error.message}</p>
+    ${header()}
+    <main role=main>
+      <h2>Error</h2>
+      <p>${error.message}</p>
+    </main>
   </body>
 </html>
   `.trim())

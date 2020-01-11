@@ -1,4 +1,5 @@
 var UUID_RE = require('../util/uuid-re')
+var header = require('./partials/header')
 var internalError = require('./internal-error')
 var seeOther = require('./see-other')
 var storage = require('../storage')
@@ -20,9 +21,11 @@ module.exports = function (request, response) {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Account Confirmation</h2>
-    <p class=message>The link you followed is invalid or expired.</p>
+    ${header()}
+    <main role=main>
+      <h2>Account Confirmation</h2>
+      <p class=message>The link you followed is invalid or expired.</p>
+    </main>
   </body>
 </html>
     `.trim())

@@ -1,6 +1,7 @@
 var Busboy = require('busboy')
 var clearCookie = require('./clear-cookie')
 var escapeHTML = require('escape-html')
+var header = require('./partials/header')
 var runSeries = require('run-series')
 var seeOther = require('./see-other')
 var setCookie = require('./set-cookie')
@@ -31,22 +32,24 @@ function get (request, response, error) {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Log In</h2>
-    ${messageParagraph}
-    <form action=/login method=post>
-      <p>
-        <label for=handle>Handle</label>
-        <input name=handle type=text required autofocus>
-      </p>
-      <p>
-        <label for=password>Password</label>
-        <input name=password type=password required>
-      </p>
-      <button type=submit>Log In</button>
-    </form>
-    <a href=/forgot>Forgot Handle</a>
-    <a href=/reset>Reset Password</a>
+    ${header()}
+    <main role=main>
+      <h2>Log In</h2>
+      ${messageParagraph}
+      <form action=/login method=post>
+        <p>
+          <label for=handle>Handle</label>
+          <input name=handle type=text required autofocus>
+        </p>
+        <p>
+          <label for=password>Password</label>
+          <input name=password type=password required>
+        </p>
+        <button type=submit>Log In</button>
+      </form>
+      <a href=/forgot>Forgot Handle</a>
+      <a href=/reset>Reset Password</a>
+    </main>
   </body>
 </html>
   `.trim())

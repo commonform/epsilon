@@ -1,3 +1,5 @@
+var header = require('./partials/header')
+
 module.exports = (request, response) => {
   response.statusCode = 404
   response.end(`
@@ -8,8 +10,10 @@ module.exports = (request, response) => {
     <title>Common Form</title>
   </head>
   <body>
-    <h1>Common Form</h1>
-    <h2>Not Found</h2>
+    ${header()}
+    <main role=main>
+      <h2>Not Found</h2>
+    </main>
   </body>
 </html>
   `.trim())
