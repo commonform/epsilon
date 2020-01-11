@@ -101,6 +101,11 @@ tape('sign up', (test) => {
           test.end()
           done()
         })
+      mail.once('sent', (options) => {
+        test.equal(options.subject, 'Sign Up', 'admin notification')
+        test.assert(options.text.includes(HANDLE), 'includes handle')
+        test.assert(options.text.includes(EMAIL), 'includes email')
+      })
     })
   })
 })

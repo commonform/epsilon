@@ -19,6 +19,7 @@ module.exports = (callback) => {
     server.listen(0, function () {
       var port = this.address().port
       process.env.BASE_HREF = 'http://localhost:' + port
+      process.env.ADMIN_EMAIL = 'admin@example.com'
       callback(port, () => {
         server.close(() => {
           rimraf.sync(directory)

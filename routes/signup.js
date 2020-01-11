@@ -46,7 +46,8 @@ function post (request, response) {
     validateInputs,
     checkForExistingAccount,
     createAccount,
-    createConfirmToken
+    createConfirmToken,
+    sendAdminEMail
   ], function (error) {
     if (error) {
       var route = error.route
@@ -159,6 +160,18 @@ function post (request, response) {
         subject: 'Confirm Your Account',
         text: href
       }, done)
+    })
+  }
+
+  function sendAdminEMail (done) {
+    if (!process.env.ADMIN_EMAIL) return done()
+    mail({
+      to: process.env.ADMIN_EMAIL,
+      subject: 'Sign Up',
+      text: `Handle: ${handle}\nE-Mail: ${email}\n`
+    }, (error) => {
+      if (error) request.log.error(error)
+      done()
     })
   }
 }
