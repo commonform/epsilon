@@ -1,8 +1,10 @@
 var JSONFile = require('./json-file')
+var assert = require('assert')
 var fs = require('fs')
 var lock = require('lock').Lock()
 var mkdirp = require('mkdirp')
 var path = require('path')
+var uuid = require('uuid')
 
 module.exports = {
   account: simpleFiles('accounts'),
@@ -21,17 +23,28 @@ account.confirm = (handle, callback) => {
 
 var token = module.exports.token
 
-token.use = (id, type, callback) => {
+token.create = (type, data, callback) => {
+  assert(typeof type === 'string')
+  assert(typeof data === 'object')
+  assert(typeof callback === 'function')
+  var id = uuid.v4()
+  data.type = type
+  token.write(id, data, (error) => {
+    if (error) return callback(error)
+    callback(null, id)
+  })
+}
+
+token.use = (id, callback) => {
   var file = token.filePath(id)
   lock(file, (unlock) => {
     callback = unlock(callback)
-    JSONFile.read(file, (error, record) => {
+    token.readWithoutLocking(id, (error, record) => {
       if (error) return callback(error)
-      if (!record) return callback(null, false)
-      if (record.type !== type) return callback(null, false)
-      fs.unlink(file, (error) => {
+      if (!record) return callback(null, null)
+      token.deleteWithoutLocking(id, (error) => {
         if (error) return callback(error)
-        callback(null, true, record)
+        callback(null, record)
       })
     })
   })

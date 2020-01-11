@@ -76,11 +76,6 @@ tape('sign up', (test) => {
       test.equal(options.subject, 'Confirm Your Account', 'subject')
       test.assert(options.text.includes('/confirm?token='), 'link')
       browser.url(options.text)
-        .then(() => browser.$('p.message'))
-        .then((p) => p.getText())
-        .then((text) => {
-          test.equal(text, 'account confirmed', 'confirmed')
-        })
         .then(() => browser.$('input[name="handle"]'))
         .then((input) => input.setValue(HANDLE))
         .then(() => browser.$('input[name="password"]'))

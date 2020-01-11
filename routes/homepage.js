@@ -2,9 +2,11 @@ var authenticate = require('./authenticate')
 var escapeHTML = require('escape-html')
 var head = require('./partials/head')
 var header = require('./partials/header')
+var methodNotAllowed = require('./method-not-allowed')
 var nav = require('./partials/nav')
 
 module.exports = (request, response) => {
+  if (request.method !== 'GET') return methodNotAllowed(request, response)
   authenticate(request, response, () => {
     response.end(`
 <!doctype html>

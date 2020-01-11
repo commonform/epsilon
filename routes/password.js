@@ -187,9 +187,9 @@ function post (request, response) {
 
   function changePassword (done) {
     if (token) {
-      return storage.token.use(token, 'reset', (error, success, record) => {
+      return storage.token.use(token, (error, record) => {
         if (error) return done(error)
-        if (!success) {
+        if (!record || record.type !== 'reset') {
           var failed = new Error('invalid token')
           failed.statusCode = 401
           return done(failed)

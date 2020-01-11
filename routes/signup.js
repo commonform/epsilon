@@ -1,4 +1,6 @@
 var Busboy = require('busboy')
+var EMAIL_RE = require('../util/email-re')
+var eMailInput = require('./partials/email-input')
 var escapeHTML = require('escape-html')
 var hashPassword = require('../util/hash-password')
 var head = require('./partials/head')
@@ -95,9 +97,6 @@ function post (request, response) {
     )
   }
 
-  // https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
-  var EMAIL_RE = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-
   function validateInputs (done) {
     var error
     if (!EMAIL_RE.test(email)) {
@@ -149,16 +148,13 @@ function post (request, response) {
   }
 
   function createConfirmToken (done) {
-    var tokenID = uuid.v4()
-    var token = { type: 'confirm', handle }
-    storage.token.write(tokenID, token, function (error, token) {
+    storage.token.create('confirm', { handle }, (error, token) => {
       if (error) return done(error)
-      var href = `${process.env.BASE_HREF}/confirm?token=${tokenID}`
       // TODO: Flesh out confirmation-link e-mail text.
       mail({
         to: email,
         subject: 'Confirm Your Account',
-        text: href
+        text: `${process.env.BASE_HREF}/confirm?token=${token}`
       }, done)
     })
   }
@@ -183,15 +179,7 @@ function signUpForm (data) {
   return `
     <form action=signup method=post>
       ${errorMessage}
-      <p>
-        <label for=email>E-Mail</label>
-        <input
-            name=email
-            type=email
-            value="${value('email')}"
-            autofocus
-            required>
-      </p>
+      ${eMailInput({ autofocus: true, value: data.email })}
       <p>
         <label for=handle>Handle</label>
         <input
