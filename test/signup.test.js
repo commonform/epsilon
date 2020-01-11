@@ -22,7 +22,9 @@ tape('browse ' + path, (test) => {
     var browser
     require('./webdriver')()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.url('http://localhost:' + port + path))
+      .then(() => browser.url('http://localhost:' + port))
+      .then(() => browser.$('a=Sign Up'))
+      .then((a) => a.click())
       .then(() => browser.$('h2'))
       .then((title) => title.getText())
       .then((text) => {
@@ -50,7 +52,9 @@ tape('sign up', (test) => {
     require('./webdriver')()
       .then((loaded) => { browser = loaded })
       .then(() => browser.setTimeouts(1000))
-      .then(() => browser.url('http://localhost:' + port + path))
+      .then(() => browser.url('http://localhost:' + port))
+      .then(() => browser.$('a=Sign Up'))
+      .then((a) => a.click())
       .then(() => browser.$('input[name="email"]'))
       .then((input) => input.setValue(EMAIL))
       .then(() => browser.$('input[name="handle"]'))

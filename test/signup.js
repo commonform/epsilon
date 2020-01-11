@@ -12,7 +12,9 @@ module.exports = (options, callback) => {
   var handle = options.handle
   var password = options.password
   var email = options.email
-  browser.url('http://localhost:' + port + '/signup')
+  browser.url('http://localhost:' + port)
+    .then(() => browser.$('a=Sign Up'))
+    .then((a) => a.click())
     .then(() => browser.$('input[name="email"]'))
     .then((input) => input.setValue(email))
     .then(() => browser.$('input[name="handle"]'))

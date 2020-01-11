@@ -33,7 +33,11 @@ tape('discover handle', (test) => {
           browser, port, handle, password, email
         }, (error) => {
           test.ifError(error, 'no signup error')
-          browser.url('http://localhost:' + port + path)
+          browser.url('http://localhost:' + port)
+            .then(() => browser.$('a=Log In'))
+            .then((a) => a.click())
+            .then(() => browser.$('a=Forgot Handle'))
+            .then((a) => a.click())
             .then(() => browser.$('input[name="email"]'))
             .then((input) => input.setValue(email))
             .then(() => browser.$('button[type="submit"]'))

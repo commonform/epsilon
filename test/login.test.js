@@ -1,6 +1,7 @@
 var http = require('http')
 var server = require('./server')
 var tape = require('tape')
+var webdriver = require('./webdriver')
 
 var path = '/login'
 
@@ -19,9 +20,12 @@ tape('GET ' + path, (test) => {
 tape('browse ' + path, (test) => {
   server((port, done) => {
     var browser
-    require('./webdriver')()
+    webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.url('http://localhost:' + port + path))
+      .then(() => browser.setTimeouts(1000))
+      .then(() => browser.url('http://localhost:' + port))
+      .then(() => browser.$('a=Log In'))
+      .then((a) => a.click())
       .then(() => browser.$('h2'))
       .then((title) => title.getText())
       .then((text) => {
@@ -42,10 +46,12 @@ tape('browse ' + path, (test) => {
 tape('log in with bad credentials', (test) => {
   server((port, done) => {
     var browser
-    require('./webdriver')()
+    webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.url('http://localhost:' + port + path))
       .then(() => browser.setTimeouts(1000))
+      .then(() => browser.url('http://localhost:' + port))
+      .then(() => browser.$('a=Log In'))
+      .then((a) => a.click())
       .then(() => browser.$('input[name="handle"]'))
       .then((input) => input.setValue('invalid'))
       .then(() => browser.$('input[name="password"]'))

@@ -46,6 +46,9 @@ function get (request, response, error) {
       </p>
       <button type=submit>Log In</button>
     </form>
+    <p>
+      <a href=/forgot>Forgot Handle</a>
+    </p>
   </body>
 </html>
   `.trim())
