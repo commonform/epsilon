@@ -174,6 +174,6 @@ function appendOnlyLists (subdirectory) {
   }
 
   function filePath (id) {
-    return path.join(process.env.DIRECTORY, subdirectory, id + '.json')
+    return path.join(process.env.DIRECTORY, subdirectory, id + '.txt')
   }
 }
