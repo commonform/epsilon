@@ -1,5 +1,6 @@
 var authenticate = require('./authenticate')
 var escapeHTML = require('escape-html')
+var found = require('./found')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var methodNotAllowed = require('./method-not-allowed')
@@ -9,11 +10,7 @@ module.exports = (request, response) => {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
   authenticate(request, response, () => {
     var account = request.account
-    if (!account) {
-      response.statusCode = 302
-      response.setHeader('Location', '/login')
-      return response.end()
-    }
+    if (!account) return found(request, response, '/login')
     response.end(`
 <!doctype html>
 <html lang=en-US>

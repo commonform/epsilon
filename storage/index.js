@@ -4,6 +4,7 @@ var fs = require('fs')
 var lock = require('lock').Lock()
 var mkdirp = require('mkdirp')
 var path = require('path')
+var serialize = require('commonform-serialize')
 var uuid = require('uuid')
 
 module.exports = {
@@ -11,6 +12,7 @@ module.exports = {
   email: simpleFiles('emails'),
   token: simpleFiles('tokens'),
   session: simpleFiles('sessions'),
+  form: simpleFiles('forms', serialize),
   lock
 }
 
@@ -50,7 +52,7 @@ token.use = (id, callback) => {
   })
 }
 
-function simpleFiles (subdirectory) {
+function simpleFiles (subdirectory, serialization) {
   return {
     write: (id, value, callback) => {
       lock(filePath(id), (unlock) => writeWithoutLocking(id, value, unlock(callback)))
@@ -64,11 +66,11 @@ function simpleFiles (subdirectory) {
       var file = filePath(id)
       lock(file, (unlock) => {
         callback = unlock(callback)
-        JSONFile.read(file, (error, record) => {
+        JSONFile.read(file, serialization, (error, record) => {
           if (error) return callback(error)
           if (!record) return callback(null, null)
           Object.assign(record, properties)
-          JSONFile.write(file, record, (error) => {
+          JSONFile.write(file, record, serialization, (error) => {
             if (error) return callback(error)
             callback(null, record)
           })
@@ -95,12 +97,12 @@ function simpleFiles (subdirectory) {
     var directory = path.dirname(file)
     mkdirp(directory, (error) => {
       if (error) return callback(error)
-      JSONFile.write(file, value, callback)
+      JSONFile.write(file, value, serialization, callback)
     })
   }
 
   function readWithoutLocking (id, callback) {
-    JSONFile.read(filePath(id), callback)
+    JSONFile.read(filePath(id), serialization, callback)
   }
 
   function deleteWithoutLocking (id, callback) {

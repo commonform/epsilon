@@ -1,13 +1,14 @@
 var fs = require('fs')
 
-exports.read = (file, callback) => {
+exports.read = (file, serialization, callback) => {
+  serialization = serialization || JSON
   fs.readFile(file, (error, data) => {
     if (error) {
       if (error.code === 'ENOENT') return callback(null, null)
       return callback(error)
     }
     try {
-      var parsed = JSON.parse(data)
+      var parsed = serialization.parse(data)
     } catch (error) {
       return callback(error)
     }
@@ -15,6 +16,7 @@ exports.read = (file, callback) => {
   })
 }
 
-exports.write = (file, data, callback) => {
-  fs.writeFile(file, JSON.stringify(data), callback)
+exports.write = (file, data, serialization, callback) => {
+  serialization = serialization || JSON
+  fs.writeFile(file, serialization.stringify(data), callback)
 }
