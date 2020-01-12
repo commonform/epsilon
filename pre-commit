@@ -3,3 +3,4 @@ set -e
 npm run licenses
 npm run lint
 ! grep -F \"tape.only\" test/**.test.js
+! git grep -F "console." -- '*.js'
