@@ -2,7 +2,7 @@ var Busboy = require('busboy')
 var EMAIL_RE = require('../util/email-re')
 var authenticate = require('./authenticate')
 var eMailInput = require('./partials/email-input')
-var escapeHTML = require('escape-html')
+var escape = require('../util/escape')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var mail = require('../mail')
@@ -37,7 +37,7 @@ function get (request, response) {
   }
   var message = request.query.message
   var messageParagraph = message
-    ? `<p class=message>${escapeHTML(message)}</p>`
+    ? `<p class=message>${escape(message)}</p>`
     : ''
   response.setHeader('Content-Type', 'text/html')
   response.end(`

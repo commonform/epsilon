@@ -1,6 +1,6 @@
 var Busboy = require('busboy')
 var clearCookie = require('./clear-cookie')
-var escapeHTML = require('escape-html')
+var escape = require('../util/escape')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var runSeries = require('run-series')
@@ -22,7 +22,7 @@ function get (request, response, error) {
   clearCookie(response)
   var message = request.query.message || error
   var messageParagraph = message
-    ? `<p class=message>${escapeHTML(message)}</p>`
+    ? `<p class=message>${escape(message)}</p>`
     : ''
   response.setHeader('Content-Type', 'text/html')
   response.end(`

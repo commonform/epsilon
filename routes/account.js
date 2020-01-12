@@ -1,5 +1,5 @@
 var authenticate = require('./authenticate')
-var escapeHTML = require('escape-html')
+var escape = require('../util/escape')
 var found = require('./found')
 var head = require('./partials/head')
 var header = require('./partials/header')
@@ -23,15 +23,15 @@ module.exports = (request, response) => {
       <table>
         <tr>
           <th>Handle</th>
-          <td class=handle>${escapeHTML(account.handle)}</td>
+          <td class=handle>${escape(account.handle)}</td>
         </tr>
         <tr>
           <th>E-Mail</th>
-          <td class=email>${escapeHTML(account.email)}</td>
+          <td class=email>${escape(account.email)}</td>
         </tr>
         <tr>
           <th>Joined</th>
-          <td class=joined>${escapeHTML(new Date(account.created).toISOString())}</td>
+          <td class=joined>${escape(new Date(account.created).toISOString())}</td>
         </tr>
       </table>
     </main>

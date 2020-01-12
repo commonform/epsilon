@@ -1,5 +1,5 @@
 var Busboy = require('busboy')
-var escapeHTML = require('escape-html')
+var escape = require('../util/escape')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var mail = require('../mail')
@@ -17,7 +17,7 @@ module.exports = function (request, response) {
 function get (request, response, error) {
   var message = request.query.message || error
   var messageParagraph = message
-    ? `<p class=message>${escapeHTML(message)}</p>`
+    ? `<p class=message>${escape(message)}</p>`
     : ''
   response.setHeader('Content-Type', 'text/html')
   response.end(`

@@ -1,11 +1,11 @@
-var escapeHTML = require('escape-html')
+var escape = require('../../util/escape')
 
 module.exports = (options) => {
   options = options || {}
   var label = options.label || 'Password'
   return `
 <p>
-  <label for=password>${escapeHTML(label)}</label>
+  <label for=password>${escape(label)}</label>
   <input name=password type=password required autocomplete=off ${options.autofocus ? 'autofocus' : ''}>
 </p>
 <p>

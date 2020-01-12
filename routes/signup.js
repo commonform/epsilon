@@ -1,7 +1,7 @@
 var Busboy = require('busboy')
 var EMAIL_RE = require('../util/email-re')
 var eMailInput = require('./partials/email-input')
-var escapeHTML = require('escape-html')
+var escape = require('../util/escape')
 var hashPassword = require('../util/hash-password')
 var head = require('./partials/head')
 var header = require('./partials/header')
@@ -174,7 +174,7 @@ function post (request, response) {
 function signUpForm (data) {
   data = data || {}
   var error = data.error
-  var errorMessage = error ? `<p class=error>${escapeHTML(error.message)}</p>` : ''
+  var errorMessage = error ? `<p class=error>${escape(error.message)}</p>` : ''
   return `
     <form action=signup method=post>
       ${errorMessage}
@@ -190,7 +190,7 @@ function signUpForm (data) {
             required>
       </p>
       ${passwordInputs()}
-      <p>${escapeHTML(passwordCriteria.explanation)}</p>
+      <p>${escape(passwordCriteria.explanation)}</p>
       <button type=submit>Join</button>
     </form>
   `.trim()

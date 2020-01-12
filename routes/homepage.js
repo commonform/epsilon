@@ -1,5 +1,5 @@
 var authenticate = require('./authenticate')
-var escapeHTML = require('escape-html')
+var escape = require('../util/escape')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var methodNotAllowed = require('./method-not-allowed')
@@ -24,7 +24,7 @@ module.exports = (request, response) => {
 
     function welcome () {
       if (!request.session) return ''
-      return `<p class=welcome>Welcome, ${escapeHTML(request.session.handle)}</p>`
+      return `<p class=welcome>Welcome, ${escape(request.session.handle)}</p>`
     }
   })
 }
