@@ -55,7 +55,7 @@ function getAuthenticated (request, response) {
           <label for=old>Old Password</label>
           <input name=old type=password required autofocus autocomplete=off>
         </p>
-        ${passwordInputs('New Password')}
+        ${passwordInputs({ label: 'New Password' })}
         <button type=submit>Change Password</button>
       </form>
     </main>
@@ -91,7 +91,7 @@ function getWithToken (request, response) {
       ${messageParagraph}
       <form action=password method=post>
         <input type=hidden name=token value="${token}">
-        ${passwordInputs('New Password')}
+        ${passwordInputs({ label: 'New Password', autofocus: true })}
         <button type=submit>Change Password</button>
       </form>
     </main>

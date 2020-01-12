@@ -186,6 +186,7 @@ function signUpForm (data) {
             type=text
             pattern="[A-Za-z0-9]{3,}"
             value="${value('handle')}"
+            autofocus
             required>
       </p>
       ${passwordInputs()}
