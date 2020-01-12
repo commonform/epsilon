@@ -1,7 +1,9 @@
 var DIGEST_RE = require('../util/digest-re')
+var form = require('./partials/form')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var internalError = require('./internal-error')
+var loadComponents = require('commonform-load-components')
 var methodNotAllowed = require('./method-not-allowed')
 var nav = require('./partials/nav')
 var notFound = require('./not-found')
@@ -24,11 +26,13 @@ module.exports = (request, response) => {
       response
     )
   }
-  storage.form.read(digest, (error, form) => {
-    if (error) return internalError(error)
-    if (!form) return notFound(request, response)
-    response.setHeader('Content-Type', 'text/html')
-    response.end(`
+  storage.form.read(digest, (error, rawForm) => {
+    if (error) return internalError(request, response, error)
+    if (!rawForm) return notFound(request, response)
+    loadComponents(rawForm, {}, (error, loadedForm, resolutions) => {
+      if (error) return internalError(request, response, error)
+      response.setHeader('Content-Type', 'text/html')
+      response.end(`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -36,10 +40,11 @@ module.exports = (request, response) => {
     ${header()}
     ${nav(request.session)}
     <main role=main>
-      <pre>${JSON.stringify(form)}</pre>
+      ${form(rawForm, { form: loadedForm, resolutions })}
     </main>
   </body>
 </html>
-    `.trim())
+      `.trim())
+    })
   })
 }
