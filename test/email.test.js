@@ -31,6 +31,8 @@ tape('change e-mail', (test) => {
             .then(() => browser.$('button[type="submit"]'))
             .then((submit) => submit.click())
             // Navigate to password-change page.
+            .then(() => browser.$('a=Account'))
+            .then((a) => a.click())
             .then(() => browser.$('a=Change E-Mail'))
             .then((a) => a.click())
             // Submit password-change form.
