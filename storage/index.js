@@ -62,6 +62,9 @@ function simpleFiles (subdirectory, serialization) {
       lock(filePath(id), (unlock) => readWithoutLocking(id, unlock(callback)))
     },
     readWithoutLocking,
+    createRawReadStream: (id) => {
+      return fs.createReadStream(filePath(id), 'utf8')
+    },
     update: (id, properties, callback) => {
       var file = filePath(id)
       lock(file, (unlock) => {
