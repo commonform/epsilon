@@ -1,5 +1,6 @@
 var routes = module.exports = require('http-hash')()
 
+// Reminder: Add new route names to handle blacklist.
 routes.set('/', require('./homepage'))
 routes.set('/account', require('./account'))
 routes.set('/confirm', require('./confirm'))

@@ -2,6 +2,7 @@ var Busboy = require('busboy')
 var EMAIL_RE = require('../util/email-re')
 var eMailInput = require('./partials/email-input')
 var escape = require('../util/escape')
+var handleCriteria = require('./handle-criteria')
 var hashPassword = require('../util/hash-password')
 var head = require('./partials/head')
 var header = require('./partials/header')
@@ -103,7 +104,7 @@ function post (request, response) {
       error.fieldName = 'email'
       return done(error)
     }
-    if (!handle || !/^[a-z0-9]{3,}$/.test(handle)) {
+    if (!handle || !handleCriteria.validate(handle)) {
       error = new Error('Invalid handle.')
       error.fieldName = 'handle'
       return done(error)
