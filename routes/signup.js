@@ -196,8 +196,8 @@ function signUpForm (data) {
             autofocus
             required>
       </p>
+      <p>${escape(handleCriteria.explanation)}</p>
       ${passwordInputs()}
-      <p>${escape(passwordCriteria.explanation)}</p>
       <button type=submit>Join</button>
     </form>
   `.trim()

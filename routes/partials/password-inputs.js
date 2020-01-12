@@ -1,4 +1,5 @@
 var escape = require('../../util/escape')
+var passwordCriteria = require('../password-criteria')
 
 module.exports = (options) => {
   options = options || {}
@@ -12,5 +13,6 @@ module.exports = (options) => {
   <label for=repeat>Repeat</label>
   <input name=repeat type=password required autocomplete=off>
 </p>
+<p>${escape(passwordCriteria.explanation)}</p>
   `.trim()
 }
