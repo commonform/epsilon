@@ -35,6 +35,8 @@ tape('change password', (test) => {
             .then(() => browser.$('a=Change Password'))
             .then((a) => a.click())
             // Submit password-change form.
+            .then(() => browser.$('input[name="old"]'))
+            .then((input) => input.setValue(oldPassword))
             .then(() => browser.$('input[name="password"]'))
             .then((input) => input.setValue(newPassword))
             .then(() => browser.$('input[name="repeat"]'))

@@ -12,6 +12,7 @@ var passwordCriteria = require('./password-criteria')
 var passwordInputs = require('./partials/password-inputs')
 var runSeries = require('run-series')
 var storage = require('../storage')
+var verifyPassword = require('../util/verify-password')
 
 module.exports = function (request, response) {
   var method = request.method
@@ -50,6 +51,10 @@ function getAuthenticated (request, response) {
       <h2>Change Password</h2>
       ${messageParagraph}
       <form action=password method=post>
+        <p>
+          <label for=old>Old Password</label>
+          <input name=old type=password required autofocus autocomplete=off>
+        </p>
         ${passwordInputs('New Password')}
         <button type=submit>Change Password</button>
       </form>
@@ -114,10 +119,11 @@ function invalidToken (request, response) {
 }
 
 function post (request, response) {
-  var password, repeat, token, email
+  var password, repeat, token, email, oldPassword
   runSeries([
     readPostBody,
     validateInputs,
+    checkOldPassword,
     changePassword,
     sendEMail
   ], function (error) {
@@ -152,7 +158,7 @@ function post (request, response) {
         limits: {
           fieldNameSize: 8,
           fieldSize: 64,
-          fields: 3,
+          fields: 4,
           parts: 1
         }
       })
@@ -160,6 +166,7 @@ function post (request, response) {
           if (name === 'password') password = value
           else if (name === 'repeat') repeat = value
           else if (name === 'token') token = value
+          else if (name === 'old') oldPassword = value
         })
         .once('finish', done)
     )
@@ -185,6 +192,26 @@ function post (request, response) {
     done()
   }
 
+  function checkOldPassword (done) {
+    if (token) return done()
+    authenticate(request, response, () => {
+      if (!request.account) {
+        var unauthorized = new Error('unauthorized')
+        unauthorized.statusCode = 401
+        return done(unauthorized)
+      }
+      var handle = request.account.handle
+      verifyPassword(handle, oldPassword, (error) => {
+        if (error) {
+          var invalidOldPassword = new Error('invalid password')
+          invalidOldPassword.statusCode = 400
+          return done(invalidOldPassword)
+        }
+        return done()
+      })
+    })
+  }
+
   function changePassword (done) {
     if (token) {
       return storage.token.use(token, (error, record) => {
@@ -206,21 +233,14 @@ function post (request, response) {
         })
       })
     }
-    authenticate(request, response, () => {
-      if (!request.session) {
-        var unauthorized = new Error('unauthorized')
-        unauthorized.statusCode = 401
-        return done(unauthorized)
-      }
-      email = request.account.email
-      hashPassword(password, (error, hash) => {
+    email = request.account.email
+    hashPassword(password, (error, hash) => {
+      if (error) return done(error)
+      var properties = { passwordHash: hash }
+      var handle = request.session.handle
+      storage.account.update(handle, properties, (error, updated) => {
         if (error) return done(error)
-        var properties = { passwordHash: hash }
-        var handle = request.session.handle
-        storage.account.update(handle, properties, (error, updated) => {
-          if (error) return done(error)
-          done()
-        })
+        done()
       })
     })
   }
