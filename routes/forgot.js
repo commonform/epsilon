@@ -3,6 +3,7 @@ var escape = require('../util/escape')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var mail = require('../mail')
+var runParallelLimit = require('run-parallel-limit')
 var runSeries = require('run-series')
 var storage = require('../storage')
 
@@ -92,19 +93,22 @@ function post (request, response) {
   }
 
   function sendEMail (done) {
-    storage.email.read(email, (error, handle) => {
+    storage.email.read(email, (error, handles) => {
       if (error) return done(error)
-      if (handle === null) return done()
-      storage.account.read(handle, function (error, account) {
-        if (error) return done(error)
-        if (account === null || !account.confirmed) return done()
-        // TODO: Improve handle-reminder e-mails.
-        mail({
-          to: account.email,
-          subject: 'Account Handle',
-          text: handle
-        }, done)
+      if (handles.length === 0) return done()
+      var tasks = handles.map((handle) => (done) => {
+        storage.account.read(handle, (error, account) => {
+          if (error) return done(error)
+          if (account === null || !account.confirmed) return done()
+          // TODO: Improve handle-reminder e-mails.
+          mail({
+            to: account.email,
+            subject: 'Account Handle',
+            text: handle
+          }, done)
+        })
       })
+      runParallelLimit(tasks, 3, done)
     })
   }
 }

@@ -1,3 +1,5 @@
+var escape = require('../../util/escape')
+
 module.exports = (options) => {
   return `
 <p>
@@ -5,7 +7,7 @@ module.exports = (options) => {
   <input
       name=email
       type=email
-      value="${options.email || ''}"
+      value="${escape(options.value) || ''}"
       ${options.autofocus ? 'autofocus' : ''}
       required>
 </p>

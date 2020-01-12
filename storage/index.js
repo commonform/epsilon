@@ -1,5 +1,4 @@
 var JSONFile = require('./json-file')
-var assert = require('assert')
 var fs = require('fs')
 var lock = require('lock').Lock()
 var mkdirp = require('mkdirp')
@@ -9,7 +8,7 @@ var uuid = require('uuid')
 
 module.exports = {
   account: simpleFiles('accounts'),
-  email: simpleFiles('emails'),
+  email: appendOnlyLists('email'),
   token: simpleFiles('tokens'),
   session: simpleFiles('sessions'),
   form: simpleFiles('forms', serialize),
@@ -25,15 +24,12 @@ account.confirm = (handle, callback) => {
 
 var token = module.exports.token
 
-token.create = (type, data, callback) => {
-  assert(typeof type === 'string')
-  assert(typeof data === 'object')
-  assert(typeof callback === 'function')
+token.generate = (type, data, callback) => {
   var id = uuid.v4()
   data.type = type
   token.write(id, data, (error) => {
-    if (error) return callback(error)
-    callback(null, id)
+    if (error) return callback(error, false)
+    callback(null, true, id)
   })
 }
 
@@ -54,6 +50,10 @@ token.use = (id, callback) => {
 
 function simpleFiles (subdirectory, serialization) {
   return {
+    create: (id, value, callback) => {
+      lock(filePath(id), (unlock) => createWithoutLocking(id, value, unlock(callback)))
+    },
+    createWithoutLocking,
     write: (id, value, callback) => {
       lock(filePath(id), (unlock) => writeWithoutLocking(id, value, unlock(callback)))
     },
@@ -69,11 +69,11 @@ function simpleFiles (subdirectory, serialization) {
       var file = filePath(id)
       lock(file, (unlock) => {
         callback = unlock(callback)
-        JSONFile.read(file, serialization, (error, record) => {
+        JSONFile.read({ file, serialization }, (error, record) => {
           if (error) return callback(error)
           if (!record) return callback(null, null)
           Object.assign(record, properties)
-          JSONFile.write(file, record, serialization, (error) => {
+          JSONFile.write({ file, data: record, serialization }, (error) => {
             if (error) return callback(error)
             callback(null, record)
           })
@@ -95,23 +95,81 @@ function simpleFiles (subdirectory, serialization) {
     filePath
   }
 
+  function createWithoutLocking (id, value, callback) {
+    var file = filePath(id)
+    var directory = path.dirname(file)
+    mkdirp(directory, (error) => {
+      if (error) return callback(error)
+      JSONFile.write({ file, data: value, serialization, flag: 'wx' }, callback)
+    })
+  }
+
   function writeWithoutLocking (id, value, callback) {
     var file = filePath(id)
     var directory = path.dirname(file)
     mkdirp(directory, (error) => {
       if (error) return callback(error)
-      JSONFile.write(file, value, serialization, callback)
+      JSONFile.write({ file, data: value, serialization }, callback)
     })
   }
 
   function readWithoutLocking (id, callback) {
-    JSONFile.read(filePath(id), serialization, callback)
+    JSONFile.read({ file: filePath(id), serialization }, callback)
   }
 
   function deleteWithoutLocking (id, callback) {
     fs.unlink(filePath(id), (error) => {
       if (error && error.code === 'ENOENT') return callback()
       return callback(error)
+    })
+  }
+
+  function filePath (id) {
+    return path.join(process.env.DIRECTORY, subdirectory, id + '.json')
+  }
+}
+
+function appendOnlyLists (subdirectory) {
+  return {
+    append: (id, string, callback) => {
+      var file = filePath(id)
+      var directory = path.dirname(file)
+      mkdirp(directory, (error) => {
+        if (error) return callback(error)
+        fs.writeFile(
+          filePath(id),
+          string + '\n',
+          { flag: 'a' },
+          callback
+        )
+      })
+    },
+    read: (id, callback) => {
+      lock(filePath(id), (unlock) => readWithoutLocking(id, unlock(callback)))
+    },
+    readWithoutLocking,
+    remove: (id, string, callback) => {
+      var file = filePath(id)
+      lock(file, (unlock) => {
+        callback = unlock(callback)
+        readWithoutLocking(id, (error, items) => {
+          if (error) return callback(error)
+          var filtered = items.filter((item) => item !== string)
+          fs.writeFile(
+            file,
+            filtered.join('\n') + '\n',
+            callback
+          )
+        })
+      })
+    },
+    filePath
+  }
+
+  function readWithoutLocking (id, callback) {
+    fs.readFile(filePath(id), 'utf8', (error, data) => {
+      if (error) return callback(error)
+      callback(null, data.split('\n'))
     })
   }
 

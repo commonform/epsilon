@@ -48,13 +48,12 @@ function post (request, response) {
     validateInputs,
     checkForExistingAccount,
     createAccount,
-    createConfirmToken,
+    generateConfirmToken,
     sendAdminEMail
   ], function (error) {
     if (error) {
-      var route = error.route
-      if (route) {
-        return route(request, response, {
+      if (error.statusCode === 400) {
+        return get(request, response, {
           email, handle, password, repeat, error
         })
       } else {
@@ -125,7 +124,13 @@ function post (request, response) {
   function checkForExistingAccount (done) {
     storage.account.read(handle, function (error, account) {
       if (error) return done(error)
-      if (account) return done(new Error('account already exists'))
+      if (account) {
+        var handleTaken = new Error(
+          `The handle “${handle}” is already taken.`
+        )
+        handleTaken.statusCode = 400
+        return done(handleTaken)
+      }
       return done()
     })
   }
@@ -142,14 +147,15 @@ function post (request, response) {
       }
       runSeries([
         (done) => { storage.account.write(handle, account, done) },
-        (done) => { storage.email.write(email, handle, done) }
+        (done) => { storage.email.append(email, handle, done) }
       ], done)
     })
   }
 
-  function createConfirmToken (done) {
-    storage.token.create('confirm', { handle }, (error, token) => {
+  function generateConfirmToken (done) {
+    storage.token.generate('confirm', { handle }, (error, success, token) => {
       if (error) return done(error)
+      if (!success) return done(new Error('token collision'))
       // TODO: Flesh out confirmation-link e-mail text.
       mail({
         to: email,

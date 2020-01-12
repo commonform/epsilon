@@ -1,6 +1,7 @@
 var http = require('http')
 var mail = require('../mail').events
 var server = require('./server')
+var signup = require('util').promisify(require('./signup'))
 var tape = require('tape')
 var verifyLogin = require('./verify-login')
 var webdriver = require('./webdriver')
@@ -98,6 +99,64 @@ tape('sign up', (test) => {
         test.assert(options.text.includes(email), 'includes email')
       })
     })
+    function finish () {
+      browser.deleteSession()
+      test.end()
+      done()
+    }
+  })
+})
+
+tape('sign up same handle', (test) => {
+  var firstEMail = 'first@example.com'
+  var secondEMail = 'first@example.com'
+  var handle = 'tester'
+  var password = 'test password'
+  server((port, done) => {
+    var browser
+    webdriver()
+      .then((loaded) => { browser = loaded })
+      .then(() => browser.setTimeouts(1000))
+      // Sign up using the handle.
+      .then(() => signup({
+        browser, port, handle, password, email: firstEMail
+      }))
+      // Try to sign up again with the same handle.
+      .then(() => browser.url('http://localhost:' + port))
+      .then(() => browser.$('a=Sign Up'))
+      .then((a) => a.click())
+      .then(() => browser.$('input[name="email"]'))
+      .then((input) => input.setValue(secondEMail))
+      .then(() => browser.$('input[name="handle"]'))
+      .then((input) => input.setValue(handle))
+      .then(() => browser.$('input[name="password"]'))
+      .then((input) => input.setValue(password))
+      .then(() => browser.$('input[name="repeat"]'))
+      .then((input) => input.setValue(password))
+      .then(() => browser.$('button[type="submit"]'))
+      .then((submit) => submit.click())
+      .then(() => browser.$('.error'))
+      .then((element) => element.getText())
+      .then((text) => {
+        test.assert(text.includes('taken'), 'handle taken')
+      })
+      .then(() => browser.$('input[name="email"]'))
+      .then((input) => input.getValue())
+      .then((value) => test.equal(value, secondEMail, 'preserves e-mail value'))
+      .then(() => browser.$('input[name="handle"]'))
+      .then((input) => input.getValue())
+      .then((value) => test.equal(value, handle, 'preserves handle value'))
+      .then(() => browser.$('input[name="password"]'))
+      .then((input) => input.getValue())
+      .then((value) => test.equal(value, '', 'empties password'))
+      .then(() => browser.$('input[name="repeat"]'))
+      .then((input) => input.getValue())
+      .then((value) => test.equal(value, '', 'empties password repeat'))
+      .then(finish)
+      .catch((error) => {
+        test.fail(error, 'catch')
+        finish()
+      })
     function finish () {
       browser.deleteSession()
       test.end()

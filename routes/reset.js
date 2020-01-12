@@ -5,7 +5,6 @@ var header = require('./partials/header')
 var mail = require('../mail')
 var runSeries = require('run-series')
 var storage = require('../storage')
-var uuid = require('uuid')
 
 module.exports = function (request, response) {
   var method = request.method
@@ -100,11 +99,11 @@ function post (request, response) {
         invalid.statusCode = 400
         return done(invalid)
       }
-      var tokenID = uuid.v4()
-      var token = { type: 'reset', handle }
-      storage.token.write(tokenID, token, (error, token) => {
+      var data = { handle }
+      storage.token.generate('reset', data, (error, success, token) => {
         if (error) return done(error)
-        var href = `${process.env.BASE_HREF}/password?token=${tokenID}`
+        if (!success) return done(new Error('token collision'))
+        var href = `${process.env.BASE_HREF}/password?token=${token}`
         // TODO: Flesh out password-reset e-mail text.
         mail({
           to: account.email,

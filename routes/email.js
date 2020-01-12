@@ -122,8 +122,9 @@ function post (request, response) {
 
   function sendConfirmationLink (done) {
     var properties = { handle, email: newEMail }
-    storage.token.create('email', properties, (error, token) => {
+    storage.token.generate('email', properties, (error, success, token) => {
       if (error) return done(error)
+      if (!success) return done(new Error('token collision'))
       request.log.info({ token }, 'e-mail change token')
       // TODO: Flesh out confirmation-link e-mail text.
       mail({

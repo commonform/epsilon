@@ -98,10 +98,14 @@ function post (request, response) {
 
   function createSession (done) {
     sessionID = uuid.v4()
-    storage.session.write(sessionID, {
+    storage.session.create(sessionID, {
       handle,
       created: new Date().toISOString()
-    }, done)
+    }, (error, success) => {
+      if (error) return done(error)
+      if (!success) return done(new Error('session collision'))
+      done()
+    })
   }
 
   function issueCookie (done) {

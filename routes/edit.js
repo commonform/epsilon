@@ -98,6 +98,10 @@ function post (request, response) {
   }
 
   function saveForms (done) {
-    storage.form.write(merkle.digest, parsed.form, done)
+    storage.form.create(merkle.digest, parsed.form, (error, success) => {
+      if (error) return done(error)
+      if (!success) return done(new Error('form collision'))
+      done()
+    })
   }
 }
