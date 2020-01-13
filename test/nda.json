@@ -1,0 +1,1030 @@
+{
+  "digest": "3e006dd61480f77ab76dc8e2086ebd6a230e7e25a1d4b1a91dd464dcf57a0e3f",
+  "form": {
+    "content": [
+      "The parties agree:",
+      {
+        "form": {
+          "content": [
+            {
+              "definition": "Disclosing Party"
+            },
+            " describes each party with respect to ",
+            {
+              "use": "Confidential Information"
+            },
+            " it discloses to the other party. ",
+            {
+              "definition": "Receiving Party"
+            },
+            " describes each party with respect to ",
+            {
+              "use": "Confidential Information"
+            },
+            " it receives from the other party."
+          ]
+        },
+        "heading": "Mutual Nondisclosure"
+      },
+      {
+        "form": {
+          "content": [
+            "The parties anticipate disclosure of ",
+            {
+              "use": "Confidential Information"
+            },
+            " for the purpose on the accompanying standard form certificate (the ",
+            {
+              "definition": "Purpose"
+            },
+            ")."
+          ]
+        },
+        "heading": "Purpose"
+      },
+      {
+        "form": {
+          "content": [
+            {
+              "form": {
+                "content": [
+                  "Subject to ",
+                  {
+                    "reference": "Exclusions from Confidential Information"
+                  },
+                  ", ",
+                  {
+                    "definition": "Confidential Information"
+                  },
+                  " means the following kinds of information:",
+                  {
+                    "form": {
+                      "content": [
+                        "information disclosed by ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        " during the term of this agreement that is related to the business of ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        ";"
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "the fact that the parties are pursuing the ",
+                        {
+                          "use": "Purpose"
+                        },
+                        ";"
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "the terms of this agreement;"
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "the fact that the parties have entered into this agreement; and"
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "other information derived from these kinds of information."
+                      ]
+                    }
+                  }
+                ]
+              },
+              "heading": "Categories of Confidential Information"
+            },
+            {
+              "form": {
+                "content": [
+                  {
+                    "form": {
+                      "content": [
+                        "Information that is now public is not ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        ". ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        " that becomes public, other than as a result of breach of this agreement, ceases to be ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        "."
+                      ]
+                    },
+                    "heading": "Information"
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "Information that ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " receives other than from ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        " is not ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        ", unless the disclosure breached a confidentiality obligation to ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        " that ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        " made known to ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        "."
+                      ]
+                    },
+                    "heading": "Acquired Information"
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "Information ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " develops independently is not, or ceases to be, ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        " of ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        ". ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " shall bear the burden of proving independent development using contemporaneous documentary evidence."
+                      ]
+                    },
+                    "heading": "Developed Information"
+                  }
+                ]
+              },
+              "heading": "Exclusions from Confidential Information"
+            }
+          ]
+        },
+        "heading": "Confidential Information"
+      },
+      {
+        "form": {
+          "content": []
+        },
+        "heading": "Confidentiality Obligations"
+      },
+      {
+        "form": {
+          "content": [
+            "Except as described in ",
+            {
+              "reference": "Permitted Disclosure"
+            },
+            ", ",
+            {
+              "use": "Receiving Party"
+            },
+            " shall not disclose ",
+            {
+              "use": "Confidential Information"
+            },
+            " to anyone."
+          ]
+        },
+        "heading": "Nondisclosure"
+      },
+      {
+        "form": {
+          "content": [
+            {
+              "use": "Receiving Party"
+            },
+            " may disclose ",
+            {
+              "use": "Confidential Information"
+            },
+            " to the following personnel:",
+            {
+              "form": {
+                "content": [
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " is a legal entity, employees, independent contractors, officers, directors, and agents of ",
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " (",
+                  {
+                    "definition": "Personnel"
+                  },
+                  ") who:",
+                  {
+                    "form": {
+                      "content": [
+                        "a need to know the ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        " to advance the ",
+                        {
+                          "use": "Purpose"
+                        },
+                        "; and"
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "entered written confidentiality agreements with ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " that impose confidentiality obligations, affording as much or more protection as those of this agreement, that apply to the ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        "; and"
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "form": {
+                "content": [
+                  "and financial advisers providing services to ",
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " under confidentiality obligations imposed either by law or by professional rules (",
+                  {
+                    "definition": "Advisers"
+                  },
+                  ")."
+                ]
+              }
+            },
+            {
+              "form": {
+                "content": [
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " shall use ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  " only to advance the ",
+                  {
+                    "use": "Purpose"
+                  },
+                  "."
+                ]
+              },
+              "heading": "Limited Use"
+            },
+            {
+              "form": {
+                "content": [
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " shall take measures to secure materials embodying ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  " at least as protective as those ",
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " employs to secure its own ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  ", but in any event no less than reasonable measures."
+                ]
+              },
+              "heading": "Security Measures"
+            },
+            {
+              "form": {
+                "content": [
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " shall not remove any proprietary notices attached to materials embodying ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  "."
+                ]
+              },
+              "heading": "Preserve Proprietary Notices"
+            },
+            {
+              "form": {
+                "content": [
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " shall not break securities laws by purchasing, selling, or otherwise dealing in securities of ",
+                  {
+                    "use": "Disclosing Party"
+                  },
+                  " on the basis of ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  " that is material, nonpublic information. ",
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " shall instruct anyone to whom it discloses ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  " that may be material, nonpublic information not to break securities laws by dealing in securities of ",
+                  {
+                    "use": "Disclosing Party"
+                  },
+                  "."
+                ]
+              },
+              "heading": "No Illegal Dealing in Securities"
+            },
+            {
+              "form": {
+                "content": [
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " shall not reverse engineer any material embodying ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  "."
+                ]
+              },
+              "heading": "No Reverse Engineering"
+            },
+            {
+              "form": {
+                "content": [
+                  "The following obligations apply when the law requires disclosure of ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  " and when ",
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " reasonably expects that the law may require disclosure of ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  ":",
+                  {
+                    "form": {
+                      "content": [
+                        "If legally permitted, ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " shall promptly notify ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        " of the nature of the requirement and the ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        " affected. If practical, ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " shall give notice quickly enough to afford ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        " practical chance to start a proceeding to protect the confidentiality of the ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        ". On ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        " request, ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " shall cooperate with ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        " in any such proceeding by providing reasonable assistance."
+                      ]
+                    },
+                    "heading": "Give Notice of Required Disclosure"
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        " shall reimburse ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        "'s reasonable out-of-pocket expenses of cooperating in any proceeding described in ",
+                        {
+                          "reference": "Give Notice of Required Disclosure"
+                        },
+                        "."
+                      ]
+                    },
+                    "heading": "Reimburse Expenses of Cooperation"
+                  }
+                ]
+              },
+              "heading": "Mitigate Legally Required Disclosure"
+            },
+            {
+              "form": {
+                "content": [
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " shall give ",
+                  {
+                    "use": "Disclosing Party"
+                  },
+                  " notice when ",
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " becomes aware, suspects, or anticipates that ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  " has been or will be disclosed or used in breach of this agreement or other confidentiality agreements with ",
+                  {
+                    "use": "Disclosing Party"
+                  },
+                  "."
+                ]
+              },
+              "heading": "Give Notice of Leaks"
+            },
+            {
+              "form": {
+                "content": [
+                  "Subject to ",
+                  {
+                    "reference": "Records Policy"
+                  },
+                  ", when this agreement terminates, ",
+                  {
+                    "use": "Receiving Party"
+                  },
+                  " shall promptly:",
+                  {
+                    "form": {
+                      "content": [
+                        "return all materials embodying ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        " that ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        " provided with request to return; and"
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "destroy all parts of other materials that embody ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        "."
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "When this agreement terminates, if ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " has a written records retention policy for the creation and scheduled destruction of archival or backup records, and only specialized personnel can routinely access those records, then ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " may retain materials embodying ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        " until destroyed under that policy."
+                      ]
+                    },
+                    "heading": "Records Policy"
+                  }
+                ]
+              },
+              "heading": "Return and Destruction"
+            },
+            {
+              "form": {
+                "content": [
+                  "Both parties shall comply with export and reexport laws with respect to ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  "."
+                ]
+              },
+              "heading": "Comply with Export Controls"
+            },
+            {
+              "form": {
+                "content": [
+                  {
+                    "form": {
+                      "content": [
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " shall ensure that its ",
+                        {
+                          "use": "Advisers"
+                        },
+                        " abide by the confidentiality obligations of ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " under this agreement. If ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " is a legal entity, ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " shall also ensure that its ",
+                        {
+                          "use": "Personnel"
+                        },
+                        " abide by the confidentiality obligations of ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " under this agreement. Breach of ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " obligations by ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " ",
+                        {
+                          "use": "Personnel"
+                        },
+                        " or ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " ",
+                        {
+                          "use": "Advisers"
+                        },
+                        " will be deemed breach of this agreement by ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " itself."
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " is a legal entity, ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " shall provide ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        " copies of confidentiality agreements with ",
+                        {
+                          "use": "Personnel"
+                        },
+                        " who receive ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        " on ",
+                        {
+                          "use": "Disclosing Party"
+                        },
+                        " request."
+                      ]
+                    }
+                  }
+                ]
+              },
+              "heading": "Compliance and Oversight"
+            }
+          ]
+        },
+        "heading": "Permitted Disclosure"
+      },
+      {
+        "form": {
+          "content": [
+            {
+              "form": {
+                "content": [
+                  "No terms of this agreement obligate ",
+                  {
+                    "use": "Disclosing Party"
+                  },
+                  " to disclose any ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  "."
+                ]
+              },
+              "heading": "No Obligation to Disclose"
+            },
+            {
+              "form": {
+                "content": [
+                  "No terms of this agreement obligate either party to enter any business relationship or agreement, related to the ",
+                  {
+                    "use": "Purpose"
+                  },
+                  " or otherwise."
+                ]
+              },
+              "heading": "No Obligation to Do Business"
+            },
+            {
+              "form": {
+                "content": [
+                  "No terms of this agreement grant any license for any patent, trademark, copyright, or other intellectual property."
+                ]
+              },
+              "heading": "No License"
+            },
+            {
+              "form": {
+                "content": [
+                  {
+                    "use": "Disclosing Party"
+                  },
+                  " makes no warranty that ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  " will be complete or accurate."
+                ]
+              },
+              "heading": "No Warranty"
+            },
+            {
+              "form": {
+                "content": [
+                  "No terms of this agreement prohibit either party from:",
+                  {
+                    "form": {
+                      "content": [
+                        "competing with the other party;"
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "entering into any business relationship with any non-party; or"
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "assigning and reassigning ",
+                        {
+                          "use": "Personnel"
+                        },
+                        " and ",
+                        {
+                          "use": "Advisers"
+                        },
+                        " in its sole discretion."
+                      ]
+                    }
+                  }
+                ]
+              },
+              "heading": "Freedom to Operate"
+            }
+          ]
+        },
+        "heading": "Clarifications"
+      },
+      {
+        "form": {
+          "content": [
+            {
+              "form": {
+                "content": [
+                  "An individual shall not be held criminally or civilly liable under any Federal or State trade secret law for the disclosure of a trade secret that:",
+                  {
+                    "form": {
+                      "content": [
+                        "is made:",
+                        {
+                          "form": {
+                            "content": [
+                              "in confidence to a Federal, State, or local government official, either directly or indirectly, or to an attorney; and"
+                            ]
+                          }
+                        },
+                        {
+                          "form": {
+                            "content": [
+                              "solely for the purpose of reporting or investigating a suspected violation of law; or"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "is made in a complaint or other document filed in a lawsuit or other proceeding, if such filing is made under seal."
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "form": {
+                "content": [
+                  "individual who files a lawsuit for retaliation by an employer for reporting a suspected violation of law may disclose the trade secret to the attorney of the individual and use the trade secret information in the court proceeding, if the individual:",
+                  {
+                    "form": {
+                      "content": [
+                        "any document containing the trade secret under seal; and"
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "not disclose the trade secret, except pursuant to court order."
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "heading": "18 U.S.C. 1833(b) Notice"
+      },
+      {
+        "form": {
+          "content": [
+            {
+              "form": {
+                "content": [
+                  "This agreement will terminate automatically on the first anniversary of the date of this agreement."
+                ]
+              },
+              "heading": "Expiration"
+            },
+            {
+              "form": {
+                "content": [
+                  "Either party may terminate this agreement early by thirty calendar days' prior written notice to the other party."
+                ]
+              },
+              "heading": "Termination by Notice"
+            },
+            {
+              "form": {
+                "content": [
+                  "Obligations under ",
+                  {
+                    "reference": "Confidentiality Obligations"
+                  },
+                  " for ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  " disclosed during the term survive the term of this agreement as follows:",
+                  {
+                    "form": {
+                      "content": [
+                        "Obligations for ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        " that ",
+                        {
+                          "use": "Receiving Party"
+                        },
+                        " knew or reasonably should have known constituted a trade secret survive as long as the ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        " remains a trade secret."
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "Obligations for other ",
+                        {
+                          "use": "Confidential Information"
+                        },
+                        " survive for five calendar years from the date of termination."
+                      ]
+                    }
+                  }
+                ]
+              },
+              "heading": "Survival"
+            }
+          ]
+        },
+        "heading": "Term"
+      },
+      {
+        "form": {
+          "content": [
+            {
+              "form": {
+                "content": [
+                  "Neither party may assign any right or delegate any obligation under this agreement without the prior, signed, written consent of the other party. Any attempt to assign or delegate without consent will have no legal effect."
+                ]
+              },
+              "heading": "No Assignment or Delegation"
+            },
+            {
+              "form": {
+                "content": [
+                  "The law of the state on the accompanying standard form certificate will govern all aspects of this agreement. The parties shall bring legal proceedings related to this agreement only in state or federal courts located in that state. The parties consent to the exclusive jurisdiction of those courts and waive any objection that legal proceedings brought there are brought in an inconvenient forum. The parties may enforce judgments of those courts in any appropriate forum."
+                ]
+              },
+              "heading": "Dispute Resolution"
+            },
+            {
+              "form": {
+                "content": [
+                  "The parties to this agreement remain independent contractors. This agreement does not create any partnership, joint venture, agency, or similar relationship between the parties."
+                ]
+              },
+              "heading": "Legal Relationship"
+            },
+            {
+              "form": {
+                "content": [
+                  "The parties will amend this agreement only by cosigned, written agreement. The parties will waive parts of this agreement, if at all, only by written waiver describing the specific terms waived and in what particular instance, signed by the party waiving."
+                ]
+              },
+              "heading": "Written Amendments and Waivers"
+            },
+            {
+              "form": {
+                "content": [
+                  "The parties shall send every notice, demand, consent, request, or other communication required or allowed by this agreement:",
+                  {
+                    "form": {
+                      "content": [
+                        "e-mail to the address the other party provided with their signature; or"
+                      ]
+                    }
+                  },
+                  {
+                    "form": {
+                      "content": [
+                        "overnight courier, with signature required for delivery, to the address the other party provided with their signature."
+                      ]
+                    }
+                  }
+                ]
+              },
+              "heading": "Notices"
+            },
+            {
+              "form": {
+                "content": [
+                  "Either party may change its e-mail or postal address for later communications by giving notice of a new address."
+                ]
+              },
+              "heading": "Change of Address"
+            },
+            {
+              "form": {
+                "content": [
+                  "If a court decides that any part of this agreement is invalid or unenforceable for any reason but enforcing the rest of the agreement would serve the purpose of protecting ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  " to advance the ",
+                  {
+                    "use": "Purpose"
+                  },
+                  ", then the rest of this agreement will remain in force."
+                ]
+              },
+              "heading": "Severability"
+            },
+            {
+              "form": {
+                "content": [
+                  "Only the parties may enforce rights under this agreement."
+                ]
+              },
+              "heading": "No Third-Party Enforcement"
+            },
+            {
+              "form": {
+                "content": [
+                  "The parties intend the terms of this agreement as the final, complete, and only expression of their agreement about protection of ",
+                  {
+                    "use": "Confidential Information"
+                  },
+                  " exchanged to advance the ",
+                  {
+                    "use": "Purpose"
+                  },
+                  "."
+                ]
+              },
+              "heading": "Entire Agreement"
+            },
+            {
+              "form": {
+                "content": [
+                  "A written or electronically signed copy of this agreement delivered by e-mail or other electronic means has the same legal effect as delivering a printed and signed original."
+                ]
+              },
+              "heading": "Signature"
+            }
+          ]
+        },
+        "heading": "General Contract Terms"
+      }
+    ]
+  }
+}

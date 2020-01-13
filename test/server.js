@@ -1,3 +1,4 @@
+var NDA = require('./nda')
 var assert = require('assert')
 var fs = require('fs')
 var handler = require('../')
@@ -5,6 +6,7 @@ var http = require('http')
 var pino = require('pino')
 var pinoHTTP = require('pino-http')
 var rimraf = require('rimraf')
+var storage = require('../storage')
 var uuid = require('uuid')
 
 module.exports = (callback) => {
@@ -12,6 +14,7 @@ module.exports = (callback) => {
   var log = pino({}, fs.createWriteStream('test-server.log'))
   fs.mkdtemp('/tmp/', (ignore, directory) => {
     process.env.DIRECTORY = directory
+    storage.form.create(NDA.digest, NDA.form, () => { })
     var server = http.createServer((request, response) => {
       pinoHTTP({ logger: log, genReqId: uuid.v4 })(request, response)
       handler(request, response)
