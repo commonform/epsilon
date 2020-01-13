@@ -8,7 +8,7 @@ var uuid = require('uuid')
 
 module.exports = {
   account: simpleFiles('accounts'),
-  email: appendOnlyLists('email'),
+  email: appendOnlyLists('emails'),
   token: simpleFiles('tokens'),
   session: simpleFiles('sessions'),
   form: simpleFiles('forms', serialize),
