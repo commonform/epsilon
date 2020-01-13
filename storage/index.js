@@ -1,18 +1,46 @@
 var JSONFile = require('./json-file')
+var crypto = require('crypto')
 var fs = require('fs')
 var lock = require('lock').Lock()
 var mkdirp = require('mkdirp')
 var path = require('path')
+var runSeries = require('run-series')
 var serialize = require('commonform-serialize')
+var stringify = require('fast-json-stable-stringify')
+var transform = require('./transform')
 var uuid = require('uuid')
 
 module.exports = {
+  log,
   account: simpleFiles('accounts'),
   email: appendOnlyLists('email'),
   token: simpleFiles('tokens'),
   session: simpleFiles('sessions'),
-  form: simpleFiles('forms', serialize),
+  form: simpleFiles('forms', { serialization: serialize }),
+  publication: simpleFiles('publication', {
+    complexID: (id) => path.join(...[id.publisher, id.project, id.edition])
+  }),
+  formSubscriber: appendOnlyLists('formSubscribers'),
+  componentInForm: appendOnlyLists('formSubscribers'),
   lock
+}
+
+function log (entry, callback) {
+  entry.date = new Date().toISOString()
+  var json = stringify(entry)
+  var digest = crypto.createHash('sha256').update(json).digest('hex')
+  var logFile = path.join(process.env.DIRECTORY, 'log')
+  var logLine = digest + '\n'
+  var entryDirectory = path.join(process.env.DIRECTORY, 'entry')
+  var entryFile = path.join(entryDirectory, digest + '.json')
+  runSeries([
+    (done) => mkdirp(entryDirectory, done),
+    (done) => fs.writeFile(entryFile, json, done),
+    (done) => fs.writeFile(logFile, logLine, { flag: 'a' }, done)
+  ], (error) => {
+    if (error) return callback(error)
+    transform(entry, callback)
+  })
 }
 
 var account = module.exports.account
@@ -48,7 +76,12 @@ token.use = (id, callback) => {
   })
 }
 
-function simpleFiles (subdirectory, serialization) {
+function simpleFiles (subdirectory, options) {
+  options = options || {}
+  var serialization = options.serialization
+  var filePath = options.complexID
+    ? (id) => path.join(process.env.DIRECTORY, subdirectory, options.complexID(id) + '.json')
+    : (id) => path.join(process.env.DIRECTORY, subdirectory, id + '.json')
   return {
     create: (id, value, callback) => {
       lock(filePath(id), (unlock) => createWithoutLocking(id, value, unlock(callback)))
@@ -123,10 +156,6 @@ function simpleFiles (subdirectory, serialization) {
       return callback(error)
     })
   }
-
-  function filePath (id) {
-    return path.join(process.env.DIRECTORY, subdirectory, id + '.json')
-  }
 }
 
 function appendOnlyLists (subdirectory) {
@@ -134,14 +163,17 @@ function appendOnlyLists (subdirectory) {
     append: (id, string, callback) => {
       var file = filePath(id)
       var directory = path.dirname(file)
-      mkdirp(directory, (error) => {
-        if (error) return callback(error)
-        fs.writeFile(
-          filePath(id),
-          string + '\n',
-          { flag: 'a' },
-          callback
-        )
+      lock(file, (unlock) => {
+        callback = unlock(callback)
+        mkdirp(directory, (error) => {
+          if (error) return callback(error)
+          fs.writeFile(
+            filePath(id),
+            string + '\n',
+            { flag: 'a' },
+            callback
+          )
+        })
       })
     },
     read: (id, callback) => {
