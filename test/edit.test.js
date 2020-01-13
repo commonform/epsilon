@@ -151,3 +151,37 @@ function saveForm (options) {
     .then(() => browser.$('button[type="submit"]'))
     .then((submit) => submit.click())
 }
+
+tape('save invalid markup', (test) => {
+  var handle = 'tester'
+  var email = 'test@example.com'
+  var password = 'test password'
+  var invalidMarkup = '<h1>invalid</h1>'
+  server((port, done) => {
+    var browser
+    webdriver()
+      .then((loaded) => { browser = loaded })
+      .then(() => browser.setTimeouts(1000))
+      .then(() => signup({ browser, port, handle, email, password }))
+      .then(() => login({ browser, port, handle, password }))
+      .then(() => browser.$('a=Edit'))
+      .then((a) => a.click())
+      .then(() => browser.$('#editor'))
+      .then((input) => input.setValue(invalidMarkup))
+      .then(() => browser.$('button[type="submit"]'))
+      .then((submit) => submit.click())
+      .then(() => browser.$('.error'))
+      .then((element) => element.getText())
+      .then((text) => test.assert(text.includes('markup'), 'markup error'))
+      .then(finish)
+      .catch((error) => {
+        test.fail(error)
+        finish()
+      })
+    function finish () {
+      test.end()
+      browser.deleteSession()
+      done()
+    }
+  })
+})
