@@ -68,6 +68,33 @@ tape('edit new form', (test) => {
   })
 })
 
+tape('edit existing form', (test) => {
+  var markup = 'test form\n'
+  var parsed = commonmark.parse(markup)
+  var digest = normalize(parsed.form).root
+  server((port, done) => {
+    var browser
+    webdriver()
+      .then((loaded) => { browser = loaded })
+      .then(() => browser.setTimeouts(1000))
+      .then(() => saveForm({ markup, port, browser }))
+      .then(() => browser.url('http://localhost:' + port + '/edit?digest=' + digest))
+      .then(() => browser.$('#editor'))
+      .then((textarea) => textarea.getValue())
+      .then((value) => test.equal(value, markup, 'populates markup'))
+      .then(finish)
+      .catch((error) => {
+        test.fail(error)
+        finish()
+      })
+    function finish () {
+      test.end()
+      browser.deleteSession()
+      done()
+    }
+  })
+})
+
 tape('save nested form', (test) => {
   var markup = '# A\n\nA\n\n# B\n\nB\n'
   var parsed = commonmark.parse(markup)

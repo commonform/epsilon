@@ -1,13 +1,17 @@
 var Busboy = require('busboy')
+var DIGEST_RE = require('../util/digest-re')
 var authenticate = require('./authenticate')
 var commonmark = require('commonform-commonmark')
+var escape = require('../util/escape')
 var found = require('./found')
 var has = require('has')
 var head = require('./partials/head')
 var header = require('./partials/header')
+var internalError = require('./internal-error')
 var methodNotAllowed = require('./method-not-allowed')
 var nav = require('./partials/nav')
 var normalize = require('commonform-normalize')
+var runAuto = require('run-auto')
 var runParallelLimit = require('run-parallel-limit')
 var runSeries = require('run-series')
 var seeOther = require('./see-other')
@@ -20,14 +24,26 @@ module.exports = (request, response) => {
   if (!isGET && !isPOST) return methodNotAllowed(request, response)
   authenticate(request, response, () => {
     if (!request.account) return found(request, response, '/login')
-    if (isGET) return get(request, response)
+    if (isGET) return get(request, response, request.query)
     post(request, response)
   })
 }
 
-function get (request, response) {
-  response.setHeader('Content-Type', 'text/html')
-  response.end(`
+function get (request, response, parameters) {
+  var tasks = {}
+  var digest = parameters.digest
+  if (digest && DIGEST_RE.test(digest)) {
+    tasks.form = (done) => storage.form.read(digest, done)
+  }
+  runAuto(tasks, (error, data) => {
+    if (error) return internalError(request, response, error)
+    var form = data.form || { content: ['edit text'] }
+    var markup = parameters.markup || commonmark.stringify(form)
+    var flash = parameters.flash
+      ? `<p class=error>${escape(parameters.flash)}</p>`
+      : ''
+    response.setHeader('Content-Type', 'text/html')
+    response.end(`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -36,14 +52,16 @@ function get (request, response) {
     ${nav(request.session)}
     <main role=main>
       <h2>Edit</h2>
+      ${flash}
       <form action=edit method=post>
-        <textarea id=editor name=markup></textarea>
+        <textarea id=editor name=markup>${escape(markup)}</textarea>
         <button type=submit>Save</button>
       </form>
     </main>
   </body>
 </html>
-  `.trim())
+    `.trim())
+  })
 }
 
 function post (request, response) {
@@ -54,13 +72,13 @@ function post (request, response) {
     saveForms
   ], function (error) {
     if (error) {
-      if (error.statusCode === 401) {
-        response.statusCode = 401
-        return get(request, response, error.message)
+      if (error.statusCode === 400) {
+        response.statusCode = 400
+        return get(request, response, {
+          markup, flash: error.message
+        })
       }
-      request.log.error(error)
-      response.statusCode = error.statusCode || 500
-      response.end()
+      return internalError(request, response, error)
     }
     seeOther(request, response, '/forms/' + normalized.root)
   })
