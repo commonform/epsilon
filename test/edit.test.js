@@ -1,8 +1,9 @@
 var commonmark = require('commonform-commonmark')
 var http = require('http')
 var login = require('./login')
-var merkleize = require('commonform-merkleize')
+var normalize = require('commonform-normalize')
 var promisify = require('util').promisify
+var runParellel = require('run-parallel')
 var server = require('./server')
 var signup = promisify(require('./signup'))
 var tape = require('tape')
@@ -23,31 +24,19 @@ tape('GET ' + path, (test) => {
 })
 
 tape('edit new form', (test) => {
-  var handle = 'tester'
-  var email = 'test@example.com'
-  var password = 'test password'
   var markup = 'test form'
   var parsed = commonmark.parse(markup)
-  var merkle = merkleize(parsed.form)
+  var normalized = normalize(parsed.form)
   server((port, done) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.setTimeouts(1000))
-      .then(() => signup({
-        browser, port, handle, email, password
-      }))
-      .then(() => login({ browser, port, handle, password }))
-      .then(() => browser.$('a=Edit'))
-      .then((a) => a.click())
-      .then(() => browser.$('#editor'))
-      .then((input) => input.setValue(markup))
-      .then(() => browser.$('button[type="submit"]'))
-      .then((submit) => submit.click())
+      .then(() => saveForm({ markup, port, browser }))
       .then(() => browser.$('=test form'))
       .then((p) => {
         test.assert(p, 'text appears')
-        var path = '/forms/' + merkle.digest + '.json'
+        var path = '/forms/' + normalized.root + '.json'
         http.request({ port, path })
           .once('response', (response) => {
             test.equal(response.statusCode, 200, '200')
@@ -78,3 +67,60 @@ tape('edit new form', (test) => {
     }
   })
 })
+
+tape('save nested form', (test) => {
+  var markup = '# A\n\nA\n\n# B\n\nB\n'
+  var parsed = commonmark.parse(markup)
+  var normalized = normalize(parsed.form)
+  var digests = Object.keys(normalized).filter((k) => k !== 'root')
+  server((port, done) => {
+    var browser
+    webdriver()
+      .then((loaded) => { browser = loaded })
+      .then(() => browser.setTimeouts(1000))
+      .then(() => saveForm({ markup, port, browser }))
+      .then(() => {
+        runParellel(
+          digests.map((digest) => (done) => {
+            var path = '/forms/' + digest + '.json'
+            http.request({ port, path })
+              .once('response', (response) => {
+                test.equal(response.statusCode, 200, '200')
+                done()
+              })
+              .end()
+          }),
+          finish
+        )
+      })
+      .catch((error) => {
+        test.fail(error)
+        finish()
+      })
+    function finish () {
+      test.end()
+      browser.deleteSession()
+      done()
+    }
+  })
+})
+
+function saveForm (options) {
+  var markup = options.markup
+  var port = options.port
+  var browser = options.browser
+  var handle = 'tester'
+  var email = 'test@example.com'
+  var password = 'test password'
+  return browser.setTimeouts(1000)
+    .then(() => signup({
+      browser, port, handle, email, password
+    }))
+    .then(() => login({ browser, port, handle, password }))
+    .then(() => browser.$('a=Edit'))
+    .then((a) => a.click())
+    .then(() => browser.$('#editor'))
+    .then((input) => input.setValue(markup))
+    .then(() => browser.$('button[type="submit"]'))
+    .then((submit) => submit.click())
+}

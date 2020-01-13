@@ -922,21 +922,41 @@
       "integrity": "sha1-sdu1LFWTERustJDmKF1gr94Cr9U=",
       "requires": {
         "commonform-normalize": "~0.5.0"
-      }
-    },
-    "commonform-normalize": {
-      "version": "0.5.3",
-      "resolved": "https://registry.npmjs.org/commonform-normalize/-/commonform-normalize-0.5.3.tgz",
-      "integrity": "sha1-n9tBkhw81QGHznhcf8bEa8nA9lo=",
-      "requires": {
-        "commonform-hash": "^0.4.0",
-        "commonform-predicate": "^0.4.0"
       },
       "dependencies": {
+        "commonform-normalize": {
+          "version": "0.5.3",
+          "resolved": "https://registry.npmjs.org/commonform-normalize/-/commonform-normalize-0.5.3.tgz",
+          "integrity": "sha1-n9tBkhw81QGHznhcf8bEa8nA9lo=",
+          "requires": {
+            "commonform-hash": "^0.4.0",
+            "commonform-predicate": "^0.4.0"
+          }
+        },
         "commonform-predicate": {
           "version": "0.4.4",
           "resolved": "https://registry.npmjs.org/commonform-predicate/-/commonform-predicate-0.4.4.tgz",
           "integrity": "sha1-3UH9J90UEwFJm2ccyLfH5RwQF/c="
+        }
+      }
+    },
+    "commonform-normalize": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/commonform-normalize/-/commonform-normalize-1.0.0.tgz",
+      "integrity": "sha512-ooZGVCft5tOSF/fKl8BFktFjEExRQkPBQhzqUaryxUUTrvyQuXqQWaqRB9WTXSX1CAdy8TeEFC1xU42MctWuCA==",
+      "requires": {
+        "commonform-hash": "^1.0.0",
+        "commonform-predicate": "^3.0.1"
+      },
+      "dependencies": {
+        "commonform-hash": {
+          "version": "1.0.0",
+          "resolved": "https://registry.npmjs.org/commonform-hash/-/commonform-hash-1.0.0.tgz",
+          "integrity": "sha512-UWt+3e2neQLHy+mxT8MyiXyZtoGxPAz95wfuTOjD3uZ6RMs93Q5hoVw6OUSmTORFjGzEwsnAuo8X4XLB3urV5g==",
+          "requires": {
+            "commonform-serialize": "^1.0.0",
+            "sha.js": "^2.4.5"
+          }
         }
       }
     },

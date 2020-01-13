@@ -2,11 +2,13 @@ var Busboy = require('busboy')
 var authenticate = require('./authenticate')
 var commonmark = require('commonform-commonmark')
 var found = require('./found')
+var has = require('has')
 var head = require('./partials/head')
 var header = require('./partials/header')
-var merkleize = require('commonform-merkleize')
 var methodNotAllowed = require('./method-not-allowed')
 var nav = require('./partials/nav')
+var normalize = require('commonform-normalize')
+var runParallelLimit = require('run-parallel-limit')
 var runSeries = require('run-series')
 var seeOther = require('./see-other')
 var storage = require('../storage')
@@ -45,7 +47,7 @@ function get (request, response) {
 }
 
 function post (request, response) {
-  var markup, parsed, merkle
+  var markup, parsed, normalized
   runSeries([
     readPostBody,
     parseMarkup,
@@ -60,7 +62,7 @@ function post (request, response) {
       response.statusCode = error.statusCode || 500
       response.end()
     }
-    seeOther(request, response, '/forms/' + merkle.digest)
+    seeOther(request, response, '/forms/' + normalized.root)
   })
 
   function readPostBody (done) {
@@ -90,7 +92,7 @@ function post (request, response) {
       return done(invalidMarkup)
     }
     try {
-      merkle = merkleize(parsed.form)
+      normalized = normalize(parsed.form)
     } catch (error) {
       return done(error)
     }
@@ -98,10 +100,28 @@ function post (request, response) {
   }
 
   function saveForms (done) {
-    storage.form.create(merkle.digest, parsed.form, (error, success) => {
-      if (error) return done(error)
-      if (!success) return done(new Error('form collision'))
-      done()
+    var forms = {}
+    recurse(parsed.form, normalized.root, normalized)
+    function recurse (form, digest, normalized) {
+      forms[digest] = form
+      form.content.forEach((element, index) => {
+        if (has(element, 'form')) {
+          var child = element.form
+          var childDigest = normalized[digest].content[index].digest
+          recurse(child, childDigest, normalized)
+        }
+      })
+    }
+    var tasks = Object.keys(forms).map((digest) => {
+      return (done) => {
+        var form = forms[digest]
+        storage.form.create(digest, form, (error, success) => {
+          if (error) return done(error)
+          if (!success) return done(new Error('form collision'))
+          done()
+        })
+      }
     })
+    runParallelLimit(tasks, 3, done)
   }
 }
