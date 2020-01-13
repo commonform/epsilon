@@ -2,6 +2,7 @@ var Busboy = require('busboy')
 var DIGEST_RE = require('../util/digest-re')
 var authenticate = require('./authenticate')
 var commonmark = require('commonform-commonmark')
+var editionValidator = require('../validators/edition')
 var escape = require('../util/escape')
 var found = require('./found')
 var has = require('has')
@@ -11,6 +12,7 @@ var internalError = require('./internal-error')
 var methodNotAllowed = require('./method-not-allowed')
 var nav = require('./partials/nav')
 var normalize = require('commonform-normalize')
+var projectValidator = require('../validators/project')
 var runAuto = require('run-auto')
 var runParallelLimit = require('run-parallel-limit')
 var runSeries = require('run-series')
@@ -56,6 +58,17 @@ function get (request, response, parameters) {
       <form action=edit method=post>
         <textarea id=editor name=markup>${escape(markup)}</textarea>
         <button type=submit>Save</button>
+        <fieldset>
+          <legend>Publication (optional)</legend>
+          <input
+              name=project
+              type=text
+              placeholder="Project Name">
+          <input
+              name=edition
+              type=text
+              placeholder="Edition">
+        </fieldset>
       </form>
     </main>
   </body>
@@ -65,11 +78,14 @@ function get (request, response, parameters) {
 }
 
 function post (request, response) {
-  var markup, parsed, normalized
+  var markup, project, edition
+  var parsed, normalized
   runSeries([
     readPostBody,
+    validateInputs,
     parseMarkup,
-    saveForms
+    saveForms,
+    savePublication
   ], function (error) {
     if (error) {
       if (error.statusCode === 400) {
@@ -88,17 +104,27 @@ function post (request, response) {
       new Busboy({
         headers: request.headers,
         limits: {
-          fieldNameSize: 6,
+          fieldNameSize: 7,
           fieldSize: 128,
-          fields: 1,
+          fields: 3,
           parts: 1
         }
       })
         .on('field', function (name, value, truncated, encoding, mime) {
           if (name === 'markup') markup = value
+          else if (name === 'project') project = value.toLowerCase().trim()
+          else if (name === 'edition') edition = value.toLowerCase().trim()
         })
         .once('finish', done)
     )
+  }
+
+  function validateInputs (done) {
+    if (project && !projectValidator.valid(project)) return done('invalid project name')
+    if (edition && !editionValidator.valid(edition)) return done('invalid edition')
+    if (project && !edition) return done('missing edition')
+    if (edition && !project) return done('missing project name')
+    done()
   }
 
   function parseMarkup (done) {
@@ -141,5 +167,16 @@ function post (request, response) {
       }
     })
     runParallelLimit(tasks, 3, done)
+  }
+
+  function savePublication (done) {
+    if (!project || !edition) return done()
+    var record = {
+      digest: normalized.root,
+      date: new Date().toISOString()
+    }
+    storage.publication.create({
+      publisher: request.account.handle, project, edition
+    }, record, done)
   }
 }

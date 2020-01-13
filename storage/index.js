@@ -11,7 +11,14 @@ module.exports = {
   email: appendOnlyLists('emails'),
   token: simpleFiles('tokens'),
   session: simpleFiles('sessions'),
-  form: simpleFiles('forms', serialize),
+  form: simpleFiles('forms', { serialization: serialize }),
+  publication: simpleFiles('publications', {
+    complexID: (argument) => path.join(
+      argument.publisher,
+      argument.project,
+      argument.edition
+    )
+  }),
   lock
 }
 
@@ -48,7 +55,13 @@ token.use = (id, callback) => {
   })
 }
 
-function simpleFiles (subdirectory, serialization) {
+function simpleFiles (subdirectory, options) {
+  options = options || {}
+  var serialization = options.serialization
+  var complexID = options.complexID
+  var filePath = complexID
+    ? (id) => path.join(process.env.DIRECTORY, subdirectory, complexID(id) + '.json')
+    : (id) => path.join(process.env.DIRECTORY, subdirectory, id + '.json')
   return {
     create: (id, value, callback) => {
       lock(filePath(id), (unlock) => createWithoutLocking(id, value, unlock(callback)))
@@ -122,10 +135,6 @@ function simpleFiles (subdirectory, serialization) {
       if (error && error.code === 'ENOENT') return callback()
       return callback(error)
     })
-  }
-
-  function filePath (id) {
-    return path.join(process.env.DIRECTORY, subdirectory, id + '.json')
   }
 }
 

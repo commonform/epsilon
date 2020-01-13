@@ -21,6 +21,7 @@
     "pino": "^5.15.0",
     "pino-http": "^4.3.0",
     "pump": "^3.0.0",
+    "reviewers-edition-parse": "^2.0.6",
     "run-auto": "^2.0.3",
     "run-parallel": "^1.1.9",
     "run-parallel-limit": "^1.0.5",

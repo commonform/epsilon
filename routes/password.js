@@ -8,7 +8,7 @@ var header = require('./partials/header')
 var internalError = require('./internal-error')
 var mail = require('../mail')
 var nav = require('./partials/nav')
-var passwordCriteria = require('./password-criteria')
+var passwordValidator = require('../validators/password')
 var passwordInputs = require('./partials/password-inputs')
 var runSeries = require('run-series')
 var storage = require('../storage')
@@ -184,7 +184,7 @@ function post (request, response) {
       error.fieldName = 'repeat'
       return done(error)
     }
-    if (!passwordCriteria.validate(password)) {
+    if (!passwordValidator.valid(password)) {
       error = new Error('invalid password')
       error.fieldName = 'password'
       return done(error)

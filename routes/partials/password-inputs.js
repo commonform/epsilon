@@ -1,5 +1,5 @@
 var escape = require('../../util/escape')
-var passwordCriteria = require('../password-criteria')
+var passwordValidator = require('../../validators/password')
 
 module.exports = (options) => {
   options = options || {}
@@ -7,12 +7,22 @@ module.exports = (options) => {
   return `
 <p>
   <label for=password>${escape(label)}</label>
-  <input name=password type=password required autocomplete=off ${options.autofocus ? 'autofocus' : ''}>
+  <input
+      name=password
+      type=password
+      required
+      autocomplete=off
+      ${options.autofocus ? 'autofocus' : ''}>
 </p>
 <p>
   <label for=repeat>Repeat</label>
-  <input name=repeat type=password required autocomplete=off>
+  <input
+      name=repeat
+      type=password
+      pattern="${passwordValidator.pattern}"
+      required
+      autocomplete=off>
 </p>
-<p>${escape(passwordCriteria.explanation)}</p>
+<p>${escape(passwordValidator.html)}</p>
   `.trim()
 }

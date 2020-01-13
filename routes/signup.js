@@ -2,14 +2,14 @@ var Busboy = require('busboy')
 var EMAIL_RE = require('../util/email-re')
 var eMailInput = require('./partials/email-input')
 var escape = require('../util/escape')
-var handleCriteria = require('./handle-criteria')
+var handleValidator = require('../validators/handle')
 var hashPassword = require('../util/hash-password')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var internalError = require('./internal-error')
 var mail = require('../mail')
 var methodNotAllowed = require('./method-not-allowed')
-var passwordCriteria = require('./password-criteria')
+var passwordValidator = require('../validators/password')
 var passwordInputs = require('./partials/password-inputs')
 var runSeries = require('run-series')
 var storage = require('../storage')
@@ -103,7 +103,7 @@ function post (request, response) {
       error.fieldName = 'email'
       return done(error)
     }
-    if (!handle || !handleCriteria.validate(handle)) {
+    if (!handle || !handleValidator.valid(handle)) {
       error = new Error('Invalid handle.')
       error.fieldName = 'handle'
       return done(error)
@@ -113,7 +113,7 @@ function post (request, response) {
       error.fieldName = 'repeat'
       return done(error)
     }
-    if (!passwordCriteria.validate(password)) {
+    if (!passwordValidator.valid(password)) {
       error = new Error('invalid password')
       error.fieldName = 'password'
       return done(error)
@@ -191,12 +191,12 @@ function signUpForm (data) {
         <input
             name=handle
             type=text
-            pattern="[A-Za-z0-9]{3,}"
+            pattern="${handleValidator.pattern}"
             value="${value('handle')}"
             autofocus
             required>
       </p>
-      <p>${escape(handleCriteria.explanation)}</p>
+      <p>${handleValidator.html}</p>
       ${passwordInputs()}
       <button type=submit>Join</button>
     </form>

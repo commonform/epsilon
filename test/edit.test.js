@@ -185,3 +185,46 @@ tape('save invalid markup', (test) => {
     }
   })
 })
+
+tape('publish', (test) => {
+  var handle = 'tester'
+  var email = 'test@example.com'
+  var password = 'test password'
+  var markup = 'applesauce test'
+  var project = 'test'
+  var edition = '1e'
+  server((port, done) => {
+    var browser
+    webdriver()
+      .then((loaded) => { browser = loaded })
+      .then(() => browser.setTimeouts(1000))
+      .then(() => signup({ browser, port, handle, email, password }))
+      .then(() => login({ browser, port, handle, password }))
+      .then(() => browser.$('a=Edit'))
+      .then((a) => a.click())
+      .then(() => browser.$('#editor'))
+      .then((input) => input.setValue(markup))
+      .then(() => browser.$('input[name="project"]'))
+      .then((input) => input.setValue(project))
+      .then(() => browser.$('input[name="edition"]'))
+      .then((input) => input.setValue(edition))
+      .then(() => browser.$('button[type="submit"]'))
+      .then((submit) => submit.click())
+      .then(() => browser.url(
+        'http://localhost:' + port + '/publications/' + [handle, project, edition].join('/')
+      ))
+      .then(() => browser.$('h2'))
+      .then((h2) => h2.getText())
+      .then((text) => test.equal(text, project + ' ' + edition, 'heading'))
+      .then(finish)
+      .catch((error) => {
+        test.fail(error)
+        finish()
+      })
+    function finish () {
+      test.end()
+      browser.deleteSession()
+      done()
+    }
+  })
+})
