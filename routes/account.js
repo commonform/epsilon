@@ -35,8 +35,8 @@ module.exports = (request, response) => {
           <td class=joined>${escape(new Date(account.created).toISOString())}</td>
         </tr>
       </table>
-      <a href=/password>Change Password</a>
-      <a href=/email>Change E-Mail</a>
+      <a class=button href=/password>Change Password</a>
+      <a class=button href=/email>Change E-Mail</a>
     </main>
   </body>
 </html>
