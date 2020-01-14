@@ -43,7 +43,7 @@ module.exports = (request, response) => {
     ${header()}
     ${nav(request.session)}
     <main role=main>
-      <a href=/edit?digest=${escape(digest)}>Edit this Form</a>
+      <a class=button href=/edit?digest=${escape(digest)}>Edit this Form</a>
       ${form(rawForm, { form: loadedForm, resolutions })}
     </main>
   </body>
