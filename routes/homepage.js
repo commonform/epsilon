@@ -8,6 +8,7 @@ var nav = require('./partials/nav')
 module.exports = (request, response) => {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
   authenticate(request, response, () => {
+    response.setHeader('Content-Type', 'text/html')
     response.end(`
 <!doctype html>
 <html lang=en-US>

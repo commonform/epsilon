@@ -54,6 +54,7 @@ module.exports = function (request, response) {
 
 function invalidToken (request, response) {
   response.statusCode = 400
+  response.setHeader('Content-Type', 'text/html')
   return response.end(`
 <!doctype html>
 <html lang=en-US>

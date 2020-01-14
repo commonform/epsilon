@@ -11,6 +11,7 @@ module.exports = (request, response) => {
   authenticate(request, response, () => {
     var account = request.account
     if (!account) return found(request, response, '/login')
+    response.setHeader('Content-Type', 'text/html')
     response.end(`
 <!doctype html>
 <html lang=en-US>

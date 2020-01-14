@@ -60,6 +60,7 @@ function post (request, response) {
         return internalError(request, response, error)
       }
     }
+    response.setHeader('Content-Type', 'text/html')
     response.end(`
 <!doctype html>
 <html lang=en-US>
