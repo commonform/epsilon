@@ -60,14 +60,16 @@ function get (request, response, parameters) {
         <button type=submit>Save</button>
         <fieldset>
           <legend>Publication (optional)</legend>
+          <label for=project>Project Name</label>
           <input
               name=project
-              type=text
-              placeholder="Project Name">
+              type=text>
+          <p>${projectValidator.html}</p>
+          <label for=edition>Edition</label>
           <input
               name=edition
-              type=text
-              placeholder="Edition">
+              type=text>
+          <p>${editionValidator.html}</p>
         </fieldset>
       </form>
     </main>
