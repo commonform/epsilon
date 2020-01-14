@@ -1,0 +1,1 @@
+ssh api@epsilon.commonform.org "bash -ic './update-epsilon'"
