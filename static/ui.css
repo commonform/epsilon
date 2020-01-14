@@ -65,3 +65,10 @@ button + .button,
   margin-left: 1ex;
 }
 
+a[href] {
+  text-decoration: none;
+}
+
+a[href]:hover {
+  text-decoration: underline;
+}
