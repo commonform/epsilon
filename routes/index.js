@@ -1,3 +1,7 @@
+var path = require('path')
+var pump = require('pump')
+var send = require('send')
+
 var routes = module.exports = require('http-hash')()
 
 // Reminder: Add new route names to handle blacklist.
@@ -14,3 +18,17 @@ routes.set('/password', require('./password'))
 routes.set('/publications/:publisher/:project/:edition', require('./publications'))
 routes.set('/reset', require('./reset'))
 routes.set('/signup', require('./signup'))
+
+var STATIC_FILES = [
+  'favicon.ico',
+  'logo-on-white.png',
+  'logo.svg',
+  'normalize.css',
+  'styles.css'
+]
+STATIC_FILES.forEach((file) => {
+  var filePath = path.join(__dirname, '..', 'static', file)
+  routes.set('/' + file, (request, response) => {
+    pump(send(request, filePath), response)
+  })
+})
