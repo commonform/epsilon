@@ -20,7 +20,6 @@ tape('browse NDA', (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })

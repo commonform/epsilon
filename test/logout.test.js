@@ -44,7 +44,6 @@ tape('log out', (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })

@@ -80,7 +80,6 @@ tape('reset password', (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })

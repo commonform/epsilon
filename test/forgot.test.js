@@ -46,7 +46,6 @@ tape('discover handle', (test) => {
     })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })

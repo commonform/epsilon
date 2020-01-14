@@ -28,13 +28,11 @@ tape('browse ' + path, (test) => {
       .then((text) => {
         test.equal(text, 'Not Found')
         test.end()
-        browser.deleteSession()
         done()
       })
       .catch((error) => {
         test.fail(error)
         test.end()
-        browser.deleteSession()
         done()
       })
   })

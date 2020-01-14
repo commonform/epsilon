@@ -40,7 +40,6 @@ tape('browse ' + path, (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })

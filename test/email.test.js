@@ -46,7 +46,6 @@ tape('change e-mail', (test) => {
                   .then((p) => p.getText())
                   .then((text) => {
                     test.assert(text.includes('changed'), 'changed')
-                    browser.deleteSession()
                     test.end()
                     done()
                   })
@@ -62,7 +61,6 @@ tape('change e-mail', (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })

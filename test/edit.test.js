@@ -63,7 +63,6 @@ tape('edit new form', (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })
@@ -89,7 +88,6 @@ tape('edit existing form', (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })
@@ -125,7 +123,6 @@ tape('save nested form', (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })
@@ -167,7 +164,6 @@ tape('save invalid markup', (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })
@@ -205,7 +201,6 @@ tape('publish', (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })

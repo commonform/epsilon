@@ -30,13 +30,11 @@ tape('browse ' + path, (test) => {
       .then((text) => {
         test.equal(text, 'Log In', '<h2>Log In</h2>')
         test.end()
-        browser.deleteSession()
         done()
       })
       .catch((error) => {
         test.fail(error)
         test.end()
-        browser.deleteSession()
         done()
       })
   })
@@ -68,7 +66,6 @@ tape('log in with bad credentials', (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })

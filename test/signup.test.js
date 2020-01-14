@@ -40,7 +40,6 @@ tape('browse ' + path, (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })
@@ -69,7 +68,6 @@ tape('sign up', (test) => {
       .then((submit) => submit.click())
       .catch((error) => {
         test.fail(error, 'catch')
-        browser.deleteSession()
         test.end()
         done()
       })
@@ -99,7 +97,6 @@ tape('sign up', (test) => {
       })
     })
     function finish () {
-      browser.deleteSession()
       test.end()
       done()
     }
@@ -156,7 +153,6 @@ tape('sign up same handle', (test) => {
         finish()
       })
     function finish () {
-      browser.deleteSession()
       test.end()
       done()
     }

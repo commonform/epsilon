@@ -26,13 +26,11 @@ tape('browse /', (test) => {
       .then((text) => {
         test.equal(text, 'Common Form')
         test.end()
-        browser.deleteSession()
         done()
       })
       .catch((error) => {
         test.fail(error)
         test.end()
-        browser.deleteSession()
         done()
       })
   })

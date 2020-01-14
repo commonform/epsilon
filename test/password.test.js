@@ -69,7 +69,6 @@ tape('change password', (test) => {
               browser, test, port, handle, email
             }))
             .then(() => {
-              browser.deleteSession()
               test.end()
               done()
             })
@@ -81,7 +80,6 @@ tape('change password', (test) => {
       })
     function finish () {
       test.end()
-      browser.deleteSession()
       done()
     }
   })
