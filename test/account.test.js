@@ -1,4 +1,6 @@
+var USER = require('./user')
 var http = require('http')
+var login = require('./login')
 var server = require('./server')
 var signup = require('./signup')
 var tape = require('tape')
@@ -21,38 +23,22 @@ tape('GET ' + path, (test) => {
 })
 
 tape('browse ' + path, (test) => {
-  var handle = 'tester'
-  var password = 'test password'
-  var email = 'tester@example.com'
+  var email = USER.email
+  var handle = USER.handle
+  var password = USER.password
   server((port, done) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.setTimeouts(1000))
-      .then(() => {
-        signup({
-          browser, port, handle, password, email
-        }, (error) => {
-          test.ifError(error, 'no signup error')
-          browser.url('http://localhost:' + port)
-            // Log in.
-            .then(() => browser.$('a=Log In'))
-            .then((a) => a.click())
-            .then(() => browser.$('input[name="handle"]'))
-            .then((input) => input.setValue(handle))
-            .then(() => browser.$('input[name="password"]'))
-            .then((input) => input.setValue(password))
-            .then(() => browser.$('button[type="submit"]'))
-            .then((submit) => submit.click())
-            .then(() => verifyLogin({
-              browser, test, port, email, handle
-            }))
-            .then(() => finish())
-            .catch((error) => {
-              test.fail(error, 'catch')
-              finish()
-            })
-        })
+      .then(() => login({ browser, port, handle, password }))
+      .then(() => verifyLogin({
+        browser, test, port, email, handle
+      }))
+      .then(() => finish())
+      .catch((error) => {
+        test.fail(error, 'catch')
+        finish()
       })
     function finish () {
       test.end()

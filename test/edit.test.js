@@ -1,3 +1,4 @@
+var USER = require('./user')
 var commonmark = require('commonform-commonmark')
 var http = require('http')
 var login = require('./login')
@@ -5,11 +6,14 @@ var normalize = require('commonform-normalize')
 var promisify = require('util').promisify
 var runParellel = require('run-parallel')
 var server = require('./server')
-var signup = promisify(require('./signup'))
 var tape = require('tape')
 var webdriver = require('./webdriver')
 
 var path = '/edit'
+
+var handle = USER.handle
+var password = USER.password
+var email = USER.email
 
 tape('GET ' + path, (test) => {
   server((port, done) => {
@@ -136,13 +140,7 @@ function saveForm (options) {
   var markup = options.markup
   var port = options.port
   var browser = options.browser
-  var handle = 'tester'
-  var email = 'test@example.com'
-  var password = 'test password'
   return browser.setTimeouts(1000)
-    .then(() => signup({
-      browser, port, handle, email, password
-    }))
     .then(() => login({ browser, port, handle, password }))
     .then(() => browser.$('a=Edit'))
     .then((a) => a.click())
@@ -153,16 +151,12 @@ function saveForm (options) {
 }
 
 tape('save invalid markup', (test) => {
-  var handle = 'tester'
-  var email = 'test@example.com'
-  var password = 'test password'
   var invalidMarkup = '<h1>invalid</h1>'
   server((port, done) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.setTimeouts(1000))
-      .then(() => signup({ browser, port, handle, email, password }))
       .then(() => login({ browser, port, handle, password }))
       .then(() => browser.$('a=Edit'))
       .then((a) => a.click())
@@ -187,9 +181,6 @@ tape('save invalid markup', (test) => {
 })
 
 tape('publish', (test) => {
-  var handle = 'tester'
-  var email = 'test@example.com'
-  var password = 'test password'
   var markup = 'applesauce test'
   var project = 'test'
   var edition = '1e'
@@ -198,7 +189,6 @@ tape('publish', (test) => {
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.setTimeouts(1000))
-      .then(() => signup({ browser, port, handle, email, password }))
       .then(() => login({ browser, port, handle, password }))
       .then(() => browser.$('a=Edit'))
       .then((a) => a.click())

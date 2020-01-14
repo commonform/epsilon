@@ -1,3 +1,4 @@
+var USER = require('./user')
 var http = require('http')
 var mail = require('../mail').events
 var server = require('./server')
@@ -6,6 +7,9 @@ var tape = require('tape')
 var webdriver = require('./webdriver')
 
 var path = '/forgot'
+var handle = USER.handle
+var password = USER.password
+var email = USER.email
 
 tape('GET ' + path, (test) => {
   server((port, done) => {
@@ -20,39 +24,29 @@ tape('GET ' + path, (test) => {
 })
 
 tape('discover handle', (test) => {
-  var handle = 'tester'
-  var password = 'test password'
-  var email = 'tester@example.com'
   server((port, done) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.setTimeouts(1000))
-      .then(() => {
-        signup({
-          browser, port, handle, password, email
-        }, (error) => {
-          test.ifError(error, 'no signup error')
-          browser.url('http://localhost:' + port)
-            .then(() => browser.$('a=Log In'))
-            .then((a) => a.click())
-            .then(() => browser.$('a=Forgot Handle'))
-            .then((a) => a.click())
-            .then(() => browser.$('input[name="email"]'))
-            .then((input) => input.setValue(email))
-            .then(() => browser.$('button[type="submit"]'))
-            .then((submit) => submit.click())
-            .catch((error) => {
-              test.fail(error, 'catch')
-              finish()
-            })
-          mail.once('sent', (options) => {
-            test.equal(options.to, email, 'sent mail')
-            test.equal(options.text, handle, 'mailed handle')
-            finish()
-          })
-        })
+      .then(() => browser.url('http://localhost:' + port))
+      .then(() => browser.$('a=Log In'))
+      .then((a) => a.click())
+      .then(() => browser.$('a=Forgot Handle'))
+      .then((a) => a.click())
+      .then(() => browser.$('input[name="email"]'))
+      .then((input) => input.setValue(email))
+      .then(() => browser.$('button[type="submit"]'))
+      .then((submit) => submit.click())
+      .catch((error) => {
+        test.fail(error, 'catch')
+        finish()
       })
+    mail.once('sent', (options) => {
+      test.equal(options.to, email, 'sent mail')
+      test.equal(options.text, handle, 'mailed handle')
+      finish()
+    })
     function finish () {
       test.end()
       browser.deleteSession()
