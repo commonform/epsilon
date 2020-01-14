@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === 'test') {
   module.exports.events = emitter
 } else {
   var nodemailer = require('nodemailer')
-  module.exports = nodemailer.createTransport({
+  var transport = nodemailer.createTransport({
     pool: true,
     host: process.env.SMTP_HOST || 'localhost',
     port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587,
@@ -17,4 +17,5 @@ if (process.env.NODE_ENV === 'test') {
       pass: process.env.SMTP_PASSWORD
     }
   })
+  module.exports = transport.sendMail.bind(transport)
 }
