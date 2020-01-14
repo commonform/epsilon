@@ -22,7 +22,7 @@ tape('browse ' + path, (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.url('http://localhost:' + port))
+      .then(() => browser.navigateTo('http://localhost:' + port))
       .then(() => browser.$('a=Log In'))
       .then((a) => a.click())
       .then(() => browser.$('h2'))
@@ -45,7 +45,7 @@ tape('log in with bad credentials', (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.url('http://localhost:' + port))
+      .then(() => browser.navigateTo('http://localhost:' + port))
       .then(() => browser.$('a=Log In'))
       .then((a) => a.click())
       .then(() => browser.$('input[name="handle"]'))

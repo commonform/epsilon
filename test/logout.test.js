@@ -33,7 +33,7 @@ tape('log out', (test) => {
       .then(() => verifyLogin({ browser, port, test, handle, email }))
       .then(() => browser.$('=Log Out'))
       .then((element) => element.click())
-      .then(() => browser.url('http://localhost:' + port + '/edit'))
+      .then(() => browser.navigateTo('http://localhost:' + port + '/edit'))
       .then(() => browser.$('h2'))
       .then((h2) => h2.getText())
       .then((text) => test.equal(text, 'Log In', 'Log In'))

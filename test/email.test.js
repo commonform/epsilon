@@ -18,7 +18,7 @@ tape('change e-mail', (test) => {
           browser, port, handle, password, email: oldEMail
         }, (error) => {
           test.ifError(error, 'no signup error')
-          browser.url('http://localhost:' + port)
+          browser.navigateTo('http://localhost:' + port)
             // Navigate to log-in page.
             .then(() => browser.$('a=Log In'))
             .then((a) => a.click())
@@ -41,7 +41,7 @@ tape('change e-mail', (test) => {
               mail.once('sent', (options) => {
                 test.equal(options.to, newEMail, 'TO: new email')
                 test.equal(options.subject, 'Confirm Your E-Mail Change', 'confirm')
-                browser.url(options.text)
+                browser.navigateTo(options.text)
                   .then(() => browser.$('p.message'))
                   .then((p) => p.getText())
                   .then((text) => {

@@ -22,7 +22,7 @@ tape('browse ' + path, (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.url('http://localhost:' + port + path))
+      .then(() => browser.navigateTo('http://localhost:' + port + path))
       .then(() => browser.$('h2'))
       .then((title) => title.getText())
       .then((text) => {

@@ -77,7 +77,7 @@ tape('edit existing form', (test) => {
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => saveForm({ markup, port, browser }))
-      .then(() => browser.url('http://localhost:' + port + '/edit?digest=' + digest))
+      .then(() => browser.navigateTo('http://localhost:' + port + '/edit?digest=' + digest))
       .then(() => browser.$('#editor'))
       .then((textarea) => textarea.getValue())
       .then((value) => test.equal(value, markup, 'populates markup'))
@@ -188,7 +188,7 @@ tape('publish', (test) => {
       .then((input) => input.addValue(edition))
       .then(() => browser.$('button[type="submit"]'))
       .then((submit) => submit.click())
-      .then(() => browser.url(
+      .then(() => browser.navigateTo(
         'http://localhost:' + port + '/publications/' + [handle, project, edition].join('/')
       ))
       .then(() => browser.$('h2'))

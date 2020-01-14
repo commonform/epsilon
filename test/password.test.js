@@ -19,7 +19,7 @@ tape('change password', (test) => {
           browser, port, handle, password: oldPassword, email
         }, (error) => {
           test.ifError(error, 'no signup error')
-          browser.url('http://localhost:' + port)
+          browser.navigateTo('http://localhost:' + port)
             // Navigate to log-in page.
             .then(() => browser.$('a=Log In'))
             .then((a) => a.click())

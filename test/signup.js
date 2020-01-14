@@ -12,7 +12,7 @@ module.exports = (options, callback) => {
   var handle = options.handle
   var password = options.password
   var email = options.email
-  browser.url('http://localhost:' + port)
+  browser.navigateTo('http://localhost:' + port)
     .then(() => browser.$('a=Sign Up'))
     .then((a) => a.click())
     .then(() => browser.$('input[name="email"]'))
@@ -30,7 +30,7 @@ module.exports = (options, callback) => {
     if (options.subject !== 'Confirm Your Account') {
       return callback(new Error('no confirmation e-mail'))
     }
-    browser.url(options.text)
+    browser.navigateTo(options.text)
       .then(() => { callback() })
       .catch(callback)
   })

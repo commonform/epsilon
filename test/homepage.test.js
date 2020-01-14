@@ -20,7 +20,7 @@ tape('browse /', (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.url('http://localhost:' + port))
+      .then(() => browser.navigateTo('http://localhost:' + port))
       .then(() => browser.$('h1'))
       .then((title) => title.getText())
       .then((text) => {

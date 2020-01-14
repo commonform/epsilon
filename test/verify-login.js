@@ -11,7 +11,7 @@ module.exports = (options) => {
   var port = options.port
   var handle = options.handle
   var email = options.email
-  return browser.url('http://localhost:' + port)
+  return browser.navigateTo('http://localhost:' + port)
     .then(() => browser.$('a=Account'))
     .then((a) => a.click())
     .then(() => browser.$('.handle'))

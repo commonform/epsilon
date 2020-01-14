@@ -25,7 +25,7 @@ tape('browse ' + path, (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.url('http://localhost:' + port))
+      .then(() => browser.navigateTo('http://localhost:' + port))
       .then(() => browser.$('a=Sign Up'))
       .then((a) => a.click())
       .then(() => browser.$('h2'))
@@ -53,7 +53,7 @@ tape('sign up', (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.url('http://localhost:' + port))
+      .then(() => browser.navigateTo('http://localhost:' + port))
       .then(() => browser.$('a=Sign Up'))
       .then((a) => a.click())
       .then(() => browser.$('input[name="email"]'))
@@ -75,7 +75,7 @@ tape('sign up', (test) => {
       test.equal(options.to, email, 'sends e-mail')
       test.equal(options.subject, 'Confirm Your Account', 'subject')
       test.assert(options.text.includes('/confirm?token='), 'link')
-      browser.url(options.text)
+      browser.navigateTo(options.text)
         .then(() => browser.$('input[name="handle"]'))
         .then((input) => input.addValue(handle))
         .then(() => browser.$('input[name="password"]'))
@@ -117,7 +117,7 @@ tape('sign up same handle', (test) => {
         browser, port, handle, password, email: firstEMail
       }))
       // Try to sign up again with the same handle.
-      .then(() => browser.url('http://localhost:' + port))
+      .then(() => browser.navigateTo('http://localhost:' + port))
       .then(() => browser.$('a=Sign Up'))
       .then((a) => a.click())
       .then(() => browser.$('input[name="email"]'))

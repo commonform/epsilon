@@ -9,7 +9,7 @@ module.exports = (options, callback) => {
   var port = options.port
   var handle = options.handle
   var password = options.password
-  return browser.url('http://localhost:' + port)
+  return browser.navigateTo('http://localhost:' + port)
     .then(() => browser.$('a=Log In'))
     .then((a) => a.click())
     .then(() => browser.$('input[name="handle"]'))

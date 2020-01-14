@@ -33,7 +33,7 @@ tape('reset password', (test) => {
           browser, port, handle, password, email
         }, (error) => {
           test.ifError(error, 'no signup error')
-          browser.url('http://localhost:' + port)
+          browser.navigateTo('http://localhost:' + port)
             .then(() => browser.$('a=Log In'))
             .then((a) => a.click())
             .then(() => browser.$('a=Reset Password'))
@@ -49,7 +49,7 @@ tape('reset password', (test) => {
           mail.once('sent', (options) => {
             test.equal(options.to, email, 'sent mail')
             test.equal(options.subject, 'Reset Your Password', 'reset')
-            browser.url(options.text)
+            browser.navigateTo(options.text)
               // Fill reset form.
               .then(() => browser.$('input[name="password"]'))
               .then((input) => input.addValue(password))
