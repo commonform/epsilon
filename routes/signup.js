@@ -146,7 +146,7 @@ function post (request, response) {
         confirmed: false
       }
       runSeries([
-        (done) => { storage.account.write(handle, account, done) },
+        (done) => { storage.account.create(handle, account, done) },
         (done) => { storage.email.append(email, handle, done) }
       ], done)
     })
