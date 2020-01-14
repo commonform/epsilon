@@ -1,5 +1,6 @@
 var DIGEST_RE = require('../util/digest-re')
 var authenticate = require('./authenticate')
+var escape = require('../util/escape')
 var form = require('./partials/form')
 var head = require('./partials/head')
 var header = require('./partials/header')
@@ -42,6 +43,7 @@ module.exports = (request, response) => {
     ${header()}
     ${nav(request.session)}
     <main role=main>
+      <a href=/edit?digest=${escape(digest)}>Edit this Form</a>
       ${form(rawForm, { form: loadedForm, resolutions })}
     </main>
   </body>
