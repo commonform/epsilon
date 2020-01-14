@@ -20,6 +20,7 @@ routes.set('/reset', require('./reset'))
 routes.set('/signup', require('./signup'))
 
 var STATIC_FILES = [
+  'editor.bundle.js',
   'favicon.ico',
   'forms.css',
   'logo-on-white.png',

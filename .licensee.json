@@ -6,6 +6,8 @@
     ]
   },
   "packages": {
+    "escape-regexp": "0.0.1",
+    "jsonify": "0.0.0",
     "css-value": "0.0.1"
   },
   "corrections": true

@@ -73,6 +73,7 @@ function get (request, response, parameters) {
         </fieldset>
       </form>
     </main>
+    <script src=/editor.bundle.js></script>
   </body>
 </html>
     `.trim())
