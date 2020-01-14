@@ -6,7 +6,7 @@ var normalize = require('commonform-normalize')
 var runParellel = require('run-parallel')
 var server = require('./server')
 var tape = require('tape')
-var webdriver = require('./webdriver')
+var webdriver = require('selenium-webdriver')
 
 var path = '/edit'
 
@@ -25,19 +25,46 @@ tape('GET ' + path, (test) => {
   })
 })
 
-tape('edit new form', (test) => {
+tape.only('edit new form', (test) => {
   var markup = 'test form'
   var parsed = commonmark.parse(markup)
   var normalized = normalize(parsed.form)
-  server((port, done) => {
-    var browser
-    webdriver()
-      .then((loaded) => { browser = loaded })
-      .then(() => saveForm({ markup, port, browser }))
-      .then(() => browser.$('=test form'))
-      .then((p) => {
-        test.assert(p, 'text appears')
-        var path = '/forms/' + normalized.root + '.json'
+  server(async (port, done) => {
+    const driver = await new webdriver.Builder()
+      .forBrowser('chrome')
+      .build()
+    try {
+      const By = webdriver.By
+      const Key = webdriver.Key
+      const until = webdriver.until
+      // Navigate to log-in page.
+      await driver.get('http://localhost:' + port)
+      const logInLink = await driver.wait(until.elementLocated(By.id('login')), 3000)
+      await logInLink.click()
+      test.pass('navigated to log-in form')
+      // Submit log-in form.
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      await Promise.all([
+        driver.wait(until.elementLocated(By.name('handle')), 3000),
+        driver.wait(until.elementLocated(By.name('password')), 3000)
+      ])
+      await driver.findElement(By.name('handle')).sendKeys(handle)
+      await driver.findElement(By.name('password')).sendKeys(password)
+      await driver.findElement(By.css('button')).click()
+      test.pass('submitted log-in form')
+      // Navigate to editor.
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      const newFormLink = await driver.wait(until.elementLocated(By.id('newform')), 3000)
+      await newFormLink.click()
+      test.pass('navigated to editor')
+      // Save form.
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      const editor = await driver.wait(until.elementLocated(By.id('editor')), 3000)
+      await editor.sendKeys(Key.CONTROL, 'a', Key.NULL, markup)
+      await driver.findElement(By.css('*[type="submit"]')).click()
+      test.pass('submitted form')
+      var path = '/forms/' + normalized.root + '.json'
+      await new Promise((resolve) => {
         http.request({ port, path })
           .once('response', (response) => {
             test.equal(response.statusCode, 200, '200')
@@ -52,18 +79,15 @@ tape('edit new form', (test) => {
                   test.ifError(error, 'JSON parse')
                 }
                 test.deepEqual(received, parsed.form, 'form as JSON')
-                finish()
+                resolve()
               })
           })
           .end()
       })
-      .catch((error) => {
-        test.fail(error)
-        finish()
-      })
-    function finish () {
-      test.end()
+    } finally {
+      driver.quit()
       done()
+      test.end()
     }
   })
 })

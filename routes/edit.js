@@ -57,7 +57,7 @@ function get (request, response, parameters) {
       ${flash}
       <form action=edit method=post>
         <textarea id=editor name=markup>${escape(markup)}</textarea>
-        <button type=submit>Save</button>
+        <button id=submit type=submit>Save</button>
         <fieldset>
           <legend>Publication (optional)</legend>
           <label for=project>Project Name</label>

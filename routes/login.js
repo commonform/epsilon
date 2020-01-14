@@ -43,7 +43,7 @@ function get (request, response, error) {
           <label for=password>Password</label>
           <input name=password type=password required>
         </p>
-        <button type=submit>Log In</button>
+        <button id=submit type=submit>Log In</button>
       </form>
       <a href=/forgot>Forgot Handle</a>
       <a href=/reset>Reset Password</a>
