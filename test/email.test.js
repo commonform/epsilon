@@ -25,9 +25,9 @@ tape('change e-mail', (test) => {
             .then((a) => a.click())
             // Log in.
             .then(() => browser.$('input[name="handle"]'))
-            .then((input) => input.setValue(handle))
+            .then((input) => input.addValue(handle))
             .then(() => browser.$('input[name="password"]'))
-            .then((input) => input.setValue(password))
+            .then((input) => input.addValue(password))
             .then(() => browser.$('button[type="submit"]'))
             .then((submit) => submit.click())
             // Navigate to password-change page.
@@ -37,7 +37,7 @@ tape('change e-mail', (test) => {
             .then((a) => a.click())
             // Submit password-change form.
             .then(() => browser.$('input[name="email"]'))
-            .then((input) => input.setValue(newEMail))
+            .then((input) => input.addValue(newEMail))
             .then(() => {
               mail.once('sent', (options) => {
                 test.equal(options.to, newEMail, 'TO: new email')

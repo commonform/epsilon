@@ -40,7 +40,7 @@ tape('reset password', (test) => {
             .then(() => browser.$('a=Reset Password'))
             .then((a) => a.click())
             .then(() => browser.$('input[name="handle"]'))
-            .then((input) => input.setValue(handle))
+            .then((input) => input.addValue(handle))
             .then(() => browser.$('button[type="submit"]'))
             .then((submit) => submit.click())
             .catch((error) => {
@@ -53,9 +53,9 @@ tape('reset password', (test) => {
             browser.url(options.text)
               // Fill reset form.
               .then(() => browser.$('input[name="password"]'))
-              .then((input) => input.setValue(password))
+              .then((input) => input.addValue(password))
               .then(() => browser.$('input[name="repeat"]'))
-              .then((input) => input.setValue(password))
+              .then((input) => input.addValue(password))
               .then(() => browser.$('button[type="submit"]'))
               .then((submit) => submit.click())
               // Navigate to log-in form.
@@ -63,9 +63,9 @@ tape('reset password', (test) => {
               .then((a) => a.click())
               // Fill log-in form.
               .then(() => browser.$('input[name="handle"]'))
-              .then((input) => input.setValue(handle))
+              .then((input) => input.addValue(handle))
               .then(() => browser.$('input[name="password"]'))
-              .then((input) => input.setValue(password))
+              .then((input) => input.addValue(password))
               .then(() => browser.$('button[type="submit"]'))
               .then((submit) => submit.click())
               .then(() => verifyLogin({

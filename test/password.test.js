@@ -26,9 +26,9 @@ tape('change password', (test) => {
             .then((a) => a.click())
             // Log in.
             .then(() => browser.$('input[name="handle"]'))
-            .then((input) => input.setValue(handle))
+            .then((input) => input.addValue(handle))
             .then(() => browser.$('input[name="password"]'))
-            .then((input) => input.setValue(oldPassword))
+            .then((input) => input.addValue(oldPassword))
             .then(() => browser.$('button[type="submit"]'))
             .then((submit) => submit.click())
             // Navigate to password-change page.
@@ -38,11 +38,11 @@ tape('change password', (test) => {
             .then((a) => a.click())
             // Submit password-change form.
             .then(() => browser.$('input[name="old"]'))
-            .then((input) => input.setValue(oldPassword))
+            .then((input) => input.addValue(oldPassword))
             .then(() => browser.$('input[name="password"]'))
-            .then((input) => input.setValue(newPassword))
+            .then((input) => input.addValue(newPassword))
             .then(() => browser.$('input[name="repeat"]'))
-            .then((input) => input.setValue(newPassword))
+            .then((input) => input.addValue(newPassword))
             .then(() => {
               mail.once('sent', (options) => {
                 test.equal(options.to, email, 'email')
@@ -61,9 +61,9 @@ tape('change password', (test) => {
             .then((a) => a.click())
             // Log in with new password.
             .then(() => browser.$('input[name="handle"]'))
-            .then((input) => input.setValue(handle))
+            .then((input) => input.addValue(handle))
             .then(() => browser.$('input[name="password"]'))
-            .then((input) => input.setValue(newPassword))
+            .then((input) => input.addValue(newPassword))
             .then(() => browser.$('button[type="submit"]'))
             .then((submit) => submit.click())
             .then(() => verifyLogin({

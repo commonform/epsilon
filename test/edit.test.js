@@ -193,9 +193,9 @@ tape('publish', (test) => {
       .then(() => browser.$('#editor'))
       .then((input) => input.setValue(markup))
       .then(() => browser.$('input[name="project"]'))
-      .then((input) => input.setValue(project))
+      .then((input) => input.addValue(project))
       .then(() => browser.$('input[name="edition"]'))
-      .then((input) => input.setValue(edition))
+      .then((input) => input.addValue(edition))
       .then(() => browser.$('button[type="submit"]'))
       .then((submit) => submit.click())
       .then(() => browser.url(

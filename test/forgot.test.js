@@ -33,7 +33,7 @@ tape('discover handle', (test) => {
       .then(() => browser.$('a=Forgot Handle'))
       .then((a) => a.click())
       .then(() => browser.$('input[name="email"]'))
-      .then((input) => input.setValue(email))
+      .then((input) => input.addValue(email))
       .then(() => browser.$('button[type="submit"]'))
       .then((submit) => submit.click())
       .catch((error) => {
