@@ -25,7 +25,7 @@ var STATIC_FILES = [
   'logo-on-white.png',
   'logo.svg',
   'normalize.css',
-  'styles.css'
+  'ui.css'
 ]
 STATIC_FILES.forEach((file) => {
   var filePath = path.join(__dirname, '..', 'static', file)
