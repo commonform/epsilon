@@ -33,7 +33,6 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
-    "chromedriver": "^79.0.0",
     "depcheck": "^0.9.1",
     "licensee": "^8.0.2",
     "rimraf": "^3.0.0",
@@ -42,7 +41,7 @@
     "webdriverio": "^5.18.5"
   },
   "scripts": {
-    "dependencies": "depcheck --ignores chromedriver",
+    "dependencies": "depcheck",
     "test": "NODE_ENV=test tape test/*.test.js",
     "licenses": "licensee --errors-only",
     "lint": "standard"
