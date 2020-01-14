@@ -54,7 +54,6 @@ tape('sign up', (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.setTimeouts(1000))
       .then(() => browser.url('http://localhost:' + port))
       .then(() => browser.$('a=Sign Up'))
       .then((a) => a.click())
@@ -116,7 +115,6 @@ tape('sign up same handle', (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.setTimeouts(1000))
       // Sign up using the handle.
       .then(() => signup({
         browser, port, handle, password, email: firstEMail

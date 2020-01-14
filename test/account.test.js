@@ -29,7 +29,6 @@ tape('browse ' + path, (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.setTimeouts(1000))
       .then(() => login({ browser, port, handle, password }))
       .then(() => verifyLogin({
         browser, test, port, email, handle

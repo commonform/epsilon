@@ -8,7 +8,6 @@ tape('browse NDA', (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.setTimeouts(1000))
       .then(() => browser.url('http://localhost:' + port + '/forms/' + NDA.digest))
       .then(() => browser.$('=Mutual Nondisclosure'))
       .then((element) => test.assert(element, 'Mutual Nondisclosure'))

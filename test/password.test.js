@@ -14,7 +14,6 @@ tape('change password', (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.setTimeouts(1000))
       .then(() => {
         signup({
           browser, port, handle, password: oldPassword, email

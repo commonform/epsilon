@@ -33,7 +33,6 @@ tape('edit new form', (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.setTimeouts(1000))
       .then(() => saveForm({ markup, port, browser }))
       .then(() => browser.$('=test form'))
       .then((p) => {
@@ -78,7 +77,6 @@ tape('edit existing form', (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.setTimeouts(1000))
       .then(() => saveForm({ markup, port, browser }))
       .then(() => browser.url('http://localhost:' + port + '/edit?digest=' + digest))
       .then(() => browser.$('#editor'))
@@ -106,7 +104,6 @@ tape('save nested form', (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.setTimeouts(1000))
       .then(() => saveForm({ markup, port, browser }))
       .then(() => {
         runParellel(
@@ -138,8 +135,7 @@ function saveForm (options) {
   var markup = options.markup
   var port = options.port
   var browser = options.browser
-  return browser.setTimeouts(1000)
-    .then(() => login({ browser, port, handle, password }))
+  return login({ browser, port, handle, password })
     .then(() => browser.$('a=New Form'))
     .then((a) => a.click())
     .then(() => browser.$('#editor'))
@@ -154,7 +150,6 @@ tape('save invalid markup', (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.setTimeouts(1000))
       .then(() => login({ browser, port, handle, password }))
       .then(() => browser.$('a=New Form'))
       .then((a) => a.click())
@@ -186,7 +181,6 @@ tape('publish', (test) => {
     var browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => browser.setTimeouts(1000))
       .then(() => login({ browser, port, handle, password }))
       .then(() => browser.$('a=New Form'))
       .then((a) => a.click())
