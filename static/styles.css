@@ -25,3 +25,7 @@ textarea {
   margin: 1rem 0;
   width: 100%;
 }
+
+#logo {
+  max-width: 5rem;
+}
