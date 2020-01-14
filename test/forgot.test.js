@@ -2,13 +2,11 @@ var USER = require('./user')
 var http = require('http')
 var mail = require('../mail').events
 var server = require('./server')
-var signup = require('./signup')
 var tape = require('tape')
 var webdriver = require('./webdriver')
 
 var path = '/forgot'
 var handle = USER.handle
-var password = USER.password
 var email = USER.email
 
 tape('GET ' + path, (test) => {

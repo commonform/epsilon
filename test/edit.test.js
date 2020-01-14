@@ -3,7 +3,6 @@ var commonmark = require('commonform-commonmark')
 var http = require('http')
 var login = require('./login')
 var normalize = require('commonform-normalize')
-var promisify = require('util').promisify
 var runParellel = require('run-parallel')
 var server = require('./server')
 var tape = require('tape')
@@ -13,7 +12,6 @@ var path = '/edit'
 
 var handle = USER.handle
 var password = USER.password
-var email = USER.email
 
 tape('GET ' + path, (test) => {
   server((port, done) => {
