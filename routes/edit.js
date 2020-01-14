@@ -107,7 +107,6 @@ function post (request, response) {
         headers: request.headers,
         limits: {
           fieldNameSize: 7,
-          fieldSize: 128,
           fields: 3,
           parts: 1
         }
