@@ -1,7 +1,6 @@
 /* eslint-env browser */
 var classnames = require('classnames')
 var commonmark = require('commonform-commonmark')
-var critique = require('commonform-critique')
 var lint = require('commonform-lint')
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -36,11 +35,6 @@ function parseAndAnnotateOnEdit () {
       append(annotation.message)
     })
     editor.className = classnames('editor', { warn: foundError })
-
-    // Critique.
-    critique(form).forEach(function (annotation) {
-      append(annotation.message)
-    })
   })
 
   function append (message) {

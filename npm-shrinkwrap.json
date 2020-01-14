@@ -430,11 +430,6 @@
         "uri-js": "^4.2.2"
       }
     },
-    "american-legal-archaisms": {
-      "version": "1.0.18",
-      "resolved": "https://registry.npmjs.org/american-legal-archaisms/-/american-legal-archaisms-1.0.18.tgz",
-      "integrity": "sha512-hPV3mDDUdhi5GZ4CC8tfcw/ddjj6xXJyDoUP00LJKpjT4hGlqXiijl9iDQSptNCDBQa66xgZSPYFCIUii2U5gg=="
-    },
     "ansi-escapes": {
       "version": "3.2.0",
       "resolved": "https://registry.npmjs.org/ansi-escapes/-/ansi-escapes-3.2.0.tgz",
@@ -1046,15 +1041,6 @@
         "commonform-predicate": "^3.0.1"
       }
     },
-    "commonform-archaic": {
-      "version": "2.0.1",
-      "resolved": "https://registry.npmjs.org/commonform-archaic/-/commonform-archaic-2.0.1.tgz",
-      "integrity": "sha512-YXc2RuYyWq1qcssf43jcfT+NahMp0SRN3vvhwcl7Lo8LTnoVW18/uA3lPBY8vEwDTXZQcFma8M3JPnIQG0yzwg==",
-      "requires": {
-        "american-legal-archaisms": "~1.0.4",
-        "commonform-phrase-annotator": "^2.0.0"
-      }
-    },
     "commonform-commonmark": {
       "version": "5.2.1",
       "resolved": "https://registry.npmjs.org/commonform-commonmark/-/commonform-commonmark-5.2.1.tgz",
@@ -1079,19 +1065,6 @@
           "resolved": "https://registry.npmjs.org/nanoassert/-/nanoassert-2.0.0.tgz",
           "integrity": "sha512-7vO7n28+aYO4J+8w96AzhmU8G+Y/xpPDJz/se19ICsqj/momRbb9mh9ZUtkoJ5X3nTnPdhEJyc0qnM6yAsHBaA=="
         }
-      }
-    },
-    "commonform-critique": {
-      "version": "1.0.3",
-      "resolved": "https://registry.npmjs.org/commonform-critique/-/commonform-critique-1.0.3.tgz",
-      "integrity": "sha512-1+NCpgoryGDsaFVInOGxPuqa/w1uHYrBNxt5rBbph9VDjeui8r8m273UFCGFNIEsHlMmZnh3WsVp9rPxw77HrQ==",
-      "requires": {
-        "commonform-archaic": "^2.0.1",
-        "commonform-mscd": "^1.0.0",
-        "commonform-predicate": "^3.0.1",
-        "doubleplus-numbers": "^0.2.0",
-        "has": "^1.0.3",
-        "wordy-words": "^1.0.0"
       }
     },
     "commonform-fix-strings": {
@@ -1208,16 +1181,6 @@
         }
       }
     },
-    "commonform-mscd": {
-      "version": "1.0.0",
-      "resolved": "https://registry.npmjs.org/commonform-mscd/-/commonform-mscd-1.0.0.tgz",
-      "integrity": "sha512-7h5VTqaR+S9qXsp+6cIkaFz5apKWS4Iu2hI7rZU7ODUK0oYl94FuOa9+vpI37hCx7IWWVMknhjIE3tqhd7W/mw==",
-      "requires": {
-        "commonform-regexp-annotator": "^2.0.0",
-        "escape-regexp": "0.0.1",
-        "mscd": "^0.1.0"
-      }
-    },
     "commonform-normalize": {
       "version": "1.0.0",
       "resolved": "https://registry.npmjs.org/commonform-normalize/-/commonform-normalize-1.0.0.tgz",
@@ -1238,15 +1201,6 @@
         }
       }
     },
-    "commonform-phrase-annotator": {
-      "version": "2.0.0",
-      "resolved": "https://registry.npmjs.org/commonform-phrase-annotator/-/commonform-phrase-annotator-2.0.0.tgz",
-      "integrity": "sha512-JZO1QWcPlUXlYBZnFiirinIkaYCYBpJX+AKZ8ocXhwd/TLctzEwYA9cf3jN+ZX8PLve1BaHG6B6X48IQQ0XTEg==",
-      "requires": {
-        "commonform-regexp-annotator": "^2.0.0",
-        "escape-regexp": "0.0.1"
-      }
-    },
     "commonform-predicate": {
       "version": "3.0.1",
       "resolved": "https://registry.npmjs.org/commonform-predicate/-/commonform-predicate-3.0.1.tgz",
@@ -1256,14 +1210,6 @@
       "version": "1.0.2",
       "resolved": "https://registry.npmjs.org/commonform-prepare-blanks/-/commonform-prepare-blanks-1.0.2.tgz",
       "integrity": "sha512-AHXD85J5EX8lhe1EiuZhM5Kczqu86Ck5BOWai51Ksx8Is3q+nIH+xKidqgY/YEsUxeRa+Vn5B44cLtZYxTRM+Q=="
-    },
-    "commonform-regexp-annotator": {
-      "version": "2.0.0",
-      "resolved": "https://registry.npmjs.org/commonform-regexp-annotator/-/commonform-regexp-annotator-2.0.0.tgz",
-      "integrity": "sha512-NTLjPRIHyM21Rx/7h6xyP7TAZM/H4TybNMiZXDOXt/dlGr3F+dbND5nyPKA5iYzz8g0hZYbVeocikwuKqcRncQ==",
-      "requires": {
-        "commonform-predicate": "^3.0.1"
-      }
     },
     "commonform-same-path": {
       "version": "1.0.0",
@@ -1752,29 +1698,6 @@
         "minimatch": "^3.0.4"
       }
     },
-    "doubleplus-numbers": {
-      "version": "0.2.1",
-      "resolved": "https://registry.npmjs.org/doubleplus-numbers/-/doubleplus-numbers-0.2.1.tgz",
-      "integrity": "sha1-LeYWZx9iPHaPhNSFalg74lIgXos=",
-      "requires": {
-        "commonform-regexp-annotator": "^1.0.3"
-      },
-      "dependencies": {
-        "commonform-predicate": {
-          "version": "0.4.4",
-          "resolved": "https://registry.npmjs.org/commonform-predicate/-/commonform-predicate-0.4.4.tgz",
-          "integrity": "sha1-3UH9J90UEwFJm2ccyLfH5RwQF/c="
-        },
-        "commonform-regexp-annotator": {
-          "version": "1.1.1",
-          "resolved": "https://registry.npmjs.org/commonform-regexp-annotator/-/commonform-regexp-annotator-1.1.1.tgz",
-          "integrity": "sha1-/VrJvYSUFIp1lzGlQTOhtJ5l570=",
-          "requires": {
-            "commonform-predicate": "^0.4.0"
-          }
-        }
-      }
-    },
     "duplexer2": {
       "version": "0.1.4",
       "resolved": "https://registry.npmjs.org/duplexer2/-/duplexer2-0.1.4.tgz",
@@ -1880,11 +1803,6 @@
       "version": "1.0.3",
       "resolved": "https://registry.npmjs.org/escape-html/-/escape-html-1.0.3.tgz",
       "integrity": "sha1-Aljq5NPQwJdN4cFpGI7wBR0dGYg="
-    },
-    "escape-regexp": {
-      "version": "0.0.1",
-      "resolved": "https://registry.npmjs.org/escape-regexp/-/escape-regexp-0.0.1.tgz",
-      "integrity": "sha1-9EvaEtRbvfnLf4Yu5+SCez3TIlQ="
     },
     "escape-string-regexp": {
       "version": "1.0.5",
@@ -3384,11 +3302,6 @@
       "version": "2.0.0",
       "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
       "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
-    },
-    "mscd": {
-      "version": "0.1.7",
-      "resolved": "https://registry.npmjs.org/mscd/-/mscd-0.1.7.tgz",
-      "integrity": "sha512-jjdcvBCcBvAPxuexgGjEi0vlcdWNhsap9IuN7NVCI4IpmPQS/l5snnreXjHes0NUtFBwWjvm9I0+3t6q84ft8A=="
     },
     "mute-stream": {
       "version": "0.0.7",
@@ -5288,11 +5201,6 @@
       "resolved": "https://registry.npmjs.org/word-wrap/-/word-wrap-1.2.3.tgz",
       "integrity": "sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==",
       "dev": true
-    },
-    "wordy-words": {
-      "version": "1.0.0",
-      "resolved": "https://registry.npmjs.org/wordy-words/-/wordy-words-1.0.0.tgz",
-      "integrity": "sha512-yADoIf2iMVQyzzaZWlnP3RedZJzgg/9mhNx5tXinKNi4vYxyqePXpq78ZGUgZsyphL8fuNNWpyzaXINWpEn2ew=="
     },
     "wrap-ansi": {
       "version": "5.1.0",
