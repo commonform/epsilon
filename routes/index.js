@@ -21,6 +21,7 @@ routes.set('/signup', require('./signup'))
 
 var STATIC_FILES = [
   'favicon.ico',
+  'forms.css',
   'logo-on-white.png',
   'logo.svg',
   'normalize.css',
