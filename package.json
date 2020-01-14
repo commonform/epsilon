@@ -42,9 +42,8 @@
     "webdriverio": "^5.18.5"
   },
   "scripts": {
-    "dependencies": "depcheck",
-    "pretest": "chromedriver >/dev/null &",
-    "test": "NODE_ENV=test tape test/*.test.js ; killall chromedriver",
+    "dependencies": "depcheck --ignores chromedriver",
+    "test": "NODE_ENV=test tape test/*.test.js",
     "licenses": "licensee --errors-only",
     "lint": "standard"
   }
