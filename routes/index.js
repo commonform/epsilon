@@ -16,6 +16,7 @@ routes.set('/login', require('./login'))
 routes.set('/logout', require('./logout'))
 routes.set('/password', require('./password'))
 routes.set('/publications/:publisher/:project/:edition', require('./publications'))
+routes.set('/publications', require('./publish'))
 routes.set('/reset', require('./reset'))
 routes.set('/signup', require('./signup'))
 

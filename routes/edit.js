@@ -2,7 +2,6 @@ var Busboy = require('busboy')
 var DIGEST_RE = require('../util/digest-re')
 var authenticate = require('./authenticate')
 var commonmark = require('commonform-commonmark')
-var editionValidator = require('../validators/edition')
 var escape = require('../util/escape')
 var found = require('./found')
 var head = require('./partials/head')
@@ -11,7 +10,6 @@ var internalError = require('./internal-error')
 var methodNotAllowed = require('./method-not-allowed')
 var nav = require('./partials/nav')
 var normalize = require('commonform-normalize')
-var projectValidator = require('../validators/project')
 var record = require('../storage/record')
 var runAuto = require('run-auto')
 var runSeries = require('run-series')
@@ -57,19 +55,6 @@ function get (request, response, parameters) {
       <form action=edit method=post>
         <textarea id=editor name=markup>${escape(markup)}</textarea>
         <button type=submit>Save</button>
-        <fieldset>
-          <legend>Publication (optional)</legend>
-          <label for=project>Project Name</label>
-          <input
-              name=project
-              type=text>
-          <p>${projectValidator.html}</p>
-          <label for=edition>Edition</label>
-          <input
-              name=edition
-              type=text>
-          <p>${editionValidator.html}</p>
-        </fieldset>
       </form>
     </main>
     <script src=/editor.bundle.js></script>
@@ -80,14 +65,11 @@ function get (request, response, parameters) {
 }
 
 function post (request, response) {
-  var markup, project, edition
-  var parsed, normalized
+  var markup, parsed, normalized
   runSeries([
     readPostBody,
-    validateInputs,
     parseMarkup,
-    recordForm,
-    recordPublication
+    recordForm
   ], function (error) {
     if (error) {
       if (error.statusCode === 400) {
@@ -113,19 +95,9 @@ function post (request, response) {
       })
         .on('field', function (name, value, truncated, encoding, mime) {
           if (name === 'markup') markup = value
-          else if (name === 'project') project = value.toLowerCase().trim()
-          else if (name === 'edition') edition = value.toLowerCase().trim()
         })
         .once('finish', done)
     )
-  }
-
-  function validateInputs (done) {
-    if (project && !projectValidator.valid(project)) return done('invalid project name')
-    if (edition && !editionValidator.valid(edition)) return done('invalid edition')
-    if (project && !edition) return done('missing edition')
-    if (edition && !project) return done('missing project name')
-    done()
   }
 
   function parseMarkup (done) {
@@ -146,16 +118,5 @@ function post (request, response) {
 
   function recordForm (done) {
     record({ type: 'form', form: parsed.form }, done)
-  }
-
-  function recordPublication (done) {
-    if (!project || !edition) return done()
-    record({
-      type: 'publication',
-      publisher: request.account.handle,
-      project,
-      edition,
-      digest: normalized.root
-    }, done)
   }
 }
