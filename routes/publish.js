@@ -39,7 +39,7 @@ function post (request, response) {
       }
       return internalError(request, response, error)
     }
-    var url = '/publications/' + [handle, body.project, body.edition].join('/')
+    var url = '/' + [handle, body.project, body.edition].join('/')
     seeOther(request, response, url)
   })
 
