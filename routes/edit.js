@@ -5,7 +5,6 @@ var commonmark = require('commonform-commonmark')
 var editionValidator = require('../validators/edition')
 var escape = require('../util/escape')
 var found = require('./found')
-var has = require('has')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var internalError = require('./internal-error')
@@ -13,8 +12,8 @@ var methodNotAllowed = require('./method-not-allowed')
 var nav = require('./partials/nav')
 var normalize = require('commonform-normalize')
 var projectValidator = require('../validators/project')
+var record = require('../storage/record')
 var runAuto = require('run-auto')
-var runParallelLimit = require('run-parallel-limit')
 var runSeries = require('run-series')
 var seeOther = require('./see-other')
 var storage = require('../storage')
@@ -87,8 +86,8 @@ function post (request, response) {
     readPostBody,
     validateInputs,
     parseMarkup,
-    saveForms,
-    savePublication
+    recordForm,
+    recordPublication
   ], function (error) {
     if (error) {
       if (error.statusCode === 400) {
@@ -145,40 +144,18 @@ function post (request, response) {
     return done()
   }
 
-  function saveForms (done) {
-    var forms = {}
-    recurse(parsed.form, normalized.root, normalized)
-    function recurse (form, digest, normalized) {
-      forms[digest] = form
-      form.content.forEach((element, index) => {
-        if (has(element, 'form')) {
-          var child = element.form
-          var childDigest = normalized[digest].content[index].digest
-          recurse(child, childDigest, normalized)
-        }
-      })
-    }
-    var tasks = Object.keys(forms).map((digest) => {
-      return (done) => {
-        var form = forms[digest]
-        storage.form.create(digest, form, (error, success) => {
-          if (error) return done(error)
-          if (!success) return done(new Error('form collision'))
-          done()
-        })
-      }
-    })
-    runParallelLimit(tasks, 3, done)
+  function recordForm (done) {
+    record({ type: 'form', form: parsed.form }, done)
   }
 
-  function savePublication (done) {
+  function recordPublication (done) {
     if (!project || !edition) return done()
-    var record = {
-      digest: normalized.root,
-      date: new Date().toISOString()
-    }
-    storage.publication.create({
-      publisher: request.account.handle, project, edition
-    }, record, done)
+    record({
+      type: 'publication',
+      publisher: request.account.handle,
+      project,
+      edition,
+      digest: normalized.root
+    }, done)
   }
 }

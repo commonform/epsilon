@@ -4,7 +4,6 @@ var lock = require('lock').Lock()
 var mkdirp = require('mkdirp')
 var path = require('path')
 var serialize = require('commonform-serialize')
-var uuid = require('uuid')
 
 module.exports = {
   account: simpleFiles('accounts'),
@@ -30,15 +29,6 @@ account.confirm = (handle, callback) => {
 }
 
 var token = module.exports.token
-
-token.generate = (type, data, callback) => {
-  var id = uuid.v4()
-  data.type = type
-  token.write(id, data, (error) => {
-    if (error) return callback(error, false)
-    callback(null, true, id)
-  })
-}
 
 token.use = (id, callback) => {
   var file = token.filePath(id)

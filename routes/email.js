@@ -7,8 +7,9 @@ var head = require('./partials/head')
 var header = require('./partials/header')
 var mail = require('../mail')
 var nav = require('./partials/nav')
+var record = require('../storage/record')
 var runSeries = require('run-series')
-var storage = require('../storage')
+var uuid = require('uuid')
 
 module.exports = function (request, response) {
   var method = request.method
@@ -121,10 +122,15 @@ function post (request, response) {
   }
 
   function sendConfirmationLink (done) {
-    var properties = { handle, email: newEMail }
-    storage.token.generate('email', properties, (error, success, token) => {
+    var token = uuid.v4()
+    record({
+      type: 'changeEMailToken',
+      token,
+      created: new Date().toISOString(),
+      handle,
+      email: newEMail
+    }, (error) => {
       if (error) return done(error)
-      if (!success) return done(new Error('token collision'))
       request.log.info({ token }, 'e-mail change token')
       // TODO: Flesh out confirmation-link e-mail text.
       mail({

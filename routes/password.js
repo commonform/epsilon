@@ -2,14 +2,14 @@ var Busboy = require('busboy')
 var UUID_RE = require('../util/uuid-re')
 var authenticate = require('./authenticate')
 var escape = require('../util/escape')
-var hashPassword = require('../util/hash-password')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var internalError = require('./internal-error')
 var mail = require('../mail')
 var nav = require('./partials/nav')
-var passwordValidator = require('../validators/password')
 var passwordInputs = require('./partials/password-inputs')
+var passwordValidator = require('../validators/password')
+var record = require('../storage/record')
 var runSeries = require('run-series')
 var storage = require('../storage')
 var verifyPassword = require('../util/verify-password')
@@ -67,10 +67,10 @@ function getAuthenticated (request, response) {
 function getWithToken (request, response) {
   var token = request.query.token
   if (!UUID_RE.test(token)) return invalidToken(request, response)
-  storage.token.read(token, (error, record) => {
+  storage.token.read(token, (error, tokenData) => {
     if (error) return internalError(error)
-    if (!record) return invalidToken(request, response)
-    if (record.type !== 'reset') {
+    if (!tokenData) return invalidToken(request, response)
+    if (tokenData.action !== 'reset') {
       response.statusCode = 400
       response.end()
       return
@@ -215,35 +215,31 @@ function post (request, response) {
 
   function changePassword (done) {
     if (token) {
-      return storage.token.use(token, (error, record) => {
+      return record({ type: 'useToken', token }, (error, tokenData) => {
         if (error) return done(error)
-        if (!record || record.type !== 'reset') {
+        if (!tokenData || tokenData.action !== 'reset') {
           var failed = new Error('invalid token')
           failed.statusCode = 401
           return done(failed)
         }
-        var handle = record.handle
-        hashPassword(password, (error, hash) => {
+        var handle = tokenData.handle
+        record({
+          type: 'changePassword',
+          handle,
+          password
+        }, (error, updated) => {
           if (error) return done(error)
-          var properties = { passwordHash: hash }
-          storage.account.update(handle, properties, (error, updated) => {
-            if (error) return done(error)
-            email = updated.email
-            done()
-          })
+          email = updated.email
+          done()
         })
       })
     }
     email = request.account.email
-    hashPassword(password, (error, hash) => {
-      if (error) return done(error)
-      var properties = { passwordHash: hash }
-      var handle = request.session.handle
-      storage.account.update(handle, properties, (error, updated) => {
-        if (error) return done(error)
-        done()
-      })
-    })
+    record({
+      type: 'changePassword',
+      handle: request.account.handle,
+      password
+    }, done)
   }
 
   function sendEMail (done) {

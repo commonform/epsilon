@@ -3,11 +3,10 @@ var clearCookie = require('./clear-cookie')
 var escape = require('../util/escape')
 var head = require('./partials/head')
 var header = require('./partials/header')
+var record = require('../storage/record')
 var runSeries = require('run-series')
 var seeOther = require('./see-other')
 var setCookie = require('./set-cookie')
-var storage = require('../storage')
-var uuid = require('uuid')
 var verifyPassword = require('../util/verify-password')
 
 module.exports = function (request, response) {
@@ -97,13 +96,9 @@ function post (request, response) {
   }
 
   function createSession (done) {
-    sessionID = uuid.v4()
-    storage.session.create(sessionID, {
-      handle,
-      created: new Date().toISOString()
-    }, (error, success) => {
+    record({ type: 'session', handle }, (error, id) => {
       if (error) return done(error)
-      if (!success) return done(new Error('session collision'))
+      sessionID = id
       done()
     })
   }

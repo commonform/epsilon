@@ -4,7 +4,7 @@ var expired = require('../util/expired')
 var runParallelLimit = require('run-parallel-limit')
 var storage = require('../storage')
 
-exports.name = 'tokens'
+exports.name = 'accounts'
 
 exports.cron = '0 */6 * * *'
 
@@ -12,20 +12,20 @@ exports.handler = function (log, callback) {
   assert(typeof lob === 'object')
   assert(typeof callback === 'function')
 
-  storage.token.list((error, ids) => {
+  storage.account.list((error, handles) => {
     if (error) {
       log.error(error)
       return callback()
     }
-    var tasks = ids.map((id) => (done) => {
-      var file = storage.token.filePath(id)
+    var tasks = handles.map((handle) => (done) => {
+      var file = storage.account.filePath(handle)
       storage.lock(file, (unlock) => {
         done = unlock(done)
-        storage.token.readWithoutLocking(id, (error, record) => {
+        storage.account.readWithoutLocking(handle, (error, record) => {
           if (error) return done(error)
-          if (expired(record.created, TOKEN_LIFETIME)) {
-            log.info({ token: id }, 'deleting')
-            storage.token.deletWithoutLocking(id, done)
+          if (!record.confirmed && expired(record.created, TOKEN_LIFETIME)) {
+            log.info({ handle }, 'deleting')
+            storage.account.deletWithoutLocking(handle, done)
           }
           done()
         })

@@ -3,16 +3,17 @@ var EMAIL_RE = require('../util/email-re')
 var eMailInput = require('./partials/email-input')
 var escape = require('../util/escape')
 var handleValidator = require('../validators/handle')
-var hashPassword = require('../util/hash-password')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var internalError = require('./internal-error')
 var mail = require('../mail')
 var methodNotAllowed = require('./method-not-allowed')
-var passwordValidator = require('../validators/password')
 var passwordInputs = require('./partials/password-inputs')
+var passwordValidator = require('../validators/password')
+var record = require('../storage/record')
 var runSeries = require('run-series')
 var storage = require('../storage')
+var uuid = require('uuid')
 
 module.exports = function (request, response) {
   var method = request.method
@@ -47,7 +48,7 @@ function post (request, response) {
     readPostBody,
     validateInputs,
     checkForExistingAccount,
-    createAccount,
+    recordAccount,
     generateConfirmToken,
     sendAdminEMail
   ], function (error) {
@@ -136,27 +137,19 @@ function post (request, response) {
     })
   }
 
-  function createAccount (done) {
-    hashPassword(password, (error, hash) => {
-      if (error) return done(error)
-      var account = {
-        handle,
-        email,
-        passwordHash: hash,
-        created: new Date().toISOString(),
-        confirmed: false
-      }
-      runSeries([
-        (done) => { storage.account.create(handle, account, done) },
-        (done) => { storage.email.append(email, handle, done) }
-      ], done)
-    })
+  function recordAccount (done) {
+    record({ type: 'account', handle, email, password }, done)
   }
 
   function generateConfirmToken (done) {
-    storage.token.generate('confirm', { handle }, (error, success, token) => {
+    var token = uuid.v4()
+    record({
+      type: 'confirmAccountToken',
+      token,
+      created: new Date().toISOString(),
+      handle
+    }, (error) => {
       if (error) return done(error)
-      if (!success) return done(new Error('token collision'))
       // TODO: Flesh out confirmation-link e-mail text.
       mail({
         to: email,

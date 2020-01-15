@@ -4,8 +4,8 @@ var header = require('./partials/header')
 var internalError = require('./internal-error')
 var methodNotAllowed = require('./method-not-allowed')
 var nav = require('./partials/nav')
+var record = require('../storage/record')
 var seeOther = require('./see-other')
-var storage = require('../storage')
 
 module.exports = function (request, response) {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
@@ -13,24 +13,24 @@ module.exports = function (request, response) {
   var token = request.query.token
   if (!UUID_RE.test(token)) return invalidToken(request, response)
 
-  storage.token.use(token, (error, record) => {
+  record({ type: 'useToken', token }, (error, tokenData) => {
     if (error) return internalError(request, response, error)
-    var type = record.type
-    if (!record) return invalidToken(request, response)
-    if (type !== 'confirm' && type !== 'email') {
+    if (!tokenData) return invalidToken(request, response)
+    var action = tokenData.action
+    if (action !== 'confirm' && action !== 'email') {
       response.statusCode = 400
       return response.end()
     }
-    var handle = record.handle
-    if (type === 'confirm') {
-      storage.account.confirm(handle, (error) => {
+    var handle = tokenData.handle
+    if (action === 'confirm') {
+      record({ type: 'confirmAccount', handle }, (error) => {
         if (error) return internalError(request, response, error)
         seeOther(request, response, '/login')
       })
     }
-    if (type === 'email') {
+    if (action === 'email') {
       var email = record.email
-      storage.account.update(handle, { email }, (error) => {
+      record({ type: 'changeEMail', handle, email }, (error) => {
         if (error) return internalError(error)
         response.setHeader('Content-Type', 'text/html')
         response.end(`

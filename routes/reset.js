@@ -3,8 +3,10 @@ var escape = require('../util/escape')
 var head = require('./partials/head')
 var header = require('./partials/header')
 var mail = require('../mail')
+var record = require('../storage/record')
 var runSeries = require('run-series')
 var storage = require('../storage')
+var uuid = require('uuid')
 
 module.exports = function (request, response) {
   var method = request.method
@@ -99,10 +101,14 @@ function post (request, response) {
         invalid.statusCode = 400
         return done(invalid)
       }
-      var data = { handle }
-      storage.token.generate('reset', data, (error, success, token) => {
+      var token = uuid.v4()
+      record({
+        type: 'resetPasswordToken',
+        token,
+        created: new Date().toISOString(),
+        handle
+      }, (error) => {
         if (error) return done(error)
-        if (!success) return done(new Error('token collision'))
         var href = `${process.env.BASE_HREF}/password?token=${token}`
         // TODO: Flesh out password-reset e-mail text.
         mail({
