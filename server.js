@@ -6,6 +6,29 @@ var uuid = require('uuid')
 
 var log = pino({ server: uuid.v4() })
 
+// Environment Variables
+
+requireEnvironmentVariable('BASE_HREF')
+requireEnvironmentVariable('INDEX_DIRECTORY')
+requireEnvironmentVariable('LOG_DIRECTORY')
+
+if (process.env.NODE_ENV !== 'test') {
+  requireEnvironmentVariable('ADMIN_EMAIL')
+  requireEnvironmentVariable('SMTP_HOST')
+  requireEnvironmentVariable('SMTP_PASSWORD')
+  requireEnvironmentVariable('SMTP_PORT')
+  requireEnvironmentVariable('SMTP_USER')
+}
+
+function requireEnvironmentVariable (name) {
+  if (!process.env[name]) {
+    log.error('missing ' + name)
+    process.exit(1)
+  }
+}
+
+// Server
+
 var server = http.createServer((request, response) => {
   pinoHTTP({ logger: log, genReqId: uuid.v4 })(request, response)
   handler(request, response)
@@ -31,6 +54,8 @@ server.listen(process.env.PORT || 8080, function () {
   // If the environment set PORT=0, we'll get a random high port.
   log.info({ port: this.address().port }, 'listening')
 })
+
+// Job Scheduler
 
 if (process.env.NODE_ENV !== 'test') {
   var schedule = require('node-schedule')
