@@ -167,7 +167,10 @@ function appendOnlyLists (subdirectory) {
 
   function readWithoutLocking (id, callback) {
     fs.readFile(filePath(id), 'utf8', (error, data) => {
-      if (error) return callback(error)
+      if (error) {
+        if (error.code === 'ENOENT') return callback(null, [])
+        return callback(error)
+      }
       callback(null, data.split('\n'))
     })
   }
