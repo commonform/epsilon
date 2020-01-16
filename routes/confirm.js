@@ -29,7 +29,7 @@ module.exports = function (request, response) {
       })
     }
     if (action === 'email') {
-      var email = record.email
+      var email = tokenData.email
       record({ type: 'changeEMail', handle, email }, (error) => {
         if (error) return internalError(request, response, error)
         response.setHeader('Content-Type', 'text/html')
