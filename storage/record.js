@@ -118,7 +118,19 @@ function confirmAccount (entry, callback) {
 function changeEMail (entry, callback) {
   var handle = entry.handle
   var email = entry.email
-  storage.account.update(handle, { email }, callback)
+  var oldEMail
+  runSeries([
+    (done) => {
+      storage.account.read(handle, (error, account) => {
+        if (error) return done(error)
+        oldEMail = account.email
+        done()
+      })
+    },
+    (done) => storage.account.update(handle, { email }, done),
+    (done) => storage.email.remove(oldEMail, handle, done),
+    (done) => storage.email.append(email, handle, done)
+  ], callback)
 }
 
 function changePassword (entry, callback) {
