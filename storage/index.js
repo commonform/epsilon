@@ -50,8 +50,8 @@ function simpleFiles (subdirectory, options) {
   var serialization = options.serialization
   var complexID = options.complexID
   var filePath = complexID
-    ? (id) => path.join(process.env.DIRECTORY, subdirectory, complexID(id) + '.json')
-    : (id) => path.join(process.env.DIRECTORY, subdirectory, id + '.json')
+    ? (id) => path.join(process.env.INDEX_DIRECTORY, subdirectory, complexID(id) + '.json')
+    : (id) => path.join(process.env.INDEX_DIRECTORY, subdirectory, id + '.json')
   return {
     create: (id, value, callback) => {
       lock(filePath(id), (unlock) => createWithoutLocking(id, value, unlock(callback)))
@@ -173,6 +173,6 @@ function appendOnlyLists (subdirectory) {
   }
 
   function filePath (id) {
-    return path.join(process.env.DIRECTORY, subdirectory, id + '.txt')
+    return path.join(process.env.INDEX_DIRECTORY, subdirectory, id + '.txt')
   }
 }

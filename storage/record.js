@@ -38,9 +38,9 @@ module.exports = (entry, callback) => {
   var digest = crypto.createHash('sha256')
     .update(stringified)
     .digest('hex')
-  var logFile = path.join(process.env.DIRECTORY, 'log')
+  var logFile = path.join(process.env.LOG_DIRECTORY, 'log')
   var logLine = digest + '\n'
-  var entries = path.join(process.env.DIRECTORY, 'entries')
+  var entries = path.join(process.env.LOG_DIRECTORY, 'entries')
   var entryFile = path.join(entries, digest + '.json')
   runSeries([
     (done) => mkdirp(entries, done),
