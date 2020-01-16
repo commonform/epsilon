@@ -85,8 +85,10 @@ function post (request, response) {
   <body>
     ${header()}
     ${nav(request.session)}
-    <h2>Change E-Mail</h2>
-    <p class=message>E-Mail changed.</p>
+    <main role=main>
+      <h2>Change E-Mail</h2>
+      <p class=message>E-Mail changed.</p>
+    </main>
   </body>
 </html>
     `.trim())
