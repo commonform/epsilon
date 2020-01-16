@@ -1,14 +1,21 @@
-var tape = require('tape')
-var rimraf = require('rimraf')
 var fs = require('fs')
+var path = require('path')
+var rimraf = require('rimraf')
 var spawn = require('child_process').spawn
+var tape = require('tape')
 
 tape('server', (test) => {
   fs.mkdtemp('/tmp/', (_, directory) => {
     var port = 8080
     var server, curl
     server = spawn('node', ['server.js'], {
-      env: { PORT: port }
+      env: {
+        PORT: port,
+        NODE_ENV: 'test',
+        BASE_HREF: 'http://localhost:' + port + '/',
+        LOG_DIRECTORY: path.join(directory, 'log'),
+        INDEX_DIRECTORY: path.join(directory, 'index')
+      }
     })
     server.stdout.once('data', () => {
       curl = spawn('curl', ['http://localhost:' + port])
