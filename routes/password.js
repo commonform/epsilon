@@ -68,7 +68,7 @@ function getWithToken (request, response) {
   var token = request.query.token
   if (!UUID_RE.test(token)) return invalidToken(request, response)
   storage.token.read(token, (error, tokenData) => {
-    if (error) return internalError(error)
+    if (error) return internalError(request, response, error)
     if (!tokenData) return invalidToken(request, response)
     if (tokenData.action !== 'reset') {
       response.statusCode = 400
