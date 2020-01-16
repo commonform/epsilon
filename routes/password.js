@@ -145,8 +145,10 @@ function post (request, response) {
   <body>
     ${header()}
     ${nav(request.session)}
-    <h2>Change Password</h2>
-    <p class=message>Password changed.</p>
+    <main role=main>
+      <h2>Change Password</h2>
+      <p class=message>Password changed.</p>
+    </main>
   </body>
 </html>
     `.trim())
