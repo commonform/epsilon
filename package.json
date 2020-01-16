@@ -15,6 +15,7 @@
     "commonform-serialize": "^1.0.0",
     "cookie": "^0.4.0",
     "fast-json-stable-stringify": "^2.1.0",
+    "flush-write-stream": "^2.0.0",
     "has": "^1.0.3",
     "html-entities": "^1.2.1",
     "http-hash": "^2.0.1",
@@ -32,6 +33,7 @@
     "run-series": "^1.1.8",
     "secure-password": "^3.1.0",
     "send": "^0.17.1",
+    "split2": "^3.1.1",
     "url-parse": "^1.4.7",
     "uuid": "^3.3.3"
   },
