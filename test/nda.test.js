@@ -1,7 +1,7 @@
-var NDA = require('./nda')
-var server = require('./server')
-var tape = require('tape')
-var webdriver = require('./webdriver')
+const NDA = require('./nda')
+const server = require('./server')
+const tape = require('tape')
+const webdriver = require('./webdriver')
 
 tape('browse NDA', (test) => {
   server((port, done) => {

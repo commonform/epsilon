@@ -1,11 +1,11 @@
-var USER = require('./user')
-var login = require('./login')
-var server = require('./server')
-var tape = require('tape')
-var webdriver = require('./webdriver')
+const USER = require('./user')
+const login = require('./login')
+const server = require('./server')
+const tape = require('tape')
+const webdriver = require('./webdriver')
 
-var handle = USER.handle
-var password = USER.password
+const handle = USER.handle
+const password = USER.password
 
 tape('publish', (test) => {
   var markup = 'applesauce test'

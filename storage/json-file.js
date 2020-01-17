@@ -1,4 +1,4 @@
-var fs = require('fs')
+const fs = require('fs')
 
 exports.read = (options, callback) => {
   var file = options.file

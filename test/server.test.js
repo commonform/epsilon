@@ -1,8 +1,8 @@
-var fs = require('fs')
-var path = require('path')
-var rimraf = require('rimraf')
-var spawn = require('child_process').spawn
-var tape = require('tape')
+const fs = require('fs')
+const path = require('path')
+const rimraf = require('rimraf')
+const spawn = require('child_process').spawn
+const tape = require('tape')
 
 tape('server', (test) => {
   fs.mkdtemp('/tmp/', (_, directory) => {

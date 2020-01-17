@@ -1,12 +1,12 @@
-var spawn = require('child_process').spawn
-var tape = require('tape')
-var webdriverio = require('webdriverio')
+const spawn = require('child_process').spawn
+const tape = require('tape')
+const webdriverio = require('webdriverio')
 
 // See: https://webdriver.io/docs/runprogrammatically.html
 
-var driver = spawn('geckodriver')
+const driver = spawn('geckodriver')
 
-var remote
+let remote
 
 module.exports = function () {
   if (!remote) {

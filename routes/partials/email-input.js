@@ -1,4 +1,4 @@
-var escape = require('../../util/escape')
+const escape = require('../../util/escape')
 
 module.exports = (options) => {
   return `

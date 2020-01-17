@@ -1,10 +1,10 @@
-var authenticate = require('./authenticate')
-var escape = require('../util/escape')
-var found = require('./found')
-var head = require('./partials/head')
-var header = require('./partials/header')
-var methodNotAllowed = require('./method-not-allowed')
-var nav = require('./partials/nav')
+const authenticate = require('./authenticate')
+const escape = require('../util/escape')
+const found = require('./found')
+const head = require('./partials/head')
+const header = require('./partials/header')
+const methodNotAllowed = require('./method-not-allowed')
+const nav = require('./partials/nav')
 
 module.exports = (request, response) => {
   if (request.method !== 'GET') return methodNotAllowed(request, response)

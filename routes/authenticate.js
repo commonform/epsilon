@@ -1,7 +1,7 @@
-var cookie = require('cookie')
-var internalError = require('./internal-error')
-var runParallel = require('run-parallel')
-var storage = require('../storage')
+const cookie = require('cookie')
+const internalError = require('./internal-error')
+const runParallel = require('run-parallel')
+const storage = require('../storage')
 
 module.exports = function (request, response, handler) {
   var header = request.headers.cookie

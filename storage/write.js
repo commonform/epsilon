@@ -1,14 +1,14 @@
-var TOKEN_LIFETIME = require('../constants/token-lifetime')
-var async = require('async')
-var expired = require('../util/expired')
-var has = require('has')
-var hashPassword = require('../util/hash-password')
-var normalize = require('commonform-normalize')
-var runSeries = require('run-series')
-var storage = require('./')
-var uuid = require('uuid')
+const TOKEN_LIFETIME = require('../constants/token-lifetime')
+const async = require('async')
+const expired = require('../util/expired')
+const has = require('has')
+const hashPassword = require('../util/hash-password')
+const normalize = require('commonform-normalize')
+const runSeries = require('run-series')
+const storage = require('./')
+const uuid = require('uuid')
 
-var writers = {
+const writers = {
   confirmAccount,
   changeEMail,
   changePassword,

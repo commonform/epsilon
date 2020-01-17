@@ -1,11 +1,11 @@
-var Busboy = require('busboy')
-var escape = require('../util/escape')
-var head = require('./partials/head')
-var header = require('./partials/header')
-var mail = require('../mail')
-var runParallelLimit = require('run-parallel-limit')
-var runSeries = require('run-series')
-var storage = require('../storage')
+const Busboy = require('busboy')
+const escape = require('../util/escape')
+const head = require('./partials/head')
+const header = require('./partials/header')
+const mail = require('../mail')
+const runParallelLimit = require('run-parallel-limit')
+const runSeries = require('run-series')
+const storage = require('../storage')
 
 module.exports = function (request, response) {
   var method = request.method

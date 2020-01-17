@@ -1,4 +1,4 @@
-var parse = require('reviewers-edition-parse')
+const parse = require('reviewers-edition-parse')
 
 exports.pattern = '^[eudc0-9]+$'
 

@@ -1,17 +1,17 @@
-var USER = require('./user')
-var commonmark = require('commonform-commonmark')
-var http = require('http')
-var login = require('./login')
-var normalize = require('commonform-normalize')
-var runParellel = require('run-parallel')
-var server = require('./server')
-var tape = require('tape')
-var webdriver = require('./webdriver')
+const USER = require('./user')
+const commonmark = require('commonform-commonmark')
+const http = require('http')
+const login = require('./login')
+const normalize = require('commonform-normalize')
+const runParellel = require('run-parallel')
+const server = require('./server')
+const tape = require('tape')
+const webdriver = require('./webdriver')
 
-var path = '/edit'
+const path = '/edit'
 
-var handle = USER.handle
-var password = USER.password
+const handle = USER.handle
+const password = USER.password
 
 tape('GET ' + path, (test) => {
   server((port, done) => {

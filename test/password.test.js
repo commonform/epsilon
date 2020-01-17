@@ -1,9 +1,9 @@
-var mail = require('../mail').events
-var server = require('./server')
-var signup = require('./signup')
-var tape = require('tape')
-var verifyLogin = require('./verify-login')
-var webdriver = require('./webdriver')
+const mail = require('../mail').events
+const server = require('./server')
+const signup = require('./signup')
+const tape = require('tape')
+const verifyLogin = require('./verify-login')
+const webdriver = require('./webdriver')
 
 tape('change password', (test) => {
   var handle = 'tester'

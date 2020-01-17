@@ -1,8 +1,8 @@
-var path = require('path')
-var pump = require('pump')
-var send = require('send')
+const path = require('path')
+const pump = require('pump')
+const send = require('send')
 
-var routes = module.exports = require('http-hash')()
+const routes = module.exports = require('http-hash')()
 
 // Reminder: Add new route names to handle blacklist.
 routes.set('/', require('./homepage'))
@@ -19,7 +19,7 @@ routes.set('/publications', require('./publish'))
 routes.set('/reset', require('./reset'))
 routes.set('/signup', require('./signup'))
 
-var STATIC_FILES = [
+const STATIC_FILES = [
   'editor.bundle.js',
   'favicon.ico',
   'forms.css',

@@ -1,9 +1,9 @@
-var JSONFile = require('./json-file')
-var fs = require('fs')
-var lock = require('lock').Lock()
-var mkdirp = require('mkdirp')
-var path = require('path')
-var serialize = require('commonform-serialize')
+const JSONFile = require('./json-file')
+const fs = require('fs')
+const lock = require('lock').Lock()
+const mkdirp = require('mkdirp')
+const path = require('path')
+const serialize = require('commonform-serialize')
 
 module.exports = {
   account: simpleFiles('accounts'),
@@ -21,14 +21,14 @@ module.exports = {
   lock
 }
 
-var account = module.exports.account
+const account = module.exports.account
 
 account.confirm = (handle, callback) => {
   var properties = { confirmed: new Date().toISOString() }
   account.update(handle, properties, callback)
 }
 
-var token = module.exports.token
+const token = module.exports.token
 
 token.use = (id, callback) => {
   var file = token.filePath(id)

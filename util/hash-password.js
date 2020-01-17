@@ -1,4 +1,4 @@
-var passwordHashing = require('./password-hashing')
+const passwordHashing = require('./password-hashing')
 
 module.exports = (password, callback) => {
   var passwordBuffer = Buffer.from(password)

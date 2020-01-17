@@ -1,8 +1,8 @@
-var TOKEN_LIFETIME = require('../constants/token-lifetime')
-var assert = require('assert')
-var expired = require('../util/expired')
-var runParallelLimit = require('run-parallel-limit')
-var storage = require('../storage')
+const TOKEN_LIFETIME = require('../constants/token-lifetime')
+const assert = require('assert')
+const expired = require('../util/expired')
+const runParallelLimit = require('run-parallel-limit')
+const storage = require('../storage')
 
 exports.name = 'tokens'
 

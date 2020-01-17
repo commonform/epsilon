@@ -1,7 +1,7 @@
-var MIN_LENGTH = 3
-var MAX_LENGTH = 32
-var PATTERN = `^[a-z0-9-]{${MIN_LENGTH},${MAX_LENGTH}}$`
-var RE = new RegExp(PATTERN)
+const MIN_LENGTH = 3
+const MAX_LENGTH = 32
+const PATTERN = `^[a-z0-9-]{${MIN_LENGTH},${MAX_LENGTH}}$`
+const RE = new RegExp(PATTERN)
 
 exports.pattern = PATTERN
 

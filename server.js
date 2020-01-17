@@ -1,10 +1,10 @@
-var handler = require('./')
-var http = require('http')
-var pino = require('pino')
-var pinoHTTP = require('pino-http')
-var uuid = require('uuid')
+const handler = require('./')
+const http = require('http')
+const pino = require('pino')
+const pinoHTTP = require('pino-http')
+const uuid = require('uuid')
 
-var log = pino({ server: uuid.v4() })
+const log = pino({ server: uuid.v4() })
 
 // Environment Variables
 
@@ -29,7 +29,7 @@ function requireEnvironmentVariable (name) {
 
 // Server
 
-var server = http.createServer((request, response) => {
+const server = http.createServer((request, response) => {
   pinoHTTP({ logger: log, genReqId: uuid.v4 })(request, response)
   handler(request, response)
 })

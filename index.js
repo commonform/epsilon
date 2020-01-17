@@ -1,9 +1,9 @@
-var notFound = require('./routes/not-found')
-var parseURL = require('url-parse')
-var publications = require('./routes/publications')
-var routes = require('./routes')
+const notFound = require('./routes/not-found')
+const parseURL = require('url-parse')
+const publications = require('./routes/publications')
+const routes = require('./routes')
 
-var PUBLICATION_PATH = /^\/([a-z0-9]+)\/([a-z0-9]+)\/([0-9eucd]+)$/
+const PUBLICATION_PATH = /^\/([a-z0-9]+)\/([a-z0-9]+)\/([0-9eucd]+)$/
 
 module.exports = (request, response) => {
   var parsed = parseURL(request.url, true)

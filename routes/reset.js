@@ -1,12 +1,12 @@
-var Busboy = require('busboy')
-var escape = require('../util/escape')
-var head = require('./partials/head')
-var header = require('./partials/header')
-var mail = require('../mail')
-var record = require('../storage/record')
-var runSeries = require('run-series')
-var storage = require('../storage')
-var uuid = require('uuid')
+const Busboy = require('busboy')
+const escape = require('../util/escape')
+const head = require('./partials/head')
+const header = require('./partials/header')
+const mail = require('../mail')
+const record = require('../storage/record')
+const runSeries = require('run-series')
+const storage = require('../storage')
+const uuid = require('uuid')
 
 module.exports = function (request, response) {
   var method = request.method

@@ -1,12 +1,12 @@
-var USER = require('./user')
-var http = require('http')
-var login = require('./login')
-var server = require('./server')
-var tape = require('tape')
-var verifyLogin = require('./verify-login')
-var webdriver = require('./webdriver')
+const USER = require('./user')
+const http = require('http')
+const login = require('./login')
+const server = require('./server')
+const tape = require('tape')
+const verifyLogin = require('./verify-login')
+const webdriver = require('./webdriver')
 
-var path = '/account'
+const path = '/account'
 
 tape('GET ' + path, (test) => {
   server((port, done) => {

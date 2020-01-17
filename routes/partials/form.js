@@ -1,12 +1,12 @@
-var classnames = require('classnames')
-var escape = require('../../util/escape')
-var group = require('commonform-group-series')
-var html = require('../html')
-var merkleize = require('commonform-merkleize')
-var predicate = require('commonform-predicate')
-var samePath = require('commonform-same-path')
+const classnames = require('classnames')
+const escape = require('../../util/escape')
+const group = require('commonform-group-series')
+const html = require('../html')
+const merkleize = require('commonform-merkleize')
+const predicate = require('commonform-predicate')
+const samePath = require('commonform-same-path')
 
-var has = Object.prototype.hasOwnProperty
+const has = Object.prototype.hasOwnProperty
 
 module.exports = function (form, loaded, options) {
   options = options || {}

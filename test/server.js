@@ -1,20 +1,20 @@
-var NDA = require('./nda')
-var USER = require('./user')
-var assert = require('assert')
-var fs = require('fs')
-var handler = require('../')
-var http = require('http')
-var path = require('path')
-var pino = require('pino')
-var pinoHTTP = require('pino-http')
-var record = require('../storage/record')
-var rimraf = require('rimraf')
-var runSeries = require('run-series')
-var uuid = require('uuid')
+const NDA = require('./nda')
+const USER = require('./user')
+const assert = require('assert')
+const fs = require('fs')
+const handler = require('../')
+const http = require('http')
+const path = require('path')
+const pino = require('pino')
+const pinoHTTP = require('pino-http')
+const record = require('../storage/record')
+const rimraf = require('rimraf')
+const runSeries = require('run-series')
+const uuid = require('uuid')
 
-var handle = USER.handle
-var password = USER.password
-var email = USER.email
+const handle = USER.handle
+const password = USER.password
+const email = USER.email
 
 module.exports = (callback) => {
   assert(typeof callback === 'function')

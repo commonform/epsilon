@@ -1,6 +1,6 @@
-var passwordHashing = require('./password-hashing')
-var securePassword = require('secure-password')
-var storage = require('../storage')
+const passwordHashing = require('./password-hashing')
+const securePassword = require('secure-password')
+const storage = require('../storage')
 
 module.exports = (handle, password, callback) => {
   var file = storage.account.filePath(handle)

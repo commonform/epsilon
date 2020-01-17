@@ -1,4 +1,4 @@
-var clearCookie = require('./clear-cookie')
+const clearCookie = require('./clear-cookie')
 
 module.exports = function (request, response) {
   clearCookie(response)

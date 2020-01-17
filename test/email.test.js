@@ -1,8 +1,8 @@
-var mail = require('../mail').events
-var server = require('./server')
-var signup = require('./signup')
-var tape = require('tape')
-var webdriver = require('./webdriver')
+const mail = require('../mail').events
+const server = require('./server')
+const signup = require('./signup')
+const tape = require('tape')
+const webdriver = require('./webdriver')
 
 tape('change e-mail', (test) => {
   var handle = 'tester'

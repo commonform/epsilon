@@ -1,5 +1,5 @@
-var head = require('./partials/head')
-var header = require('./partials/header')
+const head = require('./partials/head')
+const header = require('./partials/header')
 
 module.exports = (request, response) => {
   response.statusCode = 404

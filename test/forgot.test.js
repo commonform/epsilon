@@ -1,13 +1,13 @@
-var USER = require('./user')
-var http = require('http')
-var mail = require('../mail').events
-var server = require('./server')
-var tape = require('tape')
-var webdriver = require('./webdriver')
+const USER = require('./user')
+const http = require('http')
+const mail = require('../mail').events
+const server = require('./server')
+const tape = require('tape')
+const webdriver = require('./webdriver')
 
-var path = '/forgot'
-var handle = USER.handle
-var email = USER.email
+const path = '/forgot'
+const handle = USER.handle
+const email = USER.email
 
 tape('GET ' + path, (test) => {
   server((port, done) => {

@@ -1,5 +1,5 @@
-var escape = require('../../util/escape')
-var passwordValidator = require('../../validators/password')
+const escape = require('../../util/escape')
+const passwordValidator = require('../../validators/password')
 
 module.exports = (options) => {
   options = options || {}

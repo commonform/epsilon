@@ -1,4 +1,4 @@
-var cookie = require('cookie')
+const cookie = require('cookie')
 
 module.exports = function (response, value, expires) {
   response.setHeader(

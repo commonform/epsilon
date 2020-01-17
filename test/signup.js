@@ -1,5 +1,5 @@
-var assert = require('assert')
-var mail = require('../mail').events
+const assert = require('assert')
+const mail = require('../mail').events
 
 module.exports = (options, callback) => {
   assert(options.browser)

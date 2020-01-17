@@ -1,13 +1,13 @@
-var Busboy = require('busboy')
-var clearCookie = require('./clear-cookie')
-var escape = require('../util/escape')
-var head = require('./partials/head')
-var header = require('./partials/header')
-var record = require('../storage/record')
-var runSeries = require('run-series')
-var seeOther = require('./see-other')
-var setCookie = require('./set-cookie')
-var verifyPassword = require('../util/verify-password')
+const Busboy = require('busboy')
+const clearCookie = require('./clear-cookie')
+const escape = require('../util/escape')
+const head = require('./partials/head')
+const header = require('./partials/header')
+const record = require('../storage/record')
+const runSeries = require('run-series')
+const seeOther = require('./see-other')
+const setCookie = require('./set-cookie')
+const verifyPassword = require('../util/verify-password')
 
 module.exports = function (request, response) {
   var method = request.method

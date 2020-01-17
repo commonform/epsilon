@@ -1,12 +1,12 @@
-var http = require('http')
-var mail = require('../mail').events
-var server = require('./server')
-var signup = require('util').promisify(require('./signup'))
-var tape = require('tape')
-var verifyLogin = require('./verify-login')
-var webdriver = require('./webdriver')
+const http = require('http')
+const mail = require('../mail').events
+const server = require('./server')
+const signup = require('util').promisify(require('./signup'))
+const tape = require('tape')
+const verifyLogin = require('./verify-login')
+const webdriver = require('./webdriver')
 
-var path = '/signup'
+const path = '/signup'
 
 tape('GET ' + path, (test) => {
   server((port, done) => {

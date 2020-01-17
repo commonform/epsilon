@@ -1,9 +1,9 @@
-var http = require('http')
-var server = require('./server')
-var tape = require('tape')
-var webdriver = require('./webdriver')
+const http = require('http')
+const server = require('./server')
+const tape = require('tape')
+const webdriver = require('./webdriver')
 
-var path = '/not-found'
+const path = '/not-found'
 
 tape('GET ' + path, (test) => {
   server((port, done) => {

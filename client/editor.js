@@ -1,7 +1,7 @@
 /* eslint-env browser */
-var classnames = require('classnames')
-var commonmark = require('commonform-commonmark')
-var lint = require('commonform-lint')
+const classnames = require('classnames')
+const commonmark = require('commonform-commonmark')
+const lint = require('commonform-lint')
 
 document.addEventListener('DOMContentLoaded', function () {
   parseAndAnnotateOnEdit()
