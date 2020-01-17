@@ -49,7 +49,7 @@ function renderContents (form, resolutions, path) {
       const classes = classnames({
         component: isComponent
       })
-      var li = `<li class="${classes}">`
+      let li = `<li class="${classes}">`
       if (headingHere) {
         li += renderReference(element.heading)
       } else {
@@ -83,7 +83,7 @@ function containsHeading (form) {
 }
 
 function renderForm (depth, path, form, loaded, tree, resolutions, options) {
-  var offset = 0
+  let offset = 0
   const formGroups = form && group(form)
   const loadedGroups = group(loaded)
     .map(function (loadedGroup, index) {
@@ -146,7 +146,7 @@ function renderSeries (depth, offset, path, formSeries, loadedSeries, tree, reso
 }
 
 function resolutionLink (resolution) {
-  var returned = publicationLink(resolution)
+  let returned = publicationLink(resolution)
   if (resolution.upgrade && resolution.specified !== resolution.edition) {
     returned += ` (upgraded from ${editionLink({
       publisher: resolution.publisher,
@@ -228,7 +228,7 @@ function renderReference (heading) {
 
 function matchingValue (path, mappings) {
   const length = mappings.length
-  for (var index = 0; index < length; index++) {
+  for (let index = 0; index < length; index++) {
     const mapping = mappings[index]
     if (samePath(mapping.blank, path)) return mapping.value
   }

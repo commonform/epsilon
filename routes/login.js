@@ -53,7 +53,7 @@ function get (request, response, error) {
 }
 
 function post (request, response) {
-  var handle, password, sessionID
+  let handle, password, sessionID
   runSeries([
     readPostBody,
     authenticate,

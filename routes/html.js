@@ -10,7 +10,7 @@
 module.exports = function html (/* strings, values... */) {
   const strings = arguments[0]
   const values = Array.prototype.slice.call(arguments, 1)
-  var result = ''
+  let result = ''
   strings.forEach(function (string, index) {
     result += string
     if (index < values.length) {

@@ -25,7 +25,7 @@ tape('reset password', (test) => {
   const password = 'test password'
   const email = 'tester@example.com'
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => {

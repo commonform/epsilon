@@ -29,7 +29,7 @@ function parseAndAnnotateOnEdit () {
     emptyReadout()
 
     // Lint.
-    var foundError = false
+    let foundError = false
     lint(form).forEach(function (annotation) {
       if (annotation.level === 'error') foundError = true
       append(annotation.message)
@@ -56,7 +56,7 @@ function parseAndAnnotateOnEdit () {
 
 // If the user changes the content in the editor, mark it
 // dirty, so we can warn on `beforeunload`.
-var dirty = false
+let dirty = false
 
 window.addEventListener('beforeunload', function (event) {
   if (dirty) event.returnValue = 'If you leave this page without saving, your work will be lost.'

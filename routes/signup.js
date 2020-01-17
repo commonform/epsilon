@@ -43,7 +43,7 @@ function get (request, response, data) {
 }
 
 function post (request, response) {
-  var email, handle, password, repeat
+  let email, handle, password, repeat
   runSeries([
     readPostBody,
     validateInputs,
@@ -99,7 +99,7 @@ function post (request, response) {
   }
 
   function validateInputs (done) {
-    var error
+    let error
     if (!EMAIL_RE.test(email)) {
       error = new Error('invalid e-mail address')
       error.fieldName = 'email'

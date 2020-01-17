@@ -26,7 +26,7 @@ tape('GET ' + path, (test) => {
 
 tape('log out', (test) => {
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => login({ browser, port, handle, password }))

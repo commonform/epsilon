@@ -19,7 +19,7 @@ tape('GET ' + path, (test) => {
 
 tape('browse ' + path, (test) => {
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.navigateTo('http://localhost:' + port))
@@ -42,7 +42,7 @@ tape('browse ' + path, (test) => {
 
 tape('log in with bad credentials', (test) => {
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.navigateTo('http://localhost:' + port))

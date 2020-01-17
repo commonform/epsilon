@@ -5,7 +5,7 @@ const webdriver = require('./webdriver')
 
 tape('browse NDA', (test) => {
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.navigateTo('http://localhost:' + port + '/forms/' + NDA.digest))

@@ -44,7 +44,7 @@ function get (request, response, error) {
 }
 
 function post (request, response) {
-  var email
+  let email
   runSeries([
     readPostBody,
     sendEMail

@@ -95,7 +95,7 @@ function confirmAccount (entry, callback) {
 function changeEMail (entry, callback) {
   const handle = entry.handle
   const email = entry.email
-  var oldEMail
+  let oldEMail
   runSeries([
     (done) => {
       storage.account.read(handle, (error, account) => {

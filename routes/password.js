@@ -120,7 +120,7 @@ function invalidToken (request, response) {
 }
 
 function post (request, response) {
-  var password, repeat, token, email, oldPassword
+  let password, repeat, token, email, oldPassword
   runSeries([
     readPostBody,
     validateInputs,
@@ -176,7 +176,7 @@ function post (request, response) {
   }
 
   function validateInputs (done) {
-    var error
+    let error
     if (token && !UUID_RE.test(token)) {
       error = new Error('invalid token')
       error.fieldName = 'token'

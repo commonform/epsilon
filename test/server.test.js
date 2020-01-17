@@ -7,8 +7,7 @@ const tape = require('tape')
 tape('server', (test) => {
   fs.mkdtemp('/tmp/', (_, directory) => {
     const port = 8080
-    var server, curl
-    server = spawn('node', ['server.js'], {
+    const server = spawn('node', ['server.js'], {
       env: {
         PORT: port,
         NODE_ENV: 'test',
@@ -18,7 +17,7 @@ tape('server', (test) => {
       }
     })
     server.stdout.once('data', () => {
-      curl = spawn('curl', ['http://localhost:' + port])
+      const curl = spawn('curl', ['http://localhost:' + port])
       const chunks = []
       curl.stdout
         .on('data', (chunk) => { chunks.push(chunk) })

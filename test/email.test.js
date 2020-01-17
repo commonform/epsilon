@@ -10,7 +10,7 @@ tape('change e-mail', (test) => {
   const oldEMail = 'old@example.com'
   const newEMail = 'new@example.com'
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => {

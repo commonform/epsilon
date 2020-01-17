@@ -45,7 +45,7 @@ function get (request, response, error) {
 }
 
 function post (request, response) {
-  var handle
+  let handle
   runSeries([
     readPostBody,
     sendResetLink

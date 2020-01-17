@@ -19,7 +19,7 @@ const email = USER.email
 module.exports = (callback) => {
   assert(typeof callback === 'function')
   const log = pino({}, fs.createWriteStream('test-server.log'))
-  var directory
+  let directory
   runSeries([
     (done) => {
       fs.mkdtemp('/tmp/', (error, tmp) => {

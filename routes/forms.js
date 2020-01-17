@@ -17,8 +17,8 @@ const storage = require('../storage')
 module.exports = (request, response) => {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
   authenticate(request, response, () => {
-    var digest = request.parameters.digest
-    var json
+    let digest = request.parameters.digest
+    let json
     if (digest.endsWith('.json')) {
       json = true
       digest = digest.replace(/\.json$/, '')

@@ -11,7 +11,7 @@ tape('change password', (test) => {
   const newPassword = 'new password'
   const email = 'tester@example.com'
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => {

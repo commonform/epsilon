@@ -62,7 +62,7 @@ function get (request, response) {
 
 function post (request, response) {
   const handle = request.account.handle
-  var newEMail
+  let newEMail
   runSeries([
     readPostBody,
     validateInputs,
@@ -113,7 +113,7 @@ function post (request, response) {
   }
 
   function validateInputs (done) {
-    var error
+    let error
     if (!EMAIL_RE.test(newEMail)) {
       error = new Error('invalid e-mail address')
       error.fieldName = 'email'

@@ -26,7 +26,7 @@ tape('browse ' + path, (test) => {
   const handle = USER.handle
   const password = USER.password
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => login({ browser, port, handle, password }))

@@ -12,7 +12,7 @@ tape('publish', (test) => {
   const project = 'test'
   const edition = '1e'
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => login({ browser, port, handle, password }))

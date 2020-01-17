@@ -19,7 +19,7 @@ tape('GET ' + path, (test) => {
 
 tape('browse ' + path, (test) => {
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.navigateTo('http://localhost:' + port + path))

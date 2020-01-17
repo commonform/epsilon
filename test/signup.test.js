@@ -22,7 +22,7 @@ tape('GET ' + path, (test) => {
 
 tape('browse ' + path, (test) => {
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.navigateTo('http://localhost:' + port))
@@ -50,7 +50,7 @@ tape('sign up', (test) => {
   const handle = 'tester'
   const password = 'test password'
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => browser.navigateTo('http://localhost:' + port))
@@ -109,7 +109,7 @@ tape('sign up same handle', (test) => {
   const handle = 'tester'
   const password = 'test password'
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       // Sign up using the handle.

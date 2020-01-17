@@ -30,7 +30,7 @@ tape('edit new form', (test) => {
   const parsed = commonmark.parse(markup)
   const normalized = normalize(parsed.form)
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => saveForm({ markup, port, browser }))
@@ -73,7 +73,7 @@ tape('edit existing form', (test) => {
   const parsed = commonmark.parse(markup)
   const digest = normalize(parsed.form).root
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => saveForm({ markup, port, browser }))
@@ -99,7 +99,7 @@ tape('save nested form', (test) => {
   const normalized = normalize(parsed.form)
   const digests = Object.keys(normalized).filter((k) => k !== 'root')
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => saveForm({ markup, port, browser }))
@@ -144,7 +144,7 @@ function saveForm (options) {
 tape('save invalid markup', (test) => {
   const invalidMarkup = '<h1>invalid</h1>'
   server((port, done) => {
-    var browser
+    let browser
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => login({ browser, port, handle, password }))

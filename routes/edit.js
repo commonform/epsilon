@@ -65,7 +65,7 @@ function get (request, response, parameters) {
 }
 
 function post (request, response) {
-  var markup, parsed, normalized
+  let markup, parsed, normalized
   runSeries([
     readPostBody,
     parseMarkup,
