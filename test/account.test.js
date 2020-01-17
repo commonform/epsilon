@@ -22,9 +22,9 @@ tape('GET ' + path, (test) => {
 })
 
 tape('browse ' + path, (test) => {
-  var email = USER.email
-  var handle = USER.handle
-  var password = USER.password
+  const email = USER.email
+  const handle = USER.handle
+  const password = USER.password
   server((port, done) => {
     var browser
     webdriver()

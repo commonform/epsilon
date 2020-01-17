@@ -1,8 +1,8 @@
 const fs = require('fs')
 
 exports.read = (options, callback) => {
-  var file = options.file
-  var serialization = options.serialization || JSON
+  const file = options.file
+  const serialization = options.serialization || JSON
   fs.readFile(file, (error, data) => {
     if (error) {
       if (error.code === 'ENOENT') return callback(null, null)
@@ -18,11 +18,11 @@ exports.read = (options, callback) => {
 }
 
 exports.write = (options, callback) => {
-  var file = options.file
-  var data = options.data
-  var serialization = options.serialization || JSON
-  var flag = options.flag || 'w'
-  var stringified = serialization.stringify(data)
+  const file = options.file
+  const data = options.data
+  const serialization = options.serialization || JSON
+  const flag = options.flag || 'w'
+  const stringified = serialization.stringify(data)
   fs.writeFile(file, stringified, { flag }, (error) => {
     if (error) {
       if (error.code === 'EEXIST') return callback(null, false)

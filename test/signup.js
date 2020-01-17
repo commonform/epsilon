@@ -7,11 +7,11 @@ module.exports = (options, callback) => {
   assert(typeof options.handle === 'string')
   assert(typeof options.password === 'string')
   assert(typeof options.email === 'string')
-  var browser = options.browser
-  var port = options.port
-  var handle = options.handle
-  var password = options.password
-  var email = options.email
+  const browser = options.browser
+  const port = options.port
+  const handle = options.handle
+  const password = options.password
+  const email = options.email
   browser.navigateTo('http://localhost:' + port)
     .then(() => browser.$('a=Sign Up'))
     .then((a) => a.click())

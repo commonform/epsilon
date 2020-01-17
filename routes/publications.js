@@ -15,15 +15,15 @@ const storage = require('../storage')
 
 module.exports = (request, response) => {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
-  var publisher = request.parameters.publisher
-  var project = request.parameters.project
-  var edition = request.parameters.edition
+  const publisher = request.parameters.publisher
+  const project = request.parameters.project
+  const edition = request.parameters.edition
   if (
     !handleValidator.valid(publisher) ||
     !projectValidator.valid(project) ||
     !editionValidator.valid(edition)
   ) return notFound(request, response)
-  var tasks = {
+  const tasks = {
     publication: (done) => storage.publication.read({
       publisher, project, edition
     }, done),
@@ -35,7 +35,7 @@ module.exports = (request, response) => {
   runAuto(tasks, (error, data) => {
     if (error) return internalError(request, response, error)
     if (!data.publication) return notFound(request, response)
-    var rawForm = data.form
+    const rawForm = data.form
     loadComponents(rawForm, {}, (error, loadedForm, resolutions) => {
       if (error) return internalError(request, response, error)
       response.setHeader('Content-Type', 'text/html')

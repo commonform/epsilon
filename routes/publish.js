@@ -12,8 +12,8 @@ const seeOther = require('./see-other')
 const storage = require('../storage')
 
 module.exports = (request, response) => {
-  var method = request.method
-  var isPOST = method === 'POST'
+  const method = request.method
+  const isPOST = method === 'POST'
   if (!isPOST) return methodNotAllowed(request, response)
   authenticate(request, response, () => {
     if (!request.account) return found(request, response, '/login')
@@ -22,9 +22,9 @@ module.exports = (request, response) => {
 }
 
 function post (request, response) {
-  var handle = request.account.handle
-  var body = {}
-  var fields = ['digest', 'project', 'edition']
+  const handle = request.account.handle
+  const body = {}
+  const fields = ['digest', 'project', 'edition']
   runSeries([
     readPostBody,
     validateInputs,
@@ -39,7 +39,7 @@ function post (request, response) {
       }
       return internalError(request, response, error)
     }
-    var url = '/' + [handle, body.project, body.edition].join('/')
+    const url = '/' + [handle, body.project, body.edition].join('/')
     seeOther(request, response, url)
   })
 
@@ -61,9 +61,9 @@ function post (request, response) {
   }
 
   function validateInputs (done) {
-    var digest = body.digest
-    var project = body.project
-    var edition = body.edition
+    const digest = body.digest
+    const project = body.project
+    const edition = body.edition
     if (!DIGEST_RE.test(digest)) return done('invalid digest')
     if (project && !projectValidator.valid(project)) return done('invalid project name')
     if (edition && !editionValidator.valid(edition)) return done('invalid edition')

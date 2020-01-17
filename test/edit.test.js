@@ -26,9 +26,9 @@ tape('GET ' + path, (test) => {
 })
 
 tape('edit new form', (test) => {
-  var markup = 'test form'
-  var parsed = commonmark.parse(markup)
-  var normalized = normalize(parsed.form)
+  const markup = 'test form'
+  const parsed = commonmark.parse(markup)
+  const normalized = normalize(parsed.form)
   server((port, done) => {
     var browser
     webdriver()
@@ -37,15 +37,15 @@ tape('edit new form', (test) => {
       .then(() => browser.$('=test form'))
       .then((p) => {
         test.assert(p, 'text appears')
-        var path = '/forms/' + normalized.root + '.json'
+        const path = '/forms/' + normalized.root + '.json'
         http.request({ port, path })
           .once('response', (response) => {
             test.equal(response.statusCode, 200, '200')
-            var chunks = []
+            const chunks = []
             response
               .on('data', (chunk) => { chunks.push(chunk) })
               .once('end', () => {
-                var buffer = Buffer.concat(chunks)
+                const buffer = Buffer.concat(chunks)
                 try {
                   var received = JSON.parse(buffer)
                 } catch (error) {
@@ -69,9 +69,9 @@ tape('edit new form', (test) => {
 })
 
 tape('edit existing form', (test) => {
-  var markup = 'test form\n'
-  var parsed = commonmark.parse(markup)
-  var digest = normalize(parsed.form).root
+  const markup = 'test form\n'
+  const parsed = commonmark.parse(markup)
+  const digest = normalize(parsed.form).root
   server((port, done) => {
     var browser
     webdriver()
@@ -94,10 +94,10 @@ tape('edit existing form', (test) => {
 })
 
 tape('save nested form', (test) => {
-  var markup = '# A\n\nA\n\n# B\n\nB\n'
-  var parsed = commonmark.parse(markup)
-  var normalized = normalize(parsed.form)
-  var digests = Object.keys(normalized).filter((k) => k !== 'root')
+  const markup = '# A\n\nA\n\n# B\n\nB\n'
+  const parsed = commonmark.parse(markup)
+  const normalized = normalize(parsed.form)
+  const digests = Object.keys(normalized).filter((k) => k !== 'root')
   server((port, done) => {
     var browser
     webdriver()
@@ -106,7 +106,7 @@ tape('save nested form', (test) => {
       .then(() => {
         runParellel(
           digests.map((digest) => (done) => {
-            var path = '/forms/' + digest + '.json'
+            const path = '/forms/' + digest + '.json'
             http.request({ port, path })
               .once('response', (response) => {
                 test.equal(response.statusCode, 200, '200')
@@ -129,9 +129,9 @@ tape('save nested form', (test) => {
 })
 
 function saveForm (options) {
-  var markup = options.markup
-  var port = options.port
-  var browser = options.browser
+  const markup = options.markup
+  const port = options.port
+  const browser = options.browser
   return login({ browser, port, handle, password })
     .then(() => browser.$('a=New Form'))
     .then((a) => a.click())
@@ -142,7 +142,7 @@ function saveForm (options) {
 }
 
 tape('save invalid markup', (test) => {
-  var invalidMarkup = '<h1>invalid</h1>'
+  const invalidMarkup = '<h1>invalid</h1>'
   server((port, done) => {
     var browser
     webdriver()

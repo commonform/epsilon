@@ -5,10 +5,10 @@ const tape = require('tape')
 const webdriver = require('./webdriver')
 
 tape('change e-mail', (test) => {
-  var handle = 'tester'
-  var password = 'test password'
-  var oldEMail = 'old@example.com'
-  var newEMail = 'new@example.com'
+  const handle = 'tester'
+  const password = 'test password'
+  const oldEMail = 'old@example.com'
+  const newEMail = 'new@example.com'
   server((port, done) => {
     var browser
     webdriver()

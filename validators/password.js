@@ -1,7 +1,7 @@
 exports.pattern = '^.{8,128}$'
 
 exports.valid = function (string) {
-  var length = string.length
+  const length = string.length
   return length >= 8 && length <= 128
 }
 

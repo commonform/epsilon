@@ -10,7 +10,7 @@ const setCookie = require('./set-cookie')
 const verifyPassword = require('../util/verify-password')
 
 module.exports = function (request, response) {
-  var method = request.method
+  const method = request.method
   if (method === 'GET') return get(request, response)
   if (method === 'POST') return post(request, response)
   response.statusCode = 405
@@ -19,8 +19,8 @@ module.exports = function (request, response) {
 
 function get (request, response, error) {
   clearCookie(response)
-  var message = request.query.message || error
-  var messageParagraph = message
+  const message = request.query.message || error
+  const messageParagraph = message
     ? `<p class=message>${escape(message)}</p>`
     : ''
   response.setHeader('Content-Type', 'text/html')
@@ -104,7 +104,7 @@ function post (request, response) {
   }
 
   function issueCookie (done) {
-    var expires = new Date(
+    const expires = new Date(
       Date.now() + (30 * 24 * 60 * 60 * 1000) // thirty days
     )
     setCookie(response, sessionID, expires)

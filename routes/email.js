@@ -12,9 +12,9 @@ const runSeries = require('run-series')
 const uuid = require('uuid')
 
 module.exports = function (request, response) {
-  var method = request.method
-  var isGET = method === 'GET'
-  var isPOST = method === 'POST'
+  const method = request.method
+  const isGET = method === 'GET'
+  const isPOST = method === 'POST'
   if (isGET || isPOST) {
     return authenticate(request, response, () => {
       if (!request.session) {
@@ -30,14 +30,14 @@ module.exports = function (request, response) {
 }
 
 function get (request, response) {
-  var handle = request.session && request.session.handle
+  const handle = request.session && request.session.handle
   if (!handle) {
     response.statusCode = 401
     response.end()
     return
   }
-  var message = request.query.message
-  var messageParagraph = message
+  const message = request.query.message
+  const messageParagraph = message
     ? `<p class=message>${escape(message)}</p>`
     : ''
   response.setHeader('Content-Type', 'text/html')
@@ -61,7 +61,7 @@ function get (request, response) {
 }
 
 function post (request, response) {
-  var handle = request.account.handle
+  const handle = request.account.handle
   var newEMail
   runSeries([
     readPostBody,
@@ -124,7 +124,7 @@ function post (request, response) {
   }
 
   function sendConfirmationLink (done) {
-    var token = uuid.v4()
+    const token = uuid.v4()
     record({
       type: 'changeEMailToken',
       token,

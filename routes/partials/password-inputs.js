@@ -3,7 +3,7 @@ const passwordValidator = require('../../validators/password')
 
 module.exports = (options) => {
   options = options || {}
-  var label = options.label || 'Password'
+  const label = options.label || 'Password'
   return `
 <p>
   <label for=password>${escape(label)}</label>

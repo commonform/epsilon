@@ -9,7 +9,7 @@ const nav = require('./partials/nav')
 module.exports = (request, response) => {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
   authenticate(request, response, () => {
-    var account = request.account
+    const account = request.account
     if (!account) return found(request, response, '/login')
     response.setHeader('Content-Type', 'text/html')
     response.end(`

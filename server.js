@@ -58,11 +58,11 @@ server.listen(process.env.PORT || 8080, function () {
 // Job Scheduler
 
 if (process.env.NODE_ENV !== 'test') {
-  var schedule = require('node-schedule')
-  var jobs = require('./jobs')
+  const schedule = require('node-schedule')
+  const jobs = require('./jobs')
   jobs.forEach(function (job) {
     schedule.scheduleJob(job.cron, function () {
-      var jobLog = log.child({ subsystem: 'jobs', name: job.name })
+      const jobLog = log.child({ subsystem: 'jobs', name: job.name })
       jobLog.info('running')
       job.handler(jobLog, function () {
         jobLog.info('done')

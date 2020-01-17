@@ -1,5 +1,5 @@
 module.exports = (session) => {
-  var handle = session && session.handle
+  const handle = session && session.handle
   return `
     <nav role=navigation>
       ${!handle ? '<a class=button href=/login>Log In</a>' : ''}

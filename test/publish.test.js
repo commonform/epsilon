@@ -8,9 +8,9 @@ const handle = USER.handle
 const password = USER.password
 
 tape('publish', (test) => {
-  var markup = 'applesauce test'
-  var project = 'test'
-  var edition = '1e'
+  const markup = 'applesauce test'
+  const project = 'test'
+  const edition = '1e'
   server((port, done) => {
     var browser
     webdriver()

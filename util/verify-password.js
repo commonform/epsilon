@@ -3,7 +3,7 @@ const securePassword = require('secure-password')
 const storage = require('../storage')
 
 module.exports = (handle, password, callback) => {
-  var file = storage.account.filePath(handle)
+  const file = storage.account.filePath(handle)
   storage.lock(file, (unlock) => {
     callback = unlock(callback)
     storage.account.readWithoutLocking(handle, function (error, account) {
@@ -12,12 +12,12 @@ module.exports = (handle, password, callback) => {
         return callback(error)
       }
       if (account === null || account.confirmed === false) {
-        var invalid = new Error('invalid handle or password')
+        const invalid = new Error('invalid handle or password')
         invalid.statusCode = 401
         return callback(invalid)
       }
-      var passwordHash = Buffer.from(account.passwordHash, 'hex')
-      var passwordBuffer = Buffer.from(password, 'utf8')
+      const passwordHash = Buffer.from(account.passwordHash, 'hex')
+      const passwordBuffer = Buffer.from(password, 'utf8')
       passwordHashing.verify(
         passwordBuffer, passwordHash, (error, result) => {
           if (error) {

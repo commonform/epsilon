@@ -10,18 +10,18 @@ const seeOther = require('./see-other')
 module.exports = function (request, response) {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
 
-  var token = request.query.token
+  const token = request.query.token
   if (!UUID_RE.test(token)) return invalidToken(request, response)
 
   record({ type: 'useToken', token }, (error, tokenData) => {
     if (error) return internalError(request, response, error)
     if (!tokenData) return invalidToken(request, response)
-    var action = tokenData.action
+    const action = tokenData.action
     if (action !== 'confirm' && action !== 'email') {
       response.statusCode = 400
       return response.end()
     }
-    var handle = tokenData.handle
+    const handle = tokenData.handle
     if (action === 'confirm') {
       record({ type: 'confirmAccount', handle }, (error) => {
         if (error) return internalError(request, response, error)
@@ -29,7 +29,7 @@ module.exports = function (request, response) {
       })
     }
     if (action === 'email') {
-      var email = tokenData.email
+      const email = tokenData.email
       record({ type: 'changeEMail', handle, email }, (error) => {
         if (error) return internalError(request, response, error)
         response.setHeader('Content-Type', 'text/html')

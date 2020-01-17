@@ -5,10 +5,10 @@ module.exports = (options, callback) => {
   assert(Number.isSafeInteger(options.port))
   assert(typeof options.handle === 'string')
   assert(typeof options.password === 'string')
-  var browser = options.browser
-  var port = options.port
-  var handle = options.handle
-  var password = options.password
+  const browser = options.browser
+  const port = options.port
+  const handle = options.handle
+  const password = options.password
   return browser.navigateTo('http://localhost:' + port)
     .then(() => browser.$('a=Log In'))
     .then((a) => a.click())

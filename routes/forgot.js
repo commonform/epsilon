@@ -8,7 +8,7 @@ const runSeries = require('run-series')
 const storage = require('../storage')
 
 module.exports = function (request, response) {
-  var method = request.method
+  const method = request.method
   if (method === 'GET') return get(request, response)
   if (method === 'POST') return post(request, response)
   response.statusCode = 405
@@ -16,8 +16,8 @@ module.exports = function (request, response) {
 }
 
 function get (request, response, error) {
-  var message = request.query.message || error
-  var messageParagraph = message
+  const message = request.query.message || error
+  const messageParagraph = message
     ? `<p class=message>${escape(message)}</p>`
     : ''
   response.setHeader('Content-Type', 'text/html')
@@ -96,7 +96,7 @@ function post (request, response) {
     storage.email.read(email, (error, handles) => {
       if (error) return done(error)
       if (handles.length === 0) return done()
-      var tasks = handles.map((handle) => (done) => {
+      const tasks = handles.map((handle) => (done) => {
         storage.account.read(handle, (error, account) => {
           if (error) return done(error)
           if (account === null || !account.confirmed) return done()

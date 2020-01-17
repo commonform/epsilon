@@ -15,7 +15,7 @@ const storage = require('../storage')
 const verifyPassword = require('../util/verify-password')
 
 module.exports = function (request, response) {
-  var method = request.method
+  const method = request.method
   if (method === 'GET') return get(request, response)
   if (method === 'POST') return post(request, response)
   response.statusCode = 405
@@ -30,14 +30,14 @@ function get (request, response) {
 }
 
 function getAuthenticated (request, response) {
-  var handle = request.session && request.session.handle
+  const handle = request.session && request.session.handle
   if (!handle) {
     response.statusCode = 401
     response.end()
     return
   }
-  var message = request.query.message
-  var messageParagraph = message
+  const message = request.query.message
+  const messageParagraph = message
     ? `<p class=message>${escape(message)}</p>`
     : ''
   response.setHeader('Content-Type', 'text/html')
@@ -65,7 +65,7 @@ function getAuthenticated (request, response) {
 }
 
 function getWithToken (request, response) {
-  var token = request.query.token
+  const token = request.query.token
   if (!UUID_RE.test(token)) return invalidToken(request, response)
   storage.token.read(token, (error, tokenData) => {
     if (error) return internalError(request, response, error)
@@ -75,8 +75,8 @@ function getWithToken (request, response) {
       response.end()
       return
     }
-    var message = request.query.message || error
-    var messageParagraph = message
+    const message = request.query.message || error
+    const messageParagraph = message
       ? `<p class=message>${escape(message)}</p>`
       : ''
     response.setHeader('Content-Type', 'text/html')
@@ -199,14 +199,14 @@ function post (request, response) {
     if (token) return done()
     authenticate(request, response, () => {
       if (!request.account) {
-        var unauthorized = new Error('unauthorized')
+        const unauthorized = new Error('unauthorized')
         unauthorized.statusCode = 401
         return done(unauthorized)
       }
-      var handle = request.account.handle
+      const handle = request.account.handle
       verifyPassword(handle, oldPassword, (error) => {
         if (error) {
-          var invalidOldPassword = new Error('invalid password')
+          const invalidOldPassword = new Error('invalid password')
           invalidOldPassword.statusCode = 400
           return done(invalidOldPassword)
         }
@@ -220,11 +220,11 @@ function post (request, response) {
       return record({ type: 'useToken', token }, (error, tokenData) => {
         if (error) return done(error)
         if (!tokenData || tokenData.action !== 'reset') {
-          var failed = new Error('invalid token')
+          const failed = new Error('invalid token')
           failed.statusCode = 401
           return done(failed)
         }
-        var handle = tokenData.handle
+        const handle = tokenData.handle
         record({
           type: 'changePassword',
           handle,

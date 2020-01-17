@@ -11,7 +11,7 @@ const has = Object.prototype.hasOwnProperty
 module.exports = function (form, loaded, options) {
   options = options || {}
   if (!options.mappings) options.mappings = []
-  var tree = options.tree = merkleize(loaded.form)
+  const tree = options.tree = merkleize(loaded.form)
   return html`
     ${renderTableOfContents(loaded.form, loaded.resolutions)}
     <article class=commonform>
@@ -33,20 +33,20 @@ function renderContents (form, resolutions, path) {
   if (!containsHeading(form)) return ''
   return html`<ol class=toc id=toc>${
     form.content.reduce(function (items, element, index) {
-      var headingHere = has.call(element, 'heading')
-      var isChild = has.call(element, 'form')
-      var componentOrForm = headingHere || isChild
+      const headingHere = has.call(element, 'heading')
+      const isChild = has.call(element, 'form')
+      const componentOrForm = headingHere || isChild
       if (!componentOrForm) return items
-      var hasHeading = (
+      const hasHeading = (
         headingHere ||
         (isChild && containsHeading(element.form))
       )
       if (!hasHeading) return items
-      var childPath = path.concat('content', index)
-      var isComponent = resolutions.some(function (resolution) {
+      const childPath = path.concat('content', index)
+      const isComponent = resolutions.some(function (resolution) {
         return samePath(resolution.path, childPath)
       })
-      var classes = classnames({
+      const classes = classnames({
         component: isComponent
       })
       var li = `<li class="${classes}">`
@@ -84,11 +84,11 @@ function containsHeading (form) {
 
 function renderForm (depth, path, form, loaded, tree, resolutions, options) {
   var offset = 0
-  var formGroups = form && group(form)
-  var loadedGroups = group(loaded)
+  const formGroups = form && group(form)
+  const loadedGroups = group(loaded)
     .map(function (loadedGroup, index) {
-      var formGroup = formGroups && formGroups[index]
-      var returned = loadedGroup.type === 'series'
+      const formGroup = formGroups && formGroups[index]
+      const returned = loadedGroup.type === 'series'
         ? renderSeries(
           depth + 1,
           offset,
@@ -110,14 +110,14 @@ function renderForm (depth, path, form, loaded, tree, resolutions, options) {
 function renderSeries (depth, offset, path, formSeries, loadedSeries, tree, resolutions, options) {
   return loadedSeries.content
     .map(function (loadedChild, index) {
-      var loadedForm = loadedChild.form
-      var childTree = tree.content[offset + index]
-      var digest = childTree.digest
-      var childPath = path.concat('content', offset + index)
-      var resolution = resolutions.find(function (resolution) {
+      const loadedForm = loadedChild.form
+      const childTree = tree.content[offset + index]
+      const digest = childTree.digest
+      const childPath = path.concat('content', offset + index)
+      const resolution = resolutions.find(function (resolution) {
         return samePath(resolution.path, childPath)
       })
-      var classes = classnames({
+      const classes = classnames({
         conspicuous: loadedForm.conspicuous,
         component: resolution
       })
@@ -162,7 +162,7 @@ function publisherLink (publisher) {
 }
 
 function projectLink (publication) {
-  var href = '/' + [
+  const href = '/' + [
     publication.publisher,
     publication.project
   ].map(escape).join('/')
@@ -170,7 +170,7 @@ function projectLink (publication) {
 }
 
 function editionLink (publication) {
-  var href = '/' + [
+  const href = '/' + [
     publication.publisher,
     publication.project,
     publication.edition
@@ -227,9 +227,9 @@ function renderReference (heading) {
 }
 
 function matchingValue (path, mappings) {
-  var length = mappings.length
+  const length = mappings.length
   for (var index = 0; index < length; index++) {
-    var mapping = mappings[index]
+    const mapping = mappings[index]
     if (samePath(mapping.blank, path)) return mapping.value
   }
 }

@@ -6,11 +6,11 @@ module.exports = (options) => {
   assert(Number.isSafeInteger(options.port))
   assert(typeof options.handle === 'string')
   assert(typeof options.email === 'string')
-  var browser = options.browser
-  var test = options.test
-  var port = options.port
-  var handle = options.handle
-  var email = options.email
+  const browser = options.browser
+  const test = options.test
+  const port = options.port
+  const handle = options.handle
+  const email = options.email
   return browser.navigateTo('http://localhost:' + port)
     .then(() => browser.$('a=Account'))
     .then((a) => a.click())

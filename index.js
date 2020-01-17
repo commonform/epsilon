@@ -6,14 +6,14 @@ const routes = require('./routes')
 const PUBLICATION_PATH = /^\/([a-z0-9]+)\/([a-z0-9]+)\/([0-9eucd]+)$/
 
 module.exports = (request, response) => {
-  var parsed = parseURL(request.url, true)
-  var pathname = parsed.pathname
+  const parsed = parseURL(request.url, true)
+  const pathname = parsed.pathname
   request.pathname = pathname
   request.query = parsed.query
-  var route = routes.get(pathname)
+  const route = routes.get(pathname)
   request.parameters = route.params
   if (route.handler) return route.handler(request, response)
-  var match = PUBLICATION_PATH.exec(pathname)
+  const match = PUBLICATION_PATH.exec(pathname)
   if (match) {
     request.parameters = {
       publisher: match[1],

@@ -21,9 +21,9 @@ tape('GET ' + path, (test) => {
 })
 
 tape('reset password', (test) => {
-  var handle = 'tester'
-  var password = 'test password'
-  var email = 'tester@example.com'
+  const handle = 'tester'
+  const password = 'test password'
+  const email = 'tester@example.com'
   server((port, done) => {
     var browser
     webdriver()

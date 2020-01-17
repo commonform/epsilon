@@ -10,14 +10,14 @@ const write = require('./write')
 module.exports = (entry, callback) => {
   assert(typeof entry === 'object')
   assert(typeof entry.type === 'string')
-  var stringified = stringify(entry)
-  var digest = crypto.createHash('sha256')
+  const stringified = stringify(entry)
+  const digest = crypto.createHash('sha256')
     .update(stringified)
     .digest('hex')
-  var logFile = path.join(process.env.LOG_DIRECTORY, 'log')
-  var logLine = digest + '\n'
-  var entries = path.join(process.env.LOG_DIRECTORY, 'entries')
-  var entryFile = path.join(entries, digest + '.json')
+  const logFile = path.join(process.env.LOG_DIRECTORY, 'log')
+  const logLine = digest + '\n'
+  const entries = path.join(process.env.LOG_DIRECTORY, 'entries')
+  const entryFile = path.join(entries, digest + '.json')
   runSeries([
     (done) => mkdirp(entries, done),
     (done) => fs.writeFile(entryFile, stringified, done),

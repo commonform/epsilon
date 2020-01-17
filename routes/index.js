@@ -29,7 +29,7 @@ const STATIC_FILES = [
   'ui.css'
 ]
 STATIC_FILES.forEach((file) => {
-  var filePath = path.join(__dirname, '..', 'static', file)
+  const filePath = path.join(__dirname, '..', 'static', file)
   routes.set('/' + file, (request, response) => {
     pump(send(request, filePath), response)
   })

@@ -18,7 +18,7 @@ const email = USER.email
 
 module.exports = (callback) => {
   assert(typeof callback === 'function')
-  var log = pino({}, fs.createWriteStream('test-server.log'))
+  const log = pino({}, fs.createWriteStream('test-server.log'))
   var directory
   runSeries([
     (done) => {
@@ -34,12 +34,12 @@ module.exports = (callback) => {
     (done) => record({ type: 'account', handle, email, password }, done),
     (done) => record({ type: 'confirmAccount', handle }, done)
   ], () => {
-    var server = http.createServer((request, response) => {
+    const server = http.createServer((request, response) => {
       pinoHTTP({ logger: log, genReqId: uuid.v4 })(request, response)
       handler(request, response)
     })
     server.listen(0, function () {
-      var port = this.address().port
+      const port = this.address().port
       process.env.BASE_HREF = 'http://localhost:' + port
       process.env.ADMIN_EMAIL = 'admin@example.com'
       callback(port, () => {

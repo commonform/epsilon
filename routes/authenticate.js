@@ -4,10 +4,10 @@ const runParallel = require('run-parallel')
 const storage = require('../storage')
 
 module.exports = function (request, response, handler) {
-  var header = request.headers.cookie
+  const header = request.headers.cookie
   if (!header) return proceed()
-  var parsed = cookie.parse(header)
-  var sessionID = parsed.commonform
+  const parsed = cookie.parse(header)
+  const sessionID = parsed.commonform
   if (!sessionID) return proceed()
   storage.session.read(sessionID, function (error, session) {
     if (error) return internalError(request, response, error)
@@ -15,7 +15,7 @@ module.exports = function (request, response, handler) {
       request.log.info('expired session')
       return proceed()
     }
-    var handle = session.handle
+    const handle = session.handle
     request.log.info({ sessionID, handle }, 'authenticated')
     request.session = session
     runParallel({
@@ -24,7 +24,7 @@ module.exports = function (request, response, handler) {
       }
     }, function (error, results) {
       if (error) return internalError(request, response, error)
-      var account = results.account
+      const account = results.account
       if (account.confirmed) request.account = account
       proceed()
     })

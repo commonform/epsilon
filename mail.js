@@ -1,14 +1,14 @@
 if (process.env.NODE_ENV === 'test') {
-  var EventEmitter = require('events').EventEmitter
-  var emitter = new EventEmitter()
+  const EventEmitter = require('events').EventEmitter
+  const emitter = new EventEmitter()
   module.exports = (options, callback) => {
     emitter.emit('sent', options)
     setImmediate(() => { callback() })
   }
   module.exports.events = emitter
 } else {
-  var nodemailer = require('nodemailer')
-  var transport = nodemailer.createTransport({
+  const nodemailer = require('nodemailer')
+  const transport = nodemailer.createTransport({
     pool: true,
     host: process.env.SMTP_HOST || 'localhost',
     port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587,

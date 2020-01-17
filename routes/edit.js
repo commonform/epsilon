@@ -17,9 +17,9 @@ const seeOther = require('./see-other')
 const storage = require('../storage')
 
 module.exports = (request, response) => {
-  var method = request.method
-  var isGET = method === 'GET'
-  var isPOST = method === 'POST'
+  const method = request.method
+  const isGET = method === 'GET'
+  const isPOST = method === 'POST'
   if (!isGET && !isPOST) return methodNotAllowed(request, response)
   authenticate(request, response, () => {
     if (!request.account) return found(request, response, '/login')
@@ -29,16 +29,16 @@ module.exports = (request, response) => {
 }
 
 function get (request, response, parameters) {
-  var tasks = {}
-  var digest = parameters.digest
+  const tasks = {}
+  const digest = parameters.digest
   if (digest && DIGEST_RE.test(digest)) {
     tasks.form = (done) => storage.form.read(digest, done)
   }
   runAuto(tasks, (error, data) => {
     if (error) return internalError(request, response, error)
-    var form = data.form || { content: ['edit text'] }
-    var markup = parameters.markup || commonmark.stringify(form)
-    var flash = parameters.flash
+    const form = data.form || { content: ['edit text'] }
+    const markup = parameters.markup || commonmark.stringify(form)
+    const flash = parameters.flash
       ? `<p class=error>${escape(parameters.flash)}</p>`
       : ''
     response.setHeader('Content-Type', 'text/html')
@@ -104,7 +104,7 @@ function post (request, response) {
     try {
       parsed = commonmark.parse(markup)
     } catch (error) {
-      var invalidMarkup = new Error('invalid markup')
+      const invalidMarkup = new Error('invalid markup')
       invalidMarkup.statusCode = 400
       return done(invalidMarkup)
     }

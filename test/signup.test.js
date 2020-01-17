@@ -46,9 +46,9 @@ tape('browse ' + path, (test) => {
 })
 
 tape('sign up', (test) => {
-  var email = 'test@example.com'
-  var handle = 'tester'
-  var password = 'test password'
+  const email = 'test@example.com'
+  const handle = 'tester'
+  const password = 'test password'
   server((port, done) => {
     var browser
     webdriver()
@@ -104,10 +104,10 @@ tape('sign up', (test) => {
 })
 
 tape('sign up same handle', (test) => {
-  var firstEMail = 'first@example.com'
-  var secondEMail = 'first@example.com'
-  var handle = 'tester'
-  var password = 'test password'
+  const firstEMail = 'first@example.com'
+  const secondEMail = 'first@example.com'
+  const handle = 'tester'
+  const password = 'test password'
   server((port, done) => {
     var browser
     webdriver()

@@ -6,10 +6,10 @@ const verifyLogin = require('./verify-login')
 const webdriver = require('./webdriver')
 
 tape('change password', (test) => {
-  var handle = 'tester'
-  var oldPassword = 'old password'
-  var newPassword = 'new password'
-  var email = 'tester@example.com'
+  const handle = 'tester'
+  const oldPassword = 'old password'
+  const newPassword = 'new password'
+  const email = 'tester@example.com'
   server((port, done) => {
     var browser
     webdriver()

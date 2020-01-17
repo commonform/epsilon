@@ -9,7 +9,7 @@ const storage = require('../storage')
 const uuid = require('uuid')
 
 module.exports = function (request, response) {
-  var method = request.method
+  const method = request.method
   if (method === 'GET') return get(request, response)
   if (method === 'POST') return post(request, response)
   response.statusCode = 405
@@ -17,8 +17,8 @@ module.exports = function (request, response) {
 }
 
 function get (request, response, error) {
-  var message = request.query.message || error
-  var messageParagraph = message
+  const message = request.query.message || error
+  const messageParagraph = message
     ? `<p class=message>${escape(message)}</p>`
     : ''
   response.setHeader('Content-Type', 'text/html')
@@ -97,11 +97,11 @@ function post (request, response) {
     storage.account.read(handle, (error, account) => {
       if (error) return done(error)
       if (!account) {
-        var invalid = new Error('invalid handle')
+        const invalid = new Error('invalid handle')
         invalid.statusCode = 400
         return done(invalid)
       }
-      var token = uuid.v4()
+      const token = uuid.v4()
       record({
         type: 'resetPasswordToken',
         token,
@@ -109,7 +109,7 @@ function post (request, response) {
         handle
       }, (error) => {
         if (error) return done(error)
-        var href = `${process.env.BASE_HREF}/password?token=${token}`
+        const href = `${process.env.BASE_HREF}/password?token=${token}`
         // TODO: Flesh out password-reset e-mail text.
         mail({
           to: account.email,

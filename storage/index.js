@@ -24,14 +24,14 @@ module.exports = {
 const account = module.exports.account
 
 account.confirm = (handle, callback) => {
-  var properties = { confirmed: new Date().toISOString() }
+  const properties = { confirmed: new Date().toISOString() }
   account.update(handle, properties, callback)
 }
 
 const token = module.exports.token
 
 token.use = (id, callback) => {
-  var file = token.filePath(id)
+  const file = token.filePath(id)
   lock(file, (unlock) => {
     callback = unlock(callback)
     token.readWithoutLocking(id, (error, record) => {
@@ -47,9 +47,9 @@ token.use = (id, callback) => {
 
 function simpleFiles (subdirectory, options) {
   options = options || {}
-  var serialization = options.serialization
-  var complexID = options.complexID
-  var filePath = complexID
+  const serialization = options.serialization
+  const complexID = options.complexID
+  const filePath = complexID
     ? (id) => path.join(process.env.INDEX_DIRECTORY, subdirectory, complexID(id) + '.json')
     : (id) => path.join(process.env.INDEX_DIRECTORY, subdirectory, id + '.json')
   return {
@@ -69,7 +69,7 @@ function simpleFiles (subdirectory, options) {
       return fs.createReadStream(filePath(id), 'utf8')
     },
     update: (id, properties, callback) => {
-      var file = filePath(id)
+      const file = filePath(id)
       lock(file, (unlock) => {
         callback = unlock(callback)
         JSONFile.read({ file, serialization }, (error, record) => {
@@ -84,10 +84,10 @@ function simpleFiles (subdirectory, options) {
       })
     },
     list: (callback) => {
-      var directory = path.dirname(filePath('x'))
+      const directory = path.dirname(filePath('x'))
       fs.readdir(directory, (error, entries) => {
         if (error) return callback(error)
-        var ids = entries.map((entry) => path.basename(entry, '.json'))
+        const ids = entries.map((entry) => path.basename(entry, '.json'))
         callback(null, ids)
       })
     },
@@ -99,8 +99,8 @@ function simpleFiles (subdirectory, options) {
   }
 
   function createWithoutLocking (id, value, callback) {
-    var file = filePath(id)
-    var directory = path.dirname(file)
+    const file = filePath(id)
+    const directory = path.dirname(file)
     mkdirp(directory, (error) => {
       if (error) return callback(error)
       JSONFile.write({ file, data: value, serialization, flag: 'wx' }, callback)
@@ -108,8 +108,8 @@ function simpleFiles (subdirectory, options) {
   }
 
   function writeWithoutLocking (id, value, callback) {
-    var file = filePath(id)
-    var directory = path.dirname(file)
+    const file = filePath(id)
+    const directory = path.dirname(file)
     mkdirp(directory, (error) => {
       if (error) return callback(error)
       JSONFile.write({ file, data: value, serialization }, callback)
@@ -131,8 +131,8 @@ function simpleFiles (subdirectory, options) {
 function appendOnlyLists (subdirectory) {
   return {
     append: (id, string, callback) => {
-      var file = filePath(id)
-      var directory = path.dirname(file)
+      const file = filePath(id)
+      const directory = path.dirname(file)
       mkdirp(directory, (error) => {
         if (error) return callback(error)
         fs.writeFile(
@@ -148,12 +148,12 @@ function appendOnlyLists (subdirectory) {
     },
     readWithoutLocking,
     remove: (id, string, callback) => {
-      var file = filePath(id)
+      const file = filePath(id)
       lock(file, (unlock) => {
         callback = unlock(callback)
         readWithoutLocking(id, (error, items) => {
           if (error) return callback(error)
-          var filtered = items.filter((item) => item !== string)
+          const filtered = items.filter((item) => item !== string)
           fs.writeFile(
             file,
             filtered.join('\n') + '\n',

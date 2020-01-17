@@ -10,10 +10,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Parse and lint the form on every change.
 function parseAndAnnotateOnEdit () {
-  var editor = document.getElementById('editor')
+  const editor = document.getElementById('editor')
 
   // Insert a readout element for displaying lint annotations.
-  var readout = document.createElement('ul')
+  const readout = document.createElement('ul')
   editor.parentNode.insertBefore(readout, editor.nextSibling)
 
   // Whenever the user makes a change, parse the markup
@@ -25,7 +25,7 @@ function parseAndAnnotateOnEdit () {
     } catch (error) {
       return invalid('Invalid Markup')
     }
-    var form = parsed.form
+    const form = parsed.form
     emptyReadout()
 
     // Lint.
@@ -38,7 +38,7 @@ function parseAndAnnotateOnEdit () {
   })
 
   function append (message) {
-    var li = document.createElement('li')
+    const li = document.createElement('li')
     li.appendChild(document.createTextNode(message))
     readout.appendChild(li)
   }
@@ -63,9 +63,9 @@ window.addEventListener('beforeunload', function (event) {
 })
 
 function setDirtyFlagOnEdit () {
-  var editors = ['editor', 'notes']
+  const editors = ['editor', 'notes']
   editors.forEach(function (id) {
-    var editor = document.getElementById(id)
+    const editor = document.getElementById(id)
     editor.addEventListener('input', function () { dirty = true })
   })
 }

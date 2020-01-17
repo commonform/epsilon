@@ -16,7 +16,7 @@ const storage = require('../storage')
 const uuid = require('uuid')
 
 module.exports = function (request, response) {
-  var method = request.method
+  const method = request.method
   if (method === 'GET') return get(request, response)
   if (method === 'POST') return post(request, response)
   methodNotAllowed(request, response)
@@ -24,7 +24,7 @@ module.exports = function (request, response) {
 
 function get (request, response, data) {
   data = data || {}
-  var error = data.error
+  const error = data.error
   if (error) response.statusCode = 400
   response.setHeader('Content-Type', 'text/html')
   response.end(`
@@ -127,7 +127,7 @@ function post (request, response) {
     storage.account.read(handle, function (error, account) {
       if (error) return done(error)
       if (account) {
-        var handleTaken = new Error(
+        const handleTaken = new Error(
           `The handle “${handle}” is already taken.`
         )
         handleTaken.statusCode = 400
@@ -142,7 +142,7 @@ function post (request, response) {
   }
 
   function generateConfirmToken (done) {
-    var token = uuid.v4()
+    const token = uuid.v4()
     record({
       type: 'confirmAccountToken',
       token,
@@ -174,8 +174,8 @@ function post (request, response) {
 
 function signUpForm (data) {
   data = data || {}
-  var error = data.error
-  var errorMessage = error ? `<p class=error>${escape(error.message)}</p>` : ''
+  const error = data.error
+  const errorMessage = error ? `<p class=error>${escape(error.message)}</p>` : ''
   return `
     <form action=signup method=post>
       ${errorMessage}
