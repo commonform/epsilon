@@ -4,6 +4,7 @@ const assert = require('assert')
 const fs = require('fs')
 const handler = require('../')
 const http = require('http')
+const journal = require('../storage/journal')
 const path = require('path')
 const pino = require('pino')
 const pinoHTTP = require('pino-http')
@@ -30,6 +31,7 @@ module.exports = (callback) => {
         done()
       })
     },
+    (done) => journal.initialize(done),
     (done) => record({ type: 'form', form: NDA.form }, done),
     (done) => record({ type: 'account', handle, email, password }, done),
     (done) => record({ type: 'confirmAccount', handle }, done)

@@ -1,5 +1,6 @@
 const handler = require('./')
 const http = require('http')
+const journal = require('./storage/journal')
 const pino = require('pino')
 const pinoHTTP = require('pino-http')
 const uuid = require('uuid')
@@ -50,9 +51,15 @@ process.on('uncaughtException', (exception) => {
   close()
 })
 
-server.listen(process.env.PORT || 8080, function () {
-  // If the environment set PORT=0, we'll get a random high port.
-  log.info({ port: this.address().port }, 'listening')
+journal.initialize((error) => {
+  if (error) {
+    log.error(error)
+    process.exit(1)
+  }
+  server.listen(process.env.PORT || 8080, function () {
+    // If the environment set PORT=0, we'll get a random high port.
+    log.info({ port: this.address().port }, 'listening')
+  })
 })
 
 // Job Scheduler
