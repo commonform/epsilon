@@ -2,8 +2,12 @@ if (process.env.NODE_ENV === 'test') {
   const EventEmitter = require('events').EventEmitter
   const emitter = new EventEmitter()
   module.exports = (options, callback) => {
-    emitter.emit('sent', options)
-    setImmediate(() => { callback() })
+    // This delay prevents tests from visiting account-confirmation
+    // pages before the app has time to index the tokens.
+    setTimeout(() => {
+      emitter.emit('sent', options)
+      callback()
+    }, 1000)
   }
   module.exports.events = emitter
 } else {

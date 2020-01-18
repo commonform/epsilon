@@ -1,9 +1,13 @@
+const flushWriteStream = require('flush-write-stream')
 const handler = require('./')
 const http = require('http')
 const journal = require('./storage/journal')
 const pino = require('pino')
 const pinoHTTP = require('pino-http')
+const pump = require('pump')
 const uuid = require('uuid')
+const validate = require('./storage/validate')
+const write = require('./storage/write')
 
 const log = pino({ server: uuid.v4() })
 
@@ -30,32 +34,47 @@ function requireEnvironmentVariable (name) {
 
 // Server
 
-const server = http.createServer((request, response) => {
-  pinoHTTP({ logger: log, genReqId: uuid.v4 })(request, response)
-  handler(request, response)
-})
+var journalInstance = journal()
 
-function close () {
-  log.info('closing')
-  server.close(() => {
-    log.info('closed')
-    process.exit(0)
-  })
-}
-
-process.on('SIGINT', close)
-process.on('SIGQUIT', close)
-process.on('SIGTERM', close)
-process.on('uncaughtException', (exception) => {
-  log.error(exception)
-  close()
-})
-
-journal.initialize((error) => {
+journalInstance.initialize((error) => {
   if (error) {
     log.error(error)
     process.exit(1)
   }
+
+  const watcher = journalInstance.watch()
+  pump(watcher, flushWriteStream.obj((entry, _, done) => {
+    write(entry, done)
+  }))
+
+  const server = http.createServer((request, response) => {
+    pinoHTTP({ logger: log, genReqId: uuid.v4 })(request, response)
+    request.record = (entry, callback) => {
+      validate(entry, (error) => {
+        if (error) return callback(error)
+        journalInstance.write(entry, callback)
+      })
+    }
+    handler(request, response)
+  })
+
+  function close () {
+    log.info('closing')
+    server.close(() => {
+      watcher.close()
+      log.info('closed')
+      process.exit(0)
+    })
+  }
+
+  process.on('SIGINT', close)
+  process.on('SIGQUIT', close)
+  process.on('SIGTERM', close)
+  process.on('uncaughtException', (exception) => {
+    log.error(exception)
+    close()
+  })
+
   server.listen(process.env.PORT || 8080, function () {
     // If the environment set PORT=0, we'll get a random high port.
     log.info({ port: this.address().port }, 'listening')

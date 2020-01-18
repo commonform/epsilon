@@ -3,10 +3,10 @@ const clearCookie = require('./clear-cookie')
 const escape = require('../util/escape')
 const head = require('./partials/head')
 const header = require('./partials/header')
-const record = require('../storage/record')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
 const setCookie = require('./set-cookie')
+const uuid = require('uuid')
 const verifyPassword = require('../util/verify-password')
 
 module.exports = function (request, response) {
@@ -96,9 +96,9 @@ function post (request, response) {
   }
 
   function createSession (done) {
-    record({ type: 'session', handle }, (error, id) => {
+    sessionID = uuid.v4()
+    request.record({ type: 'session', handle, id: sessionID }, (error) => {
       if (error) return done(error)
-      sessionID = id
       done()
     })
   }

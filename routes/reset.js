@@ -3,7 +3,6 @@ const escape = require('../util/escape')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const mail = require('../mail')
-const record = require('../storage/record')
 const runSeries = require('run-series')
 const storage = require('../storage')
 const uuid = require('uuid')
@@ -102,7 +101,7 @@ function post (request, response) {
         return done(invalid)
       }
       const token = uuid.v4()
-      record({
+      request.record({
         type: 'resetPasswordToken',
         token,
         created: new Date().toISOString(),

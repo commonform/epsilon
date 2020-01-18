@@ -6,7 +6,6 @@ const found = require('./found')
 const internalError = require('./internal-error')
 const methodNotAllowed = require('./method-not-allowed')
 const projectValidator = require('../validators/project')
-const record = require('../storage/record')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
 const storage = require('../storage')
@@ -81,7 +80,7 @@ function post (request, response) {
   }
 
   function recordPublication (done) {
-    record({
+    request.record({
       type: 'publication',
       publisher: handle,
       project: body.project,

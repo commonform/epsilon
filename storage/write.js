@@ -6,7 +6,6 @@ const hashPassword = require('../util/hash-password')
 const normalize = require('commonform-normalize')
 const runSeries = require('run-series')
 const storage = require('./')
-const uuid = require('uuid')
 
 const writers = {
   confirmAccount,
@@ -153,11 +152,11 @@ function useToken (entry, callback) {
 
 function session (entry, callback) {
   const handle = entry.handle
-  const id = uuid.v4()
+  const id = entry.id
   const created = new Date().toISOString()
   storage.session.create(id, { handle, created }, (error, success) => {
     if (error) return callback(error)
     if (!success) return callback(new Error('session collision'))
-    callback(null, id)
+    callback()
   })
 }

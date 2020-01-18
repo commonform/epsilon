@@ -4,8 +4,8 @@ const header = require('./partials/header')
 const internalError = require('./internal-error')
 const methodNotAllowed = require('./method-not-allowed')
 const nav = require('./partials/nav')
-const record = require('../storage/record')
 const seeOther = require('./see-other')
+const storage = require('../storage')
 
 module.exports = function (request, response) {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
@@ -13,27 +13,30 @@ module.exports = function (request, response) {
   const token = request.query.token
   if (!UUID_RE.test(token)) return invalidToken(request, response)
 
-  record({ type: 'useToken', token }, (error, tokenData) => {
+  storage.token.read(token, (error, tokenData) => {
     if (error) return internalError(request, response, error)
     if (!tokenData) return invalidToken(request, response)
-    const action = tokenData.action
-    if (action !== 'confirm' && action !== 'email') {
-      response.statusCode = 400
-      return response.end()
-    }
-    const handle = tokenData.handle
-    if (action === 'confirm') {
-      record({ type: 'confirmAccount', handle }, (error) => {
-        if (error) return internalError(request, response, error)
-        seeOther(request, response, '/login')
-      })
-    }
-    if (action === 'email') {
-      const email = tokenData.email
-      record({ type: 'changeEMail', handle, email }, (error) => {
-        if (error) return internalError(request, response, error)
-        response.setHeader('Content-Type', 'text/html')
-        response.end(`
+    request.record({ type: 'useToken', token }, (error) => {
+      if (error) return internalError(request, response, error)
+      if (!tokenData) return invalidToken(request, response)
+      const action = tokenData.action
+      if (action !== 'confirm' && action !== 'email') {
+        response.statusCode = 400
+        return response.end()
+      }
+      const handle = tokenData.handle
+      if (action === 'confirm') {
+        request.record({ type: 'confirmAccount', handle }, (error) => {
+          if (error) return internalError(request, response, error)
+          seeOther(request, response, '/login')
+        })
+      }
+      if (action === 'email') {
+        const email = tokenData.email
+        request.record({ type: 'changeEMail', handle, email }, (error) => {
+          if (error) return internalError(request, response, error)
+          response.setHeader('Content-Type', 'text/html')
+          response.end(`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -46,9 +49,10 @@ module.exports = function (request, response) {
     </main>
   </body>
 </html>
-        `.trim())
-      })
-    }
+          `.trim())
+        })
+      }
+    })
   })
 }
 

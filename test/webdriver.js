@@ -23,8 +23,8 @@ tape.onFinish(() => {
   if (remote) {
     remote
       .then((browser) => browser.deleteSession())
-      .then(() => driver.kill())
+      .then(() => driver.kill(9))
   } else {
-    driver.kill()
+    driver.kill(9)
   }
 })

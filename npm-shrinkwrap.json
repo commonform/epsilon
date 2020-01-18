@@ -2418,6 +2418,21 @@
       "integrity": "sha1-FQStJSMVjKpA20onh8sBQRmU6k8=",
       "dev": true
     },
+    "fsaol": {
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/fsaol/-/fsaol-1.1.0.tgz",
+      "integrity": "sha512-koWlIGZwLg2AqI98Uy7BmVfHfEm25q0tSTOAWF3Zlwi1uEkRFXXyciNsSjbdhJLOg1/8d8Gr/MdtEnKsjW4QLg==",
+      "requires": {
+        "end-of-stream": "^1.4.4",
+        "flush-write-stream": "^2.0.0",
+        "mkdirp": "^0.5.1",
+        "pump": "^3.0.0",
+        "run-series": "^1.1.8",
+        "split2": "^3.1.1",
+        "through2": "^3.0.1",
+        "touch": "^3.1.0"
+      }
+    },
     "function-bind": {
       "version": "1.1.1",
       "resolved": "https://registry.npmjs.org/function-bind/-/function-bind-1.1.1.tgz",

@@ -7,7 +7,6 @@ const head = require('./partials/head')
 const header = require('./partials/header')
 const mail = require('../mail')
 const nav = require('./partials/nav')
-const record = require('../storage/record')
 const runSeries = require('run-series')
 const uuid = require('uuid')
 
@@ -125,7 +124,7 @@ function post (request, response) {
 
   function sendConfirmationLink (done) {
     const token = uuid.v4()
-    record({
+    request.record({
       type: 'changeEMailToken',
       token,
       created: new Date().toISOString(),

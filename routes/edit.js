@@ -10,7 +10,6 @@ const internalError = require('./internal-error')
 const methodNotAllowed = require('./method-not-allowed')
 const nav = require('./partials/nav')
 const normalize = require('commonform-normalize')
-const record = require('../storage/record')
 const runAuto = require('run-auto')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
@@ -117,6 +116,6 @@ function post (request, response) {
   }
 
   function recordForm (done) {
-    record({ type: 'form', form: parsed.form }, done)
+    request.record({ type: 'form', form: parsed.form }, done)
   }
 }

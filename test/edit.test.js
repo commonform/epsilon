@@ -148,6 +148,9 @@ tape('save invalid markup', (test) => {
     webdriver()
       .then((loaded) => { browser = loaded })
       .then(() => login({ browser, port, handle, password }))
+      .then(() => new Promise((resolve) => {
+        setTimeout(resolve, 1000)
+      }))
       .then(() => browser.$('a=New Form'))
       .then((a) => a.click())
       .then(() => browser.$('#editor'))

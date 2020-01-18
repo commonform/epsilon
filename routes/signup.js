@@ -10,7 +10,6 @@ const mail = require('../mail')
 const methodNotAllowed = require('./method-not-allowed')
 const passwordInputs = require('./partials/password-inputs')
 const passwordValidator = require('../validators/password')
-const record = require('../storage/record')
 const runSeries = require('run-series')
 const storage = require('../storage')
 const uuid = require('uuid')
@@ -138,12 +137,12 @@ function post (request, response) {
   }
 
   function recordAccount (done) {
-    record({ type: 'account', handle, email, password }, done)
+    request.record({ type: 'account', handle, email, password }, done)
   }
 
   function generateConfirmToken (done) {
     const token = uuid.v4()
-    record({
+    request.record({
       type: 'confirmAccountToken',
       token,
       created: new Date().toISOString(),

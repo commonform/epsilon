@@ -9,7 +9,6 @@ const mail = require('../mail')
 const nav = require('./partials/nav')
 const passwordInputs = require('./partials/password-inputs')
 const passwordValidator = require('../validators/password')
-const record = require('../storage/record')
 const runSeries = require('run-series')
 const storage = require('../storage')
 const verifyPassword = require('../util/verify-password')
@@ -120,7 +119,7 @@ function invalidToken (request, response) {
 }
 
 function post (request, response) {
-  let password, repeat, token, email, oldPassword
+  let password, repeat, token, oldPassword, handle
   runSeries([
     readPostBody,
     validateInputs,
@@ -203,7 +202,7 @@ function post (request, response) {
         unauthorized.statusCode = 401
         return done(unauthorized)
       }
-      const handle = request.account.handle
+      handle = request.account.handle
       verifyPassword(handle, oldPassword, (error) => {
         if (error) {
           const invalidOldPassword = new Error('invalid password')
@@ -217,43 +216,44 @@ function post (request, response) {
 
   function changePassword (done) {
     if (token) {
-      return record({ type: 'useToken', token }, (error, tokenData) => {
+      return storage.token.read(token, (error, tokenData) => {
         if (error) return done(error)
         if (!tokenData || tokenData.action !== 'reset') {
           const failed = new Error('invalid token')
           failed.statusCode = 401
           return done(failed)
         }
-        const handle = tokenData.handle
-        record({
-          type: 'changePassword',
-          handle,
-          password
-        }, (error, updated) => {
+        request.record({ type: 'useToken', token }, (error) => {
           if (error) return done(error)
-          email = updated.email
-          done()
+          handle = tokenData.handle
+          request.record({
+            type: 'changePassword',
+            handle,
+            password
+          }, done)
         })
       })
     }
-    email = request.account.email
-    record({
+    request.record({
       type: 'changePassword',
-      handle: request.account.handle,
+      handle,
       password
     }, done)
   }
 
   function sendEMail (done) {
     // TODO: Improve password-change notification e-mails.
-    mail({
-      to: email,
-      subject: 'Password Change',
-      text: 'The password for your account was changed.'
-    }, (error) => {
-      // Log and eat errors.
-      if (error) request.log.error(error)
-      done()
+    storage.account.read(handle, (error, account) => {
+      if (error) return done(error)
+      mail({
+        to: account.email,
+        subject: 'Password Change',
+        text: 'The password for your account was changed.'
+      }, (error) => {
+        // Log and eat errors.
+        if (error) request.log.error(error)
+        done()
+      })
     })
   }
 }
