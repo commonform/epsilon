@@ -27,8 +27,8 @@ tape('server', (test) => {
             output.includes('<h1>Common Form</h1>'),
             'output includes <h1>Common Form</h1>'
           )
-          server.kill()
-          curl.kill()
+          server.kill(9)
+          curl.kill(9)
           rimraf.sync(directory)
           test.end()
         })
