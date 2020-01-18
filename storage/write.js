@@ -2,7 +2,6 @@ const TOKEN_LIFETIME = require('../constants/token-lifetime')
 const async = require('async')
 const expired = require('../util/expired')
 const has = require('has')
-const hashPassword = require('../util/hash-password')
 const normalize = require('commonform-normalize')
 const runSeries = require('run-series')
 const storage = require('./')
@@ -73,17 +72,14 @@ function publication (entry, callback) {
 function account (entry, callback) {
   const handle = entry.handle
   const email = entry.email
-  const password = entry.password
+  const passwordHash = entry.passwordHash
   const created = new Date().toISOString()
   const confirmed = false
-  hashPassword(password, (error, passwordHash) => {
-    if (error) return callback(error)
-    const record = { handle, email, passwordHash, created, confirmed }
-    runSeries([
-      (done) => { storage.account.create(handle, record, done) },
-      (done) => { storage.email.append(email, handle, done) }
-    ], callback)
-  })
+  const record = { handle, email, passwordHash, created, confirmed }
+  runSeries([
+    (done) => { storage.account.create(handle, record, done) },
+    (done) => { storage.email.append(email, handle, done) }
+  ], callback)
 }
 
 function confirmAccount (entry, callback) {
@@ -111,11 +107,8 @@ function changeEMail (entry, callback) {
 
 function changePassword (entry, callback) {
   const handle = entry.handle
-  const password = entry.password
-  hashPassword(password, (error, passwordHash) => {
-    if (error) return callback(error)
-    storage.account.update(handle, { passwordHash }, callback)
-  })
+  const passwordHash = entry.passwordHash
+  storage.account.update(handle, { passwordHash }, callback)
 }
 
 function confirmAccountToken (entry, callback) {

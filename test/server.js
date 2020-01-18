@@ -4,6 +4,7 @@ const assert = require('assert')
 const flushWriteStream = require('flush-write-stream')
 const fs = require('fs')
 const handler = require('../')
+const hashPassword = require('../util/hash-password')
 const http = require('http')
 const journal = require('../storage/journal')
 const path = require('path')
@@ -38,7 +39,12 @@ module.exports = (callback) => {
     },
     (done) => journalInstance.initialize(done),
     (done) => journalInstance.write({ type: 'form', form: NDA.form }, done),
-    (done) => journalInstance.write({ type: 'account', handle, email, password }, done),
+    (done) => {
+      hashPassword(password, (error, passwordHash) => {
+        if (error) return done(error)
+        journalInstance.write({ type: 'account', handle, email, passwordHash }, done)
+      })
+    },
     (done) => journalInstance.write({ type: 'confirmAccount', handle }, done)
   ], () => {
     const entries = journalInstance.watch()

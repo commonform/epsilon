@@ -3,6 +3,7 @@ const EMAIL_RE = require('../util/email-re')
 const eMailInput = require('./partials/email-input')
 const escape = require('../util/escape')
 const handleValidator = require('../validators/handle')
+const hashPassword = require('../util/hash-password')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const internalError = require('./internal-error')
@@ -137,7 +138,15 @@ function post (request, response) {
   }
 
   function recordAccount (done) {
-    request.record({ type: 'account', handle, email, password }, done)
+    hashPassword(password, (error, passwordHash) => {
+      if (error) return done(error)
+      request.record({
+        type: 'account',
+        handle,
+        email,
+        passwordHash
+      }, done)
+    })
   }
 
   function generateConfirmToken (done) {

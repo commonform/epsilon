@@ -47,6 +47,7 @@ function post (request, response) {
   let handle
   runSeries([
     readPostBody,
+    validateInputs,
     sendResetLink
   ], function (error) {
     if (error) {
@@ -90,6 +91,16 @@ function post (request, response) {
         })
         .once('finish', done)
     )
+  }
+
+  function validateInputs (done) {
+    let error
+    if (!handle) {
+      error = new Error('missing handle')
+      error.fieldName = 'handle'
+      return done(error)
+    }
+    done()
   }
 
   function sendResetLink (done) {

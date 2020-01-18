@@ -1,7 +1,12 @@
+const has = require('has')
 const runParallelLimit = require('run-parallel-limit')
 const storage = require('./')
 
-const validations = {
+const universalValidations = [
+  doesNotContainPassword
+]
+
+const typeSpecificValidations = {
   changeEMail: [handleExists],
   changePassword: [handleExists],
   confirmAccount: [handleExists],
@@ -12,15 +17,22 @@ const validations = {
 
 module.exports = (entry, callback) => {
   const type = entry.type
-  const validation = validations[type]
+  const validation = typeSpecificValidations[type]
   if (!validation) return setImmediate(callback)
   runParallelLimit(
-    validation.map((validator) => (done) => {
-      validator(entry, done)
-    }),
+    universalValidations
+      .concat(validation)
+      .map((validator) => (done) => {
+        validator(entry, done)
+      }),
     3,
     callback
   )
+}
+
+function doesNotContainPassword (entry, callback) {
+  if (has(entry, 'password')) callback(new Error('entry contains password'))
+  callback()
 }
 
 function handleExists (entry, callback) {

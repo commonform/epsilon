@@ -28,7 +28,6 @@ function get (request, response, error) {
 <!doctype html>
 <html lang=en-US>
   ${head()}
-  <body>
     ${header()}
     <main role=main>
       <h2>Log In</h2>
@@ -56,6 +55,7 @@ function post (request, response) {
   let handle, password, sessionID
   runSeries([
     readPostBody,
+    validateInputs,
     authenticate,
     createSession,
     issueCookie,
@@ -89,6 +89,21 @@ function post (request, response) {
         })
         .once('finish', done)
     )
+  }
+
+  function validateInputs (done) {
+    let error
+    if (!password) {
+      error = new Error('missing password')
+      error.fieldName = 'password'
+      return done(error)
+    }
+    if (!handle) {
+      error = new Error('missing handle')
+      error.fieldName = 'handle'
+      return done(error)
+    }
+    done()
   }
 
   function authenticate (done) {

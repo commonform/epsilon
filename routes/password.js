@@ -2,6 +2,7 @@ const Busboy = require('busboy')
 const UUID_RE = require('../util/uuid-re')
 const authenticate = require('./authenticate')
 const escape = require('../util/escape')
+const hashPassword = require('../util/hash-password')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const internalError = require('./internal-error')
@@ -22,8 +23,8 @@ module.exports = function (request, response) {
 }
 
 function get (request, response) {
+  if (request.query.token) return getWithToken(request, response)
   authenticate(request, response, () => {
-    if (request.query.token) return getWithToken(request, response)
     getAuthenticated(request, response)
   })
 }
@@ -191,6 +192,11 @@ function post (request, response) {
       error.fieldName = 'password'
       return done(error)
     }
+    if (!token && !oldPassword) {
+      error = new Error('missing old password')
+      error.fieldName = 'old'
+      return done(error)
+    }
     done()
   }
 
@@ -226,19 +232,23 @@ function post (request, response) {
         request.record({ type: 'useToken', token }, (error) => {
           if (error) return done(error)
           handle = tokenData.handle
-          request.record({
-            type: 'changePassword',
-            handle,
-            password
-          }, done)
+          recordChange()
         })
       })
     }
-    request.record({
-      type: 'changePassword',
-      handle,
-      password
-    }, done)
+
+    recordChange()
+
+    function recordChange () {
+      hashPassword(password, (error, passwordHash) => {
+        if (error) return done(error)
+        request.record({
+          type: 'changePassword',
+          handle,
+          passwordHash
+        }, done)
+      })
+    }
   }
 
   function sendEMail (done) {
