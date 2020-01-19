@@ -77,7 +77,7 @@ function account (entry, callback) {
   const confirmed = false
   const record = { handle, email, passwordHash, created, confirmed }
   runSeries([
-    (done) => { storage.account.create(handle, record, done) },
+    (done) => { storage.account.write(handle, record, done) },
     (done) => { storage.email.append(email, handle, done) }
   ], callback)
 }
@@ -117,7 +117,7 @@ function confirmAccountToken (entry, callback) {
   const token = entry.token
   const handle = entry.handle
   const tokenData = { action: 'confirm', created, handle }
-  storage.token.create(token, tokenData, callback)
+  storage.token.write(token, tokenData, callback)
 }
 
 function changeEMailToken (entry, callback) {
@@ -127,7 +127,7 @@ function changeEMailToken (entry, callback) {
   const token = entry.token
   const email = entry.email
   const tokenData = { action: 'email', created, handle, email }
-  storage.token.create(token, tokenData, callback)
+  storage.token.write(token, tokenData, callback)
 }
 
 function resetPasswordToken (entry, callback) {
@@ -136,7 +136,7 @@ function resetPasswordToken (entry, callback) {
   const token = entry.token
   const handle = entry.handle
   const tokenData = { action: 'reset', created, handle }
-  storage.token.create(token, tokenData, callback)
+  storage.token.write(token, tokenData, callback)
 }
 
 function useToken (entry, callback) {
@@ -147,7 +147,7 @@ function session (entry, callback) {
   const handle = entry.handle
   const id = entry.id
   const created = new Date().toISOString()
-  storage.session.create(id, { handle, created }, (error, success) => {
+  storage.session.write(id, { handle, created }, (error, success) => {
     if (error) return callback(error)
     if (!success) return callback(new Error('session collision'))
     callback()

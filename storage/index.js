@@ -53,10 +53,6 @@ function simpleFiles (subdirectory, options) {
     ? (id) => path.join(process.env.INDEX_DIRECTORY, subdirectory, complexID(id) + '.json')
     : (id) => path.join(process.env.INDEX_DIRECTORY, subdirectory, id + '.json')
   return {
-    create: (id, value, callback) => {
-      lock(filePath(id), (unlock) => createWithoutLocking(id, value, unlock(callback)))
-    },
-    createWithoutLocking,
     write: (id, value, callback) => {
       lock(filePath(id), (unlock) => writeWithoutLocking(id, value, unlock(callback)))
     },
@@ -96,15 +92,6 @@ function simpleFiles (subdirectory, options) {
     },
     deleteWithoutLocking,
     filePath
-  }
-
-  function createWithoutLocking (id, value, callback) {
-    const file = filePath(id)
-    const directory = path.dirname(file)
-    mkdirp(directory, (error) => {
-      if (error) return callback(error)
-      JSONFile.write({ file, data: value, serialization, flag: 'wx' }, callback)
-    })
   }
 
   function writeWithoutLocking (id, value, callback) {

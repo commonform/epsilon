@@ -1,13 +1,8 @@
-const flushWriteStream = require('flush-write-stream')
-const handler = require('./')
+const TCPLogClient = require('tcp-log-client')
 const http = require('http')
-const journal = require('./storage/journal')
+const makeHandler = require('./')
 const pino = require('pino')
-const pinoHTTP = require('pino-http')
-const pump = require('pump')
 const uuid = require('uuid')
-const validate = require('./storage/validate')
-const write = require('./storage/write')
 
 const log = pino({ server: uuid.v4() })
 
@@ -15,7 +10,6 @@ const log = pino({ server: uuid.v4() })
 
 requireEnvironmentVariable('BASE_HREF')
 requireEnvironmentVariable('INDEX_DIRECTORY')
-requireEnvironmentVariable('LOG_DIRECTORY')
 
 if (process.env.NODE_ENV !== 'test') {
   requireEnvironmentVariable('ADMIN_EMAIL')
@@ -34,52 +28,56 @@ function requireEnvironmentVariable (name) {
 
 // Server
 
-var journalInstance = journal()
-
-journalInstance.initialize((error) => {
-  if (error) {
-    log.error(error)
-    process.exit(1)
+const clientLog = log.child({ system: 'client' })
+const client = TCPLogClient({
+  server: {
+    host: process.env.TCP_LOG_SERVER_HOST || 'localhost',
+    port: process.env.TCP_LOG_SERVER_PORT
+      ? parseInt(process.env.TCP_LOG_SERVER_PORT)
+      : 4444
   }
-
-  const watcher = journalInstance.watch()
-  pump(watcher, flushWriteStream.obj((entry, _, done) => {
-    write(entry, done)
-  }))
-
-  const server = http.createServer((request, response) => {
-    pinoHTTP({ logger: log, genReqId: uuid.v4 })(request, response)
-    request.record = (entry, callback) => {
-      validate(entry, (error) => {
-        if (error) return callback(error)
-        journalInstance.write(entry, callback)
-      })
-    }
-    handler(request, response)
-  })
-
-  function close () {
-    log.info('closing')
-    server.close(() => {
-      watcher.close()
-      log.info('closed')
-      process.exit(0)
-    })
-  }
-
-  process.on('SIGINT', close)
-  process.on('SIGQUIT', close)
-  process.on('SIGTERM', close)
-  process.on('uncaughtException', (exception) => {
-    log.error(exception)
-    close()
-  })
-
-  server.listen(process.env.PORT || 8080, function () {
-    // If the environment set PORT=0, we'll get a random high port.
-    log.info({ port: this.address().port }, 'listening')
-  })
 })
+  .on('error', (error) => { clientLog.error(error) })
+  .on('fail', () => {
+    clientLog.error('fail')
+    server.close()
+  })
+logClientEvent('connect')
+logClientEvent('disconnect')
+logClientEvent('reconnect')
+logClientEvent('backoff')
+logClientEvent('ready')
+logClientEvent('current')
+
+function logClientEvent (event) {
+  client.on(event, () => { clientLog.info(event) })
+}
+
+const handler = makeHandler({ log, client })
+const server = http.createServer(handler)
+
+function close () {
+  log.info('closing')
+  server.close(() => {
+    log.info('closed')
+    process.exit(0)
+  })
+}
+
+process.on('SIGINT', close)
+process.on('SIGQUIT', close)
+process.on('SIGTERM', close)
+process.on('uncaughtException', (exception) => {
+  log.error(exception)
+  close()
+})
+
+server.listen(process.env.PORT || 8080, function () {
+  // If the environment set PORT=0, we'll get a random high port.
+  log.info({ port: this.address().port }, 'listening')
+})
+
+client.connect()
 
 // Job Scheduler
 
