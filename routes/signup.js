@@ -144,6 +144,7 @@ function post (request, response) {
         type: 'account',
         handle,
         email,
+        created: new Date().toISOString(),
         passwordHash
       }, done)
     })

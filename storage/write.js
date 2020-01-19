@@ -66,14 +66,14 @@ function publication (entry, callback) {
   const date = new Date().toISOString()
   const record = { digest, date }
 
-  storage.publication.create(id, record, callback)
+  storage.publication.write(id, record, callback)
 }
 
 function account (entry, callback) {
   const handle = entry.handle
   const email = entry.email
   const passwordHash = entry.passwordHash
-  const created = new Date().toISOString()
+  const created = entry.created
   const confirmed = false
   const record = { handle, email, passwordHash, created, confirmed }
   runSeries([

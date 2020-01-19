@@ -38,14 +38,26 @@ module.exports = (callback) => {
       })
     },
     (done) => journalInstance.initialize(done),
-    (done) => journalInstance.write({ type: 'form', form: NDA.form }, done),
+    (done) => journalInstance.write({
+      type: 'form',
+      form: NDA.form
+    }, done),
     (done) => {
       hashPassword(password, (error, passwordHash) => {
         if (error) return done(error)
-        journalInstance.write({ type: 'account', handle, email, passwordHash }, done)
+        journalInstance.write({
+          type: 'account',
+          created: new Date().toISOString(),
+          handle,
+          email,
+          passwordHash
+        }, done)
       })
     },
-    (done) => journalInstance.write({ type: 'confirmAccount', handle }, done)
+    (done) => journalInstance.write({
+      type: 'confirmAccount',
+      handle
+    }, done)
   ], () => {
     const entries = journalInstance.watch()
     pump(entries, flushWriteStream.obj((entry, _, done) => {
