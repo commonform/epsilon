@@ -4,6 +4,7 @@ const http = require('http')
 const login = require('./login')
 const normalize = require('commonform-normalize')
 const runParellel = require('run-parallel')
+const saveForm = require('./save-form')
 const server = require('./server')
 const tape = require('tape')
 const webdriver = require('./webdriver')
@@ -33,7 +34,7 @@ tape('edit new form', (test) => {
     let browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => saveForm({ markup, port, browser }))
+      .then(() => saveForm({ markup, port, browser, handle, password }))
       .then(() => browser.$('=test form'))
       .then((p) => {
         test.assert(p, 'text appears')
@@ -76,7 +77,7 @@ tape('edit existing form', (test) => {
     let browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => saveForm({ markup, port, browser }))
+      .then(() => saveForm({ markup, port, browser, handle, password }))
       .then(() => browser.navigateTo('http://localhost:' + port + '/edit?digest=' + digest))
       .then(() => browser.$('#editor'))
       .then((textarea) => textarea.getValue())
@@ -102,7 +103,7 @@ tape('save nested form', (test) => {
     let browser
     webdriver()
       .then((loaded) => { browser = loaded })
-      .then(() => saveForm({ markup, port, browser }))
+      .then(() => saveForm({ markup, port, browser, handle, password }))
       .then(() => {
         runParellel(
           digests.map((digest) => (done) => {
@@ -127,19 +128,6 @@ tape('save nested form', (test) => {
     }
   })
 })
-
-function saveForm (options) {
-  const markup = options.markup
-  const port = options.port
-  const browser = options.browser
-  return login({ browser, port, handle, password })
-    .then(() => browser.$('a=New Form'))
-    .then((a) => a.click())
-    .then(() => browser.$('#editor'))
-    .then((input) => input.setValue(markup))
-    .then(() => browser.$('button[type="submit"]'))
-    .then((submit) => submit.click())
-}
 
 tape('save invalid markup', (test) => {
   const invalidMarkup = '<h1>invalid</h1>'

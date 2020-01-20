@@ -1,7 +1,10 @@
 const JSONFile = require('./json-file')
+const async = require('async')
 const fs = require('fs')
+const has = require('has')
 const lock = require('lock').Lock()
 const mkdirp = require('mkdirp')
+const normalize = require('commonform-normalize')
 const path = require('path')
 const serialize = require('commonform-serialize')
 
@@ -11,7 +14,8 @@ module.exports = {
   token: simpleFiles('tokens'),
   session: simpleFiles('sessions'),
   form: simpleFiles('forms', { serialization: serialize }),
-  comment: appendOnlyLists('comments'),
+  comment: simpleFiles('comments'),
+  formComment: appendOnlyLists('formComments'),
   publication: simpleFiles('publications', {
     complexID: (argument) => path.join(
       argument.publisher,
@@ -44,6 +48,89 @@ token.use = (id, callback) => {
       })
     })
   })
+}
+
+const form = module.exports.form
+const comment = module.exports.comment
+const formComment = module.exports.formComment
+
+formComment.find = (options, callback) => {
+  const formDigest = options.form // optional
+  const contextDigest = options.context
+  form.read(contextDigest, (error, context) => {
+    if (error) return callback(error)
+    if (!context) return callback(new Error('context not found'))
+    const contexts = computeContexts(context)
+    if (formDigest && !has(contexts, formDigest)) {
+      return callback(new Error('form not in context'))
+    }
+    const comments = []
+    const digestQueue = async.queue((digest, done) => {
+      formComment.read(digest, (error, ids) => {
+        if (error) return done(error)
+        if (ids.length === 0) return done()
+        const readQueue = async.queue((id, done) => {
+          comment.read(id, (error, comment) => {
+            if (error) return done(error)
+            if (!comment) return done()
+            comments.push(comment)
+            done()
+          })
+        })
+        readQueue.error((error, task) => {
+          readQueue.kill()
+          done(error)
+        })
+        readQueue.drain(done)
+        ids.forEach((id) => { readQueue.push(id) })
+      })
+    })
+    digestQueue.error((error, task) => {
+      digestQueue.kill()
+      callback(error)
+    })
+    digestQueue.drain(() => {
+      callback(null, comments)
+    })
+    if (!formDigest) {
+      Object.keys(contexts).forEach((digest) => {
+        digestQueue.push(digest)
+      })
+    } else {
+      Object.keys(contexts).forEach((digest) => {
+        if (
+          // The form is query.form itself.
+          digest === formDigest ||
+          // The form is a child of query.form.
+          contexts[digest].includes(formDigest)
+        ) digestQueue.push(digest)
+      })
+    }
+  })
+}
+
+// Produces an object map from digest to an array of parent digests.
+function computeContexts (form) {
+  const normalized = normalize(form)
+  const result = {}
+  // Initialze an empty array property for each digest.
+  Object.keys(normalized).forEach(digest => {
+    if (digest !== 'root') result[digest] = []
+  })
+  return recurse(normalized.root, [], result)
+
+  function recurse (digest, parents, result) {
+    // Push every parent's digest to the list of parents.
+    parents.forEach(parent => { result[digest].push(parent) })
+    // Iterate children.
+    normalized[digest].content.forEach(element => {
+      const isChild = typeof element === 'object' && element.digest
+      if (isChild) {
+        recurse(element.digest, parents.concat(digest), result)
+      }
+    })
+    return result
+  }
 }
 
 function simpleFiles (subdirectory, options) {
@@ -159,7 +246,7 @@ function appendOnlyLists (subdirectory) {
         if (error.code === 'ENOENT') return callback(null, [])
         return callback(error)
       }
-      callback(null, data.split('\n'))
+      callback(null, data.split('\n').slice(0, -1))
     })
   }
 

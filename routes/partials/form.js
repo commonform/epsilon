@@ -121,23 +121,7 @@ function renderForm (options) {
     tree
   } = options
   let offset = 0
-  let commentsHere = comments.filter((annotation) => {
-    return samePath(annotation.path.slice(0, -2), path)
-  })
-  const uniqueCommentsHere = []
-  commentsHere.forEach((annotation) => {
-    var already = uniqueCommentsHere.find((otherAnnotation) => {
-      return annotation.message === otherAnnotation.message
-    })
-    if (already) already.count++
-    else {
-      annotation.count = 1
-      uniqueCommentsHere.push(annotation)
-    }
-  })
   const digest = tree.digest
-  commentsHere = comments
-    .filter((comment) => comment.form === digest)
   const formGroups = form && group(form)
   const loadedGroups = group(loaded)
     .map((loadedGroup, index) => {
@@ -168,7 +152,7 @@ function renderForm (options) {
     ${loadedGroups}
     ${renderComments({
       account,
-      comments: commentsHere,
+      comments: comments.filter(comment => comment.form === digest),
       root: digest
     })}
   `
@@ -205,18 +189,14 @@ function renderCommentForm (options) {
   }
 
   return html`
-    <button class="commentButton yesscript">
+    <button class="commentButton">
       ${replyTo ? 'Reply' : 'Comment'}
     </button>
-    <form class="comment commentForm hidden" action=/comment method=post>
+    <form class="comment commentForm hidden" action=/comments method=post>
       ${contextMarkup}
       ${replyTos}
       <input type=hidden name=form value=${form}>
       <textarea name=text required></textarea>
-      <label>
-        <input type=checkbox name=subscribe>
-        E-Mail Notifications
-      </label>
       <button type=submit>Publish Comment</button>
     </form>
   `
@@ -269,8 +249,8 @@ function renderComment (options) {
     <aside class=comment id=${uuid}>
       ${content}
       <p class=byline>
-        &mdash;&nbsp;${publisherLink(comment.publisher)},
-        ${escape(longDate(new Date(parseInt(comment.timestamp))))}
+        &mdash;&nbsp;${publisherLink(comment.handle)},
+        ${escape(longDate(new Date(comment.date)))}
       </p>
       ${children}
       ${account && replyForm}
@@ -306,9 +286,10 @@ function renderSeries (options) {
         conspicuous: loadedForm.conspicuous,
         component: resolution
       })
+      const heading = loadedChild.heading
       return html`
         <section class="${classes}">
-        ${'heading' in loadedChild && renderHeading(loadedChild.heading)}
+        ${heading && renderHeading(heading)}
         ${resolution && resolutionLink(resolution)}
         ${renderForm({
           account,

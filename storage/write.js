@@ -10,6 +10,7 @@ const writers = {
   confirmAccount,
   changeEMail,
   changePassword,
+  comment,
   form,
   publication,
   confirmAccountToken,
@@ -33,6 +34,10 @@ function form (entry, callback) {
   const queue = async.queue((task, done) => {
     storage.form.write(task.digest, task.form, done)
   }, 3)
+  queue.error((error, _) => {
+    queue.kill()
+    callback(error)
+  })
   queue.drain(callback)
   Object.keys(forms).map((digest) => {
     queue.push({ digest, form: forms[digest] })
@@ -152,4 +157,11 @@ function session (entry, callback) {
     if (!success) return callback(new Error('session collision'))
     callback()
   })
+}
+
+function comment (entry, callback) {
+  runSeries([
+    done => storage.comment.write(entry.id, entry, done),
+    done => storage.formComment.append(entry.form, entry.id, done)
+  ])
 }

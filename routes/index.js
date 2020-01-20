@@ -7,6 +7,8 @@ const routes = module.exports = require('http-hash')()
 // Reminder: Add new route names to handle blacklist.
 routes.set('/', require('./homepage'))
 routes.set('/account', require('./account'))
+routes.set('/comments/:id', require('./comment'))
+routes.set('/comments', require('./comments'))
 routes.set('/confirm', require('./confirm'))
 routes.set('/edit', require('./edit'))
 routes.set('/email', require('./email'))

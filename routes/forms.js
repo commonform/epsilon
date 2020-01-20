@@ -12,6 +12,7 @@ const notFound = require('./not-found')
 const projectValidator = require('../validators/project')
 const pump = require('pump')
 const renderForm = require('./partials/form')
+const runAuto = require('run-auto')
 const storage = require('../storage')
 
 module.exports = (request, response) => {
@@ -31,13 +32,36 @@ module.exports = (request, response) => {
         response
       )
     }
-    storage.form.read(digest, (error, form) => {
-      if (error) return internalError(request, response, error)
-      if (!form) return notFound(request, response)
-      loadComponents(form, {}, (error, loadedForm, resolutions) => {
-        if (error) return internalError(request, response, error)
-        response.setHeader('Content-Type', 'text/html')
-        response.end(`
+    runAuto({
+      form: done => {
+        storage.form.read(digest, (error, form) => {
+          if (error) return done(error)
+          if (!form) {
+            const error = new Error('not found')
+            error.statusCode = 404
+            return done(error)
+          }
+          done(null, form)
+        })
+      },
+      loaded: ['form', (results, done) => {
+        loadComponents(results.form, {}, (error, form, resolutions) => {
+          if (error) return done(error)
+          done(null, { form, resolutions })
+        })
+      }],
+      comments: (done) => {
+        storage.formComment.find({ context: digest }, done)
+      }
+    }, (error, results) => {
+      if (error) {
+        if (error.statusCode === 404) {
+          return notFound(request, response)
+        }
+        return internalError(request, response, error)
+      }
+      response.setHeader('Content-Type', 'text/html')
+      response.end(`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -48,16 +72,17 @@ module.exports = (request, response) => {
       <a class=button href=/edit?digest=${escape(digest)}>Edit this Form</a>
       ${renderForm({
         account: request.account,
-        form,
-        loaded: loadedForm,
-        resolutions
+        comments: results.comments,
+        form: results.form,
+        loaded: results.loaded.form,
+        resolutions: results.loaded.resolutions
       })}
       ${request.account ? publishForm(digest) : ''}
     </main>
   </body>
+  <script src=/comments.js></script>
 </html>
       `.trim())
-      })
     })
   })
 }

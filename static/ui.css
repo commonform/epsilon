@@ -74,3 +74,9 @@ a[href]:hover {
 }
 
 .hidden, .yesscript { display: none; }
+
+.comment {
+  border: 1px solid #777;
+  margin: 1rem 0;
+  padding: 1rem;
+}
