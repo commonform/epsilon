@@ -99,7 +99,7 @@ function formInContext (entry, callback) {
 function validReply (entry, callback) {
   if (entry.replyTo.length === 0) return callback()
   const parentID = entry.replyTo[0]
-  storage.entry.read(parentID, (error, parent) => {
+  storage.comment.read(parentID, (error, parent) => {
     if (error) return callback(error)
     var isReply = (
       entry.context === parent.context &&
