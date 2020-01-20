@@ -39,37 +39,37 @@ function doesNotContainPassword (entry, callback) {
 }
 
 function handleExists (entry, callback) {
-  storage.account.read(entry.handle, (error, account) => {
+  storage.account.exists(entry.handle, (error, exists) => {
     if (error) return callback(error)
-    if (!account) callback(new Error('no such handle'))
+    if (!exists) callback(new Error('no such handle'))
     callback()
   })
 }
 
 function tokenExists (entry, callback) {
-  storage.token.read(entry.token, (error, data) => {
+  storage.token.exists(entry.token, (error, exists) => {
     if (error) return callback(error)
-    if (!data) callback(new Error('no such token'))
+    if (!exists) callback(new Error('no such token'))
     callback()
   })
 }
 
 function publicationDoesNotExist (entry, callback) {
-  storage.publication.read({
+  storage.publication.exists({
     edition: entry.edition,
     project: entry.project,
     publisher: entry.publisher
-  }, (error, data) => {
+  }, (error, exists) => {
     if (error) return callback(error)
-    if (data) return callback(new Error('publication exists'))
+    if (exists) return callback(new Error('publication exists'))
     callback()
   })
 }
 
 function formExists (entry, callback) {
-  storage.form.read(entry.form, (error, data) => {
+  storage.form.exists(entry.form, (error, exists) => {
     if (error) return callback(error)
-    if (!data) return callback(new Error('no such form'))
+    if (!exists) return callback(new Error('no such form'))
     callback()
   })
 }

@@ -152,6 +152,17 @@ function simpleFiles (subdirectory, options) {
     createRawReadStream: id => {
       return fs.createReadStream(filePath(id), 'utf8')
     },
+    exists: (id, callback) => {
+      fs.access(filePath(id), error => {
+        if (error) {
+          if (error.code === 'ENOENT') {
+            return callback(null, false)
+          }
+          return callback(error)
+        }
+        callback(null, true)
+      })
+    },
     update: (id, properties, callback) => {
       const file = filePath(id)
       lock(file, unlock => {
