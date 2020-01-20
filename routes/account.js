@@ -3,6 +3,7 @@ const escape = require('../util/escape')
 const found = require('./found')
 const head = require('./partials/head')
 const header = require('./partials/header')
+const html = require('./html')
 const methodNotAllowed = require('./method-not-allowed')
 const nav = require('./partials/nav')
 
@@ -12,7 +13,7 @@ module.exports = (request, response) => {
     const account = request.account
     if (!account) return found(request, response, '/login')
     response.setHeader('Content-Type', 'text/html')
-    response.end(`
+    response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -40,6 +41,6 @@ module.exports = (request, response) => {
     </main>
   </body>
 </html>
-    `.trim())
+    `)
   })
 }

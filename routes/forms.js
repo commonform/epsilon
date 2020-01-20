@@ -4,6 +4,7 @@ const editionValidator = require('../validators/edition')
 const escape = require('../util/escape')
 const head = require('./partials/head')
 const header = require('./partials/header')
+const html = require('./html')
 const internalError = require('./internal-error')
 const loadComponents = require('commonform-load-components')
 const methodNotAllowed = require('./method-not-allowed')
@@ -61,7 +62,7 @@ module.exports = (request, response) => {
         return internalError(request, response, error)
       }
       response.setHeader('Content-Type', 'text/html')
-      response.end(`
+      response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -82,13 +83,13 @@ module.exports = (request, response) => {
   </body>
   <script src=/comments.js></script>
 </html>
-      `.trim())
+      `)
     })
   })
 }
 
 function publishForm (digest) {
-  return `
+  return html`
 <form id=publishForm action=/publications method=post>
   <input type=hidden name=digest value="${escape(digest)}">
   <label for=project>Project Name</label>
@@ -99,5 +100,5 @@ function publishForm (digest) {
   <p>${editionValidator.html}</p>
   <button type=submit>Publish</button>
 </form>
-  `.trim()
+  `
 }

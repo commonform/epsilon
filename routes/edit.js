@@ -6,6 +6,7 @@ const escape = require('../util/escape')
 const found = require('./found')
 const head = require('./partials/head')
 const header = require('./partials/header')
+const html = require('./html')
 const internalError = require('./internal-error')
 const methodNotAllowed = require('./method-not-allowed')
 const nav = require('./partials/nav')
@@ -41,7 +42,7 @@ function get (request, response, parameters) {
       ? `<p class=error>${escape(parameters.flash)}</p>`
       : ''
     response.setHeader('Content-Type', 'text/html')
-    response.end(`
+    response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -59,7 +60,7 @@ function get (request, response, parameters) {
     <script src=/editor.bundle.js></script>
   </body>
 </html>
-    `.trim())
+    `)
   })
 }
 

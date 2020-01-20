@@ -6,6 +6,7 @@ const handleValidator = require('../validators/handle')
 const hashPassword = require('../util/hash-password')
 const head = require('./partials/head')
 const header = require('./partials/header')
+const html = require('./html')
 const internalError = require('./internal-error')
 const mail = require('../mail')
 const methodNotAllowed = require('./method-not-allowed')
@@ -27,7 +28,7 @@ function get (request, response, data) {
   const error = data.error
   if (error) response.statusCode = 400
   response.setHeader('Content-Type', 'text/html')
-  response.end(`
+  response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -39,7 +40,7 @@ function get (request, response, data) {
     </main>
   </body>
 </html>
-  `.trim())
+  `)
 }
 
 function post (request, response) {
@@ -62,7 +63,7 @@ function post (request, response) {
       }
     }
     response.setHeader('Content-Type', 'text/html')
-    response.end(`
+    response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -74,7 +75,7 @@ function post (request, response) {
     </main>
   </body>
 </html>
-    `.trim())
+    `)
   })
 
   function readPostBody (done) {
@@ -185,7 +186,7 @@ function signUpForm (data) {
   data = data || {}
   const error = data.error
   const errorMessage = error ? `<p class=error>${escape(error.message)}</p>` : ''
-  return `
+  return html`
 <form method=post>
   ${errorMessage}
   ${eMailInput({ autofocus: true, value: data.email })}
@@ -203,7 +204,7 @@ function signUpForm (data) {
   ${passwordInputs()}
   <button type=submit>Join</button>
 </form>
-  `.trim()
+  `
 
   function value (fieldName) {
     return data[fieldName] || ''

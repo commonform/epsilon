@@ -3,6 +3,7 @@ const clearCookie = require('./clear-cookie')
 const escape = require('../util/escape')
 const head = require('./partials/head')
 const header = require('./partials/header')
+const html = require('./html')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
 const setCookie = require('./set-cookie')
@@ -24,7 +25,7 @@ function get (request, response, error) {
     ? `<p class=message>${escape(message)}</p>`
     : ''
   response.setHeader('Content-Type', 'text/html')
-  response.end(`
+  response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -48,7 +49,7 @@ function get (request, response, error) {
     </main>
   </body>
 </html>
-  `.trim())
+  `)
 }
 
 function post (request, response) {

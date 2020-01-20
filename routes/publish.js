@@ -3,15 +3,16 @@ const DIGEST_RE = require('../util/digest-re')
 const authenticate = require('./authenticate')
 const editionValidator = require('../validators/edition')
 const escape = require('../util/escape')
-const renderForm = require('./partials/form')
 const found = require('./found')
 const head = require('./partials/head')
 const header = require('./partials/header')
+const html = require('./html')
 const internalError = require('./internal-error')
 const loadComponents = require('commonform-load-components')
 const methodNotAllowed = require('./method-not-allowed')
 const nav = require('./partials/nav')
 const projectValidator = require('../validators/project')
+const renderForm = require('./partials/form')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
 const storage = require('../storage')
@@ -52,7 +53,7 @@ function post (request, response) {
     loadComponents(form, {}, (error, loadedForm, resolutions) => {
       if (error) return internalError(request, response, error)
       response.setHeader('Content-Type', 'text/html')
-      response.end(`
+      response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -70,12 +71,12 @@ function post (request, response) {
     </main>
   </body>
 </html>
-      `.trim())
+      `)
     })
   })
 
   function confirmationForm () {
-    return `
+    return html`
 <form id=publishForm method=post>
   <table>
     <tr>
@@ -101,7 +102,7 @@ function post (request, response) {
   <input type=hidden name=proofed value=true>
   <button type=submit>Publish</button>
 </form>
-    `.trim()
+    `
   }
 
   function readPostBody (done) {

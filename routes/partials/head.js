@@ -1,5 +1,7 @@
+const html = require('../html')
+
 module.exports = () => {
-  return `
+  return html`
 <head>
   <meta charset=UTF-8>
   <title>Common Form</title>
@@ -7,5 +9,5 @@ module.exports = () => {
   <link rel=stylesheet type=text/css href=/ui.css>
   <link rel=stylesheet type=text/css href=/forms.css>
 </head>
-  `.trim()
+  `
 }

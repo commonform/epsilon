@@ -1,6 +1,8 @@
+const html = require('../html')
+
 module.exports = (session) => {
   const handle = session && session.handle
-  return `
+  return html`
 <nav role=navigation>
   ${!handle ? '<a class=button href=/login>Log In</a>' : ''}
   ${!handle ? '<a class=button href=/signup>Sign Up</a>' : ''}
@@ -8,5 +10,5 @@ module.exports = (session) => {
   ${handle ? '<a class=button href=/logout>Log Out</a>' : ''}
   ${handle ? '<a class=button href=/account>Account</a>' : ''}
 </nav>
-  `.trim()
+  `
 }

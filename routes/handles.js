@@ -2,6 +2,7 @@ const Busboy = require('busboy')
 const escape = require('../util/escape')
 const head = require('./partials/head')
 const header = require('./partials/header')
+const html = require('./html')
 const mail = require('../mail')
 const runParallelLimit = require('run-parallel-limit')
 const runSeries = require('run-series')
@@ -21,7 +22,7 @@ function get (request, response, error) {
     ? `<p class=message>${escape(message)}</p>`
     : ''
   response.setHeader('Content-Type', 'text/html')
-  response.end(`
+  response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -40,7 +41,7 @@ function get (request, response, error) {
     </main>
   </body>
 </html>
-  `.trim())
+  `)
 }
 
 function post (request, response) {
@@ -59,7 +60,7 @@ function post (request, response) {
       return response.end()
     }
     response.setHeader('Content-Type', 'text/html')
-    response.end(`
+    response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -71,7 +72,7 @@ function post (request, response) {
     </main>
   </body>
 </html>
-    `.trim())
+    `)
   })
 
   function readPostBody (done) {

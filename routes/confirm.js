@@ -1,6 +1,7 @@
 const UUID_RE = require('../util/uuid-re')
 const head = require('./partials/head')
 const header = require('./partials/header')
+const html = require('./html')
 const internalError = require('./internal-error')
 const methodNotAllowed = require('./method-not-allowed')
 const nav = require('./partials/nav')
@@ -36,7 +37,7 @@ module.exports = function (request, response) {
         request.record({ type: 'changeEMail', handle, email }, (error) => {
           if (error) return internalError(request, response, error)
           response.setHeader('Content-Type', 'text/html')
-          response.end(`
+          response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -49,7 +50,7 @@ module.exports = function (request, response) {
     </main>
   </body>
 </html>
-          `.trim())
+          `)
         })
       }
     })
@@ -59,7 +60,7 @@ module.exports = function (request, response) {
 function invalidToken (request, response) {
   response.statusCode = 400
   response.setHeader('Content-Type', 'text/html')
-  return response.end(`
+  return response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -71,5 +72,5 @@ function invalidToken (request, response) {
     </main>
   </body>
 </html>
-  `.trim())
+  `)
 }

@@ -1,7 +1,8 @@
 const escape = require('../../util/escape')
+const html = require('../html')
 
 module.exports = (options) => {
-  return `
+  return html`
 <p>
   <label for=email>E-Mail</label>
   <input
@@ -11,5 +12,5 @@ module.exports = (options) => {
       ${options.autofocus ? 'autofocus' : ''}
       required>
 </p>
-  `.trim()
+  `
 }

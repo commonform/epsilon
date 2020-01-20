@@ -1,10 +1,11 @@
 const escape = require('../../util/escape')
+const html = require('../html')
 const passwordValidator = require('../../validators/password')
 
 module.exports = (options) => {
   options = options || {}
   const label = options.label || 'Password'
-  return `
+  return html`
 <p>
   <label for=password>${escape(label)}</label>
   <input
@@ -24,5 +25,5 @@ module.exports = (options) => {
       autocomplete=off>
 </p>
 <p>${escape(passwordValidator.html)}</p>
-  `.trim()
+  `
 }

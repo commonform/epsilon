@@ -3,6 +3,7 @@ const escape = require('../util/escape')
 const handleValidator = require('../validators/handle')
 const head = require('./partials/head')
 const header = require('./partials/header')
+const html = require('./html')
 const internalError = require('./internal-error')
 const loadComponents = require('commonform-load-components')
 const methodNotAllowed = require('./method-not-allowed')
@@ -39,7 +40,7 @@ module.exports = (request, response) => {
     loadComponents(form, {}, (error, loaded, resolutions) => {
       if (error) return internalError(request, response, error)
       response.setHeader('Content-Type', 'text/html')
-      response.end(`
+      response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -56,7 +57,7 @@ module.exports = (request, response) => {
     </main>
   </body>
 </html>
-        `.trim())
+        `)
     })
   })
 }
