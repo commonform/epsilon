@@ -20,22 +20,20 @@ tape('publish', (test) => {
       .then(() => browser.$('a=New Form'))
       .then((a) => a.click())
       .then(() => browser.$('#editor'))
-      .then((input) => input.setValue(markup))
-      .then(() => browser.$('button[type="submit"]'))
-      .then((submit) => submit.click())
+      .then((editor) => editor.setValue(markup))
+      .then(() => click('button[type="submit"]'))
+      .then(() => { test.pass('submitted form') })
       // Publish.
-      .then(() => browser.$('input[name="project"]'))
-      .then((input) => input.addValue(project))
-      .then(() => browser.$('input[name="edition"]'))
-      .then((input) => input.addValue(edition))
-      .then(() => browser.$('button[type="submit"]'))
-      .then((submit) => submit.click())
+      .then(() => addValue('input[name="project"]', project))
+      .then(() => addValue('input[name="edition"]', edition))
+      .then(() => click('#publishForm button[type="submit"]'))
+      .then(() => { test.pass('submitted') })
       // Confirm
       .then(() => browser.$('h2'))
       .then((h2) => h2.getText())
       .then((text) => { test.equal(text, 'Proofread and Publish') })
-      .then(() => browser.$('button[type="submit"]'))
-      .then((submit) => submit.click())
+      .then(() => click('#publishForm button[type="submit"]'))
+      .then(() => { test.pass('proofed') })
       .then(() => browser.$('h2'))
       .then((h2) => h2.getText())
       .then((text) => test.equal(text, project + ' ' + edition, 'heading'))
@@ -44,6 +42,21 @@ tape('publish', (test) => {
         test.fail(error)
         finish()
       })
+
+    function addValue (selector, value) {
+      return browser.$(selector)
+        .then((element) => element.waitForEnabled())
+        .then(() => browser.$(selector))
+        .then((element) => element.addValue(value))
+    }
+
+    function click (selector) {
+      return browser.$(selector)
+        .then((element) => element.waitForClickable())
+        .then(() => browser.$(selector))
+        .then((element) => element.click())
+    }
+
     function finish () {
       test.end()
       done()

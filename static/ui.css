@@ -72,3 +72,5 @@ a[href] {
 a[href]:hover {
   text-decoration: underline;
 }
+
+.hidden, .yesscript { display: none; }

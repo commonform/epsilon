@@ -8,9 +8,9 @@
 // These make it much more convenient do achieve conditional markup
 // using boolean expressions, without control structures.
 module.exports = function html (/* strings, values... */) {
-  const strings = arguments[0]
-  const values = Array.prototype.slice.call(arguments, 1)
-  let result = ''
+  var strings = arguments[0]
+  var values = Array.prototype.slice.call(arguments, 1)
+  var result = ''
   strings.forEach(function (string, index) {
     result += string
     if (index < values.length) {

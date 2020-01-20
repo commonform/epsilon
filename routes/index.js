@@ -20,6 +20,7 @@ routes.set('/reset', require('./reset'))
 routes.set('/signup', require('./signup'))
 
 const STATIC_FILES = [
+  'comments.js',
   'editor.bundle.js',
   'favicon.ico',
   'forms.css',

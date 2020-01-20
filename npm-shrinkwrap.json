@@ -1491,6 +1491,24 @@
         "sha.js": "^2.4.8"
       }
     },
+    "create-html-element": {
+      "version": "2.1.0",
+      "resolved": "https://registry.npmjs.org/create-html-element/-/create-html-element-2.1.0.tgz",
+      "integrity": "sha512-ofbOpJh3GSDsyINuqppupKRUcQHnXSyvwvk0F5DlEtwKwb+thdFoJAtYczy7bIZWdsQjZfADUc38pF4gVd0o+Q==",
+      "requires": {
+        "escape-goat": "^1.3.0",
+        "html-tags": "^2.0.0",
+        "stringify-attributes": "^1.0.0",
+        "type-fest": "^0.3.0"
+      },
+      "dependencies": {
+        "type-fest": {
+          "version": "0.3.1",
+          "resolved": "https://registry.npmjs.org/type-fest/-/type-fest-0.3.1.tgz",
+          "integrity": "sha512-cUGJnCdr4STbePCgqNFbpVNCepa+kAVohJs1sLhxzdH+gnEoOd8VhbYa7pD3zZYGiURWM2xzEII3fQcRizDkYQ=="
+        }
+      }
+    },
     "cron-parser": {
       "version": "2.13.0",
       "resolved": "https://registry.npmjs.org/cron-parser/-/cron-parser-2.13.0.tgz",
@@ -1932,6 +1950,11 @@
         "is-date-object": "^1.0.1",
         "is-symbol": "^1.0.2"
       }
+    },
+    "escape-goat": {
+      "version": "1.3.0",
+      "resolved": "https://registry.npmjs.org/escape-goat/-/escape-goat-1.3.0.tgz",
+      "integrity": "sha512-E2nU1Y39N5UgfLU8qwMlK0vZrZprIwWLeVmDYN8wd/e37hMtGzu2w1DBiREts0XHfgyZEQlj/hYr0H0izF0HDQ=="
     },
     "escape-html": {
       "version": "1.0.3",
@@ -2727,6 +2750,11 @@
       "resolved": "https://registry.npmjs.org/html-entities/-/html-entities-1.2.1.tgz",
       "integrity": "sha1-DfKTUfByEWNRXfueVUPl9u7VFi8="
     },
+    "html-tags": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/html-tags/-/html-tags-2.0.0.tgz",
+      "integrity": "sha1-ELMKOGCF9Dzt41PMj6fLDe7qZos="
+    },
     "htmlescape": {
       "version": "1.1.1",
       "resolved": "https://registry.npmjs.org/htmlescape/-/htmlescape-1.1.1.tgz",
@@ -3238,6 +3266,14 @@
         "spdx-whitelisted": "^1.0.0"
       }
     },
+    "linkify-urls": {
+      "version": "3.1.0",
+      "resolved": "https://registry.npmjs.org/linkify-urls/-/linkify-urls-3.1.0.tgz",
+      "integrity": "sha512-WLBS5zng9FCiFT30j1QkjExDBp9wNw1oBpY4oS8vbOyIZZt6+JSymPir/xrWyS+Bu1ban3pj0nukJI7ctpCLWw==",
+      "requires": {
+        "create-html-element": "^2.1.0"
+      }
+    },
     "load-json-file": {
       "version": "2.0.0",
       "resolved": "https://registry.npmjs.org/load-json-file/-/load-json-file-2.0.0.tgz",
@@ -3375,6 +3411,11 @@
       "version": "1.0.2",
       "resolved": "https://registry.npmjs.org/markdown-escape/-/markdown-escape-1.0.2.tgz",
       "integrity": "sha1-cYSuJFVMSehLgv1WSP4qU9H5Gwg="
+    },
+    "markdown-link": {
+      "version": "0.1.1",
+      "resolved": "https://registry.npmjs.org/markdown-link/-/markdown-link-0.1.1.tgz",
+      "integrity": "sha1-MsXGUZmmRXMWMi0eQinRNAfIx88="
     },
     "md5.js": {
       "version": "1.3.5",
@@ -3858,6 +3899,14 @@
       "dev": true,
       "requires": {
         "error-ex": "^1.2.0"
+      }
+    },
+    "parse-mentions": {
+      "version": "0.1.0",
+      "resolved": "https://registry.npmjs.org/parse-mentions/-/parse-mentions-0.1.0.tgz",
+      "integrity": "sha1-fWVLFJBXvO1vEvac7VOhxWJqPiM=",
+      "requires": {
+        "extend-shallow": "^2.0.1"
       }
     },
     "path-browserify": {
@@ -5040,6 +5089,14 @@
         "safe-buffer": "~5.1.0"
       }
     },
+    "stringify-attributes": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/stringify-attributes/-/stringify-attributes-1.0.0.tgz",
+      "integrity": "sha1-nosvmpRn57SAk8shJOvBwX5jgsU=",
+      "requires": {
+        "escape-goat": "^1.1.0"
+      }
+    },
     "strip-ansi": {
       "version": "6.0.0",
       "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.0.tgz",
@@ -5299,6 +5356,16 @@
       "resolved": "https://registry.npmjs.org/to-fast-properties/-/to-fast-properties-2.0.0.tgz",
       "integrity": "sha1-3F5pjL0HkmW8c+A3doGk5Og/YW4=",
       "dev": true
+    },
+    "to-mention-link": {
+      "version": "0.1.0",
+      "resolved": "https://registry.npmjs.org/to-mention-link/-/to-mention-link-0.1.0.tgz",
+      "integrity": "sha1-1cGezlJSHCWVQc8porEZ2+bpbA4=",
+      "requires": {
+        "extend-shallow": "^2.0.1",
+        "markdown-link": "^0.1.1",
+        "parse-mentions": "^0.1.0"
+      }
     },
     "toidentifier": {
       "version": "1.0.0",

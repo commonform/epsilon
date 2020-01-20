@@ -62,7 +62,11 @@ function post (request, response) {
     <main role=main>
       <h2>Proofread and Publish</h2>
       ${confirmationForm()}
-      ${renderForm(form, { form: loadedForm, resolutions })}
+      ${renderForm({
+        form,
+        loaded: loadedForm,
+        resolutions
+      })}
     </main>
   </body>
 </html>
@@ -72,7 +76,7 @@ function post (request, response) {
 
   function confirmationForm () {
     return `
-<form method=post>
+<form id=publishForm method=post>
   <table>
     <tr>
       <td>Handle</td>
@@ -94,7 +98,7 @@ function post (request, response) {
   <input type=hidden name=digest value="${escape(body.digest)}">
   <input type=hidden name=project value="${escape(body.project)}">
   <input type=hidden name=edition value="${escape(body.edition)}">
-  <input type=hidden name=proofed value="true">
+  <input type=hidden name=proofed value=true>
   <button type=submit>Publish</button>
 </form>
     `.trim()

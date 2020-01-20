@@ -2,7 +2,6 @@ const DIGEST_RE = require('../util/digest-re')
 const authenticate = require('./authenticate')
 const editionValidator = require('../validators/edition')
 const escape = require('../util/escape')
-const form = require('./partials/form')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const internalError = require('./internal-error')
@@ -12,6 +11,7 @@ const nav = require('./partials/nav')
 const notFound = require('./not-found')
 const projectValidator = require('../validators/project')
 const pump = require('pump')
+const renderForm = require('./partials/form')
 const storage = require('../storage')
 
 module.exports = (request, response) => {
@@ -31,10 +31,10 @@ module.exports = (request, response) => {
         response
       )
     }
-    storage.form.read(digest, (error, rawForm) => {
+    storage.form.read(digest, (error, form) => {
       if (error) return internalError(request, response, error)
-      if (!rawForm) return notFound(request, response)
-      loadComponents(rawForm, {}, (error, loadedForm, resolutions) => {
+      if (!form) return notFound(request, response)
+      loadComponents(form, {}, (error, loadedForm, resolutions) => {
         if (error) return internalError(request, response, error)
         response.setHeader('Content-Type', 'text/html')
         response.end(`
@@ -46,7 +46,12 @@ module.exports = (request, response) => {
     ${nav(request.session)}
     <main role=main>
       <a class=button href=/edit?digest=${escape(digest)}>Edit this Form</a>
-      ${form(rawForm, { form: loadedForm, resolutions })}
+      ${renderForm({
+        account: request.account,
+        form,
+        loaded: loadedForm,
+        resolutions
+      })}
       ${request.account ? publishForm(digest) : ''}
     </main>
   </body>
@@ -59,7 +64,7 @@ module.exports = (request, response) => {
 
 function publishForm (digest) {
   return `
-<form action=/publications method=post>
+<form id=publishForm action=/publications method=post>
   <input type=hidden name=digest value="${escape(digest)}">
   <label for=project>Project Name</label>
   <input name=project type=text>
@@ -67,7 +72,7 @@ function publishForm (digest) {
   <label for=edition>Edition</label>
   <input name=edition type=text>
   <p>${editionValidator.html}</p>
-  <button type=submit>Proofread</button>
+  <button type=submit>Publish</button>
 </form>
   `.trim()
 }
