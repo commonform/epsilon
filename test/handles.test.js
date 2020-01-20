@@ -5,7 +5,7 @@ const server = require('./server')
 const tape = require('tape')
 const webdriver = require('./webdriver')
 
-const path = '/forgot'
+const path = '/handles'
 const handle = USER.handle
 const email = USER.email
 

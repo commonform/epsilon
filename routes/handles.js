@@ -30,7 +30,7 @@ function get (request, response, error) {
     <main role=main>
       <h2>Forgot Handle</h2>
       ${messageParagraph}
-      <form action=forgot method=post>
+      <form action=handles method=post>
         <p>
           <label for=email>E-Mail</label>
           <input name=email type=email required autofocus autocomplete=off>
