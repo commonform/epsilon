@@ -186,23 +186,23 @@ function signUpForm (data) {
   const error = data.error
   const errorMessage = error ? `<p class=error>${escape(error.message)}</p>` : ''
   return `
-    <form method=post>
-      ${errorMessage}
-      ${eMailInput({ autofocus: true, value: data.email })}
-      <p>
-        <label for=handle>Handle</label>
-        <input
-            name=handle
-            type=text
-            pattern="${handleValidator.pattern}"
-            value="${value('handle')}"
-            autofocus
-            required>
-      </p>
-      <p>${handleValidator.html}</p>
-      ${passwordInputs()}
-      <button type=submit>Join</button>
-    </form>
+<form method=post>
+  ${errorMessage}
+  ${eMailInput({ autofocus: true, value: data.email })}
+  <p>
+    <label for=handle>Handle</label>
+    <input
+        name=handle
+        type=text
+        pattern="${handleValidator.pattern}"
+        value="${value('handle')}"
+        autofocus
+        required>
+  </p>
+  <p>${handleValidator.html}</p>
+  ${passwordInputs()}
+  <button type=submit>Join</button>
+</form>
   `.trim()
 
   function value (fieldName) {

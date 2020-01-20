@@ -25,30 +25,30 @@ module.exports = function (options) {
   const tree = merkleize(loaded)
   const digest = tree.digest
   return html`
-    ${renderTableOfContents(loaded, resolutions)}
-    <article class=commonform>
-      ${renderForm({
-        account,
-        comments,
-        depth: 0,
-        form,
-        loaded,
-        mappings,
-        path: [],
-        resolutions,
-        tree
-      })}
-      ${account && renderCommentForm({
-        form: digest,
-        root: digest
-      })}
-    </article>
-    <script>window.form = ${JSON.stringify(form)}</script>
-    <script>window.loaded = ${JSON.stringify(loaded)}</script>
-    <script>window.resolutions = ${JSON.stringify(resolutions)}</script>
-    <script>window.mappings = ${JSON.stringify(mappings)}</script>
-    <script>window.comments = ${JSON.stringify(comments)}</script>
-    <script>window.tree = ${JSON.stringify(tree)}</script>
+${renderTableOfContents(loaded, resolutions)}
+<article class=commonform>
+  ${renderForm({
+    account,
+    comments,
+    depth: 0,
+    form,
+    loaded,
+    mappings,
+    path: [],
+    resolutions,
+    tree
+  })}
+  ${account && renderCommentForm({
+    form: digest,
+    root: digest
+  })}
+</article>
+<script>window.form = ${JSON.stringify(form)}</script>
+<script>window.loaded = ${JSON.stringify(loaded)}</script>
+<script>window.resolutions = ${JSON.stringify(resolutions)}</script>
+<script>window.mappings = ${JSON.stringify(mappings)}</script>
+<script>window.comments = ${JSON.stringify(comments)}</script>
+<script>window.tree = ${JSON.stringify(tree)}</script>
   `
 }
 
@@ -189,16 +189,16 @@ function renderCommentForm (options) {
   }
 
   return html`
-    <button class="commentButton">
-      ${replyTo ? 'Reply' : 'Comment'}
-    </button>
-    <form class="comment commentForm hidden" action=/comments method=post>
-      ${contextMarkup}
-      ${replyTos}
-      <input type=hidden name=form value=${form}>
-      <textarea name=text required></textarea>
-      <button type=submit>Publish Comment</button>
-    </form>
+<button class="commentButton">
+  ${replyTo ? 'Reply' : 'Comment'}
+</button>
+<form class="comment commentForm hidden" action=/comments method=post>
+  ${contextMarkup}
+  ${replyTos}
+  <input type=hidden name=form value=${form}>
+  <textarea name=text required></textarea>
+  <button type=submit>Publish Comment</button>
+</form>
   `
 }
 
@@ -246,15 +246,15 @@ function renderComment (options) {
     .split('\n\n')
     .map((text) => `<p>${linkify(escape(text))}</p>`)
   return html`
-    <aside class=comment id=${uuid}>
-      ${content}
-      <p class=byline>
-        &mdash;&nbsp;${publisherLink(comment.handle)},
-        ${escape(longDate(new Date(comment.date)))}
-      </p>
-      ${children}
-      ${account && replyForm}
-    </aside>
+<aside class=comment id=${uuid}>
+  ${content}
+  <p class=byline>
+    &mdash;&nbsp;${publisherLink(comment.handle)},
+    ${escape(longDate(new Date(comment.date)))}
+  </p>
+  ${children}
+  ${account && replyForm}
+</aside>
   `
 }
 
@@ -288,25 +288,25 @@ function renderSeries (options) {
       })
       const heading = loadedChild.heading
       return html`
-        <section class="${classes}">
-        ${heading && renderHeading(heading)}
-        ${resolution && resolutionLink(resolution)}
-        ${renderForm({
-          account,
-          comments,
-          depth,
-          form: formSeries ? formSeries.content[index].form : null,
-          loaded: loadedForm,
-          mappings,
-          path: childPath.concat('form'),
-          resolutions,
-          tree: childTree
-        })}
-        ${account && renderCommentForm({
-          root: tree.digest,
-          form: digest
-        })}
-        </section>
+<section class="${classes}">
+${heading && renderHeading(heading)}
+${resolution && resolutionLink(resolution)}
+${renderForm({
+  account,
+  comments,
+  depth,
+  form: formSeries ? formSeries.content[index].form : null,
+  loaded: loadedForm,
+  mappings,
+  path: childPath.concat('form'),
+  resolutions,
+  tree: childTree
+})}
+${account && renderCommentForm({
+  root: tree.digest,
+  form: digest
+})}
+</section>
       `
     })
     .join('')
