@@ -32,7 +32,7 @@ function get (request, response, error) {
     <main role=main>
       <h2>Log In</h2>
       ${messageParagraph}
-      <form action=/login method=post>
+      <form method=post>
         <p>
           <label for=handle>Handle</label>
           <input name=handle type=text required autofocus>

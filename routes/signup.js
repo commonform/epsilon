@@ -186,7 +186,7 @@ function signUpForm (data) {
   const error = data.error
   const errorMessage = error ? `<p class=error>${escape(error.message)}</p>` : ''
   return `
-    <form action=signup method=post>
+    <form method=post>
       ${errorMessage}
       ${eMailInput({ autofocus: true, value: data.email })}
       <p>

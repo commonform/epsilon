@@ -30,7 +30,7 @@ function get (request, response, error) {
     <main role=main>
       <h2>Reset Password</h2>
       ${messageParagraph}
-      <form action=reset method=post>
+      <form method=post>
         <p>
           <label for=handle>Handle</label>
           <input name=handle type=text required autofocus autocomplete=off>

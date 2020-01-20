@@ -49,7 +49,7 @@ function get (request, response) {
     <main role=main>
       <h2>Change E-Mail</h2>
       ${messageParagraph}
-      <form action=email method=post>
+      <form method=post>
         ${eMailInput({ autofocus: true })}
         <button type=submit>Change E-Mail</button>
       </form>
