@@ -9,11 +9,12 @@ const universalValidations = [
 ]
 
 const typeSpecificValidations = {
+  account: [handleDoesNotExist],
   comment: [formExists, formInContext, validReply],
   changeEMail: [handleExists],
   changePassword: [handleExists],
   confirmAccount: [handleExists],
-  publication: [publicationDoesNotExist],
+  publication: [formExists, publicationDoesNotExist],
   session: [handleExists],
   useToken: [tokenExists]
 }
@@ -42,6 +43,14 @@ function handleExists (entry, callback) {
   storage.account.exists(entry.handle, (error, exists) => {
     if (error) return callback(error)
     if (!exists) callback(new Error('no such handle'))
+    callback()
+  })
+}
+
+function handleDoesNotExist (entry, callback) {
+  storage.account.exists(entry.handle, (error, exists) => {
+    if (error) return callback(error)
+    if (exists) callback(new Error('handle taken'))
     callback()
   })
 }

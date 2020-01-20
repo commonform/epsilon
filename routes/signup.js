@@ -13,7 +13,6 @@ const methodNotAllowed = require('./method-not-allowed')
 const passwordInputs = require('./partials/password-inputs')
 const passwordValidator = require('../validators/password')
 const runSeries = require('run-series')
-const storage = require('../storage')
 const uuid = require('uuid')
 
 module.exports = function (request, response) {
@@ -48,13 +47,15 @@ function post (request, response) {
   runSeries([
     readPostBody,
     validateInputs,
-    checkForExistingAccount,
     recordAccount,
     generateConfirmToken,
     sendAdminEMail
   ], function (error) {
     if (error) {
-      if (error.statusCode === 400) {
+      if (
+        error.statusCode === 400 ||
+        error.message === 'handle taken'
+      ) {
         return get(request, response, {
           email, handle, password, repeat, error
         })
@@ -122,20 +123,6 @@ function post (request, response) {
       return done(error)
     }
     done()
-  }
-
-  function checkForExistingAccount (done) {
-    storage.account.read(handle, function (error, account) {
-      if (error) return done(error)
-      if (account) {
-        const handleTaken = new Error(
-          `The handle “${handle}” is already taken.`
-        )
-        handleTaken.statusCode = 400
-        return done(handleTaken)
-      }
-      return done()
-    })
   }
 
   function recordAccount (done) {
