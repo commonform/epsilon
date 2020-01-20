@@ -30,7 +30,7 @@ module.exports = (request, response) => {
 function post (request, response) {
   const handle = request.account.handle
   const body = {}
-  const fields = ['digest', 'project', 'edition', 'proofed']
+  const fields = ['form', 'project', 'edition', 'proofed']
   let form
   runSeries([
     readPostBody,
@@ -93,10 +93,10 @@ function post (request, response) {
     </tr>
     <tr>
       <th>Form</th>
-      <td><a href="/forms/${escape(body.digest)}">${escape(body.digest)}</a></td>
+      <td><a href="/forms/${escape(body.form)}">${escape(body.form)}</a></td>
     </tr>
   </table>
-  <input type=hidden name=digest value="${escape(body.digest)}">
+  <input type=hidden name=form value="${escape(body.form)}">
   <input type=hidden name=project value="${escape(body.project)}">
   <input type=hidden name=edition value="${escape(body.edition)}">
   <input type=hidden name=proofed value=true>
@@ -123,10 +123,10 @@ function post (request, response) {
   }
 
   function validateInputs (done) {
-    const digest = body.digest
+    const form = body.form
     const project = body.project
     const edition = body.edition
-    if (!DIGEST_RE.test(digest)) return done('invalid digest')
+    if (!DIGEST_RE.test(form)) return done('invalid form digest')
     if (project && !projectValidator.valid(project)) return done('invalid project name')
     if (edition && !editionValidator.valid(edition)) return done('invalid edition')
     if (project && !edition) return done('missing edition')
@@ -135,7 +135,7 @@ function post (request, response) {
   }
 
   function verifyForm (done) {
-    storage.form.read(body.digest, (error, read) => {
+    storage.form.read(body.form, (error, read) => {
       if (error) return done(error)
       if (!read) return done('unknown form')
       form = read
@@ -150,7 +150,7 @@ function post (request, response) {
       publisher: handle,
       project: body.project,
       edition: body.edition,
-      digest: body.digest
+      form: body.form
     }, done)
   }
 }

@@ -30,7 +30,7 @@ module.exports = (request, response) => {
     }, done),
     form: ['publication', (results, done) => {
       if (!results.publication) return done()
-      storage.form.read(results.publication.digest, done)
+      storage.form.read(results.publication.form, done)
     }]
   }
   runAuto(tasks, (error, data) => {

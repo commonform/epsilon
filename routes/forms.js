@@ -91,7 +91,7 @@ module.exports = (request, response) => {
 function publishForm (digest) {
   return html`
 <form id=publishForm action=/publications method=post>
-  <input type=hidden name=digest value="${escape(digest)}">
+  <input type=hidden name=form value="${escape(digest)}">
   <label for=project>Project Name</label>
   <input name=project type=text>
   <p>${projectValidator.html}</p>

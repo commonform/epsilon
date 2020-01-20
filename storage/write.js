@@ -67,9 +67,9 @@ function publication (entry, callback) {
   const publisher = entry.publisher
   const id = { publisher, project, edition }
 
-  const digest = entry.digest
+  const form = entry.form
   const date = new Date().toISOString()
-  const record = { digest, date }
+  const record = { form, date }
 
   storage.publication.write(id, record, callback)
 }
