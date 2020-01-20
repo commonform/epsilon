@@ -30,6 +30,12 @@ tape('publish', (test) => {
       .then((input) => input.addValue(edition))
       .then(() => browser.$('button[type="submit"]'))
       .then((submit) => submit.click())
+      // Confirm
+      .then(() => browser.$('h2'))
+      .then((h2) => h2.getText())
+      .then((text) => { test.equal(text, 'Proofread and Publish') })
+      .then(() => browser.$('button[type="submit"]'))
+      .then((submit) => submit.click())
       .then(() => browser.$('h2'))
       .then((h2) => h2.getText())
       .then((text) => test.equal(text, project + ' ' + edition, 'heading'))

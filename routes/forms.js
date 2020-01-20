@@ -67,7 +67,7 @@ function publishForm (digest) {
   <label for=edition>Edition</label>
   <input name=edition type=text>
   <p>${editionValidator.html}</p>
-  <button type=submit>Publish</button>
+  <button type=submit>Proofread</button>
 </form>
   `.trim()
 }

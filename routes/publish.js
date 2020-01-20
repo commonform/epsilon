@@ -2,9 +2,15 @@ const Busboy = require('busboy')
 const DIGEST_RE = require('../util/digest-re')
 const authenticate = require('./authenticate')
 const editionValidator = require('../validators/edition')
+const escape = require('../util/escape')
+const renderForm = require('./partials/form')
 const found = require('./found')
+const head = require('./partials/head')
+const header = require('./partials/header')
 const internalError = require('./internal-error')
+const loadComponents = require('commonform-load-components')
 const methodNotAllowed = require('./method-not-allowed')
+const nav = require('./partials/nav')
 const projectValidator = require('../validators/project')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
@@ -23,7 +29,8 @@ module.exports = (request, response) => {
 function post (request, response) {
   const handle = request.account.handle
   const body = {}
-  const fields = ['digest', 'project', 'edition']
+  const fields = ['digest', 'project', 'edition', 'proofed']
+  let form
   runSeries([
     readPostBody,
     validateInputs,
@@ -38,9 +45,60 @@ function post (request, response) {
       }
       return internalError(request, response, error)
     }
-    const url = '/' + [handle, body.project, body.edition].join('/')
-    seeOther(request, response, url)
+    if (body.proofed) {
+      const url = '/' + [handle, body.project, body.edition].join('/')
+      return seeOther(request, response, url)
+    }
+    loadComponents(form, {}, (error, loadedForm, resolutions) => {
+      if (error) return internalError(request, response, error)
+      response.setHeader('Content-Type', 'text/html')
+      response.end(`
+<!doctype html>
+<html lang=en-US>
+  ${head()}
+  <body>
+    ${header()}
+    ${nav(request.session)}
+    <main role=main>
+      <h2>Proofread and Publish</h2>
+      ${confirmationForm()}
+      ${renderForm(form, { form: loadedForm, resolutions })}
+    </main>
+  </body>
+</html>
+      `.trim())
+    })
   })
+
+  function confirmationForm () {
+    return `
+<form method=post>
+  <table>
+    <tr>
+      <td>Handle</td>
+      <td>${escape(request.account.handle)}</td>
+    </tr>
+    <tr>
+      <th>Project</th>
+      <td>${escape(body.project)}</td>
+    </tr>
+    <tr>
+      <th>Edition</th>
+      <td>${escape(body.edition)}</td>
+    </tr>
+    <tr>
+      <th>Form</th>
+      <td><a href="/forms/${escape(body.digest)}">${escape(body.digest)}</a></td>
+    </tr>
+  </table>
+  <input type=hidden name=digest value="${escape(body.digest)}">
+  <input type=hidden name=project value="${escape(body.project)}">
+  <input type=hidden name=edition value="${escape(body.edition)}">
+  <input type=hidden name=proofed value="true">
+  <button type=submit>Publish</button>
+</form>
+    `.trim()
+  }
 
   function readPostBody (done) {
     request.pipe(
@@ -72,14 +130,16 @@ function post (request, response) {
   }
 
   function verifyForm (done) {
-    storage.form.read(body.digest, (error, form) => {
+    storage.form.read(body.digest, (error, read) => {
       if (error) return done(error)
-      if (!form) return done('unknown form')
+      if (!read) return done('unknown form')
+      form = read
       done()
     })
   }
 
   function recordPublication (done) {
+    if (!body.proofed) return done()
     request.record({
       type: 'publication',
       publisher: handle,
