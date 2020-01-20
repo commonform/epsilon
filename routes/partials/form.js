@@ -96,7 +96,7 @@ function renderContents (form, resolutions, path) {
 }
 
 function containsHeading (form) {
-  return form.content.some((element) => (
+  return form.content.some(element => (
     has(element, 'heading') ||
     (
       has(element, 'form') &&
@@ -181,7 +181,7 @@ function renderCommentForm (options) {
 
   let replyTos = ''
   if (replyTo) {
-    replyTos = replyTo.map((uuid) => {
+    replyTos = replyTo.map(uuid => {
       return html`
 <input type=hidden name="replyTo[]" value="${uuid}">
       `
@@ -205,10 +205,10 @@ function renderCommentForm (options) {
 function renderComments (options) {
   const { account, comments, root } = options
   const roots = comments
-    .filter((comment) => comment.replyTo.length === 0)
+    .filter(comment => comment.replyTo.length === 0)
     .sort((a, b) => parseInt(a.timestamp) - parseInt(b.timestamp))
   return roots
-    .map((comment) => renderComment({
+    .map(comment => renderComment({
       account,
       comment,
       comments,
@@ -222,14 +222,14 @@ function renderComment (options) {
   const { account, comment, comments, parents, root } = options
   const uuid = comment.uuid
   const withParent = [uuid].concat(parents)
-  const replies = comments.filter((comment) => {
+  const replies = comments.filter(comment => {
     const slice = comment.replyTo.slice(0, withParent.length)
     return (
       withParent.length === slice.length &&
       slice.every((element, index) => element === withParent[index])
     )
   })
-  var children = replies.map((reply) => renderComment({
+  var children = replies.map(reply => renderComment({
     comment: reply,
     parents: withParent,
     comments
@@ -244,7 +244,7 @@ function renderComment (options) {
   }
   var content = comment.text
     .split('\n\n')
-    .map((text) => `<p>${linkify(escape(text))}</p>`)
+    .map(text => `<p>${linkify(escape(text))}</p>`)
   return html`
 <aside class=comment id=${uuid}>
   ${content}
@@ -281,7 +281,7 @@ function renderSeries (options) {
       const childTree = tree.content[offset + index]
       const digest = childTree.digest
       const childPath = path.concat('content', offset + index)
-      const resolution = resolutions.find((resolution) => samePath(resolution.path, childPath))
+      const resolution = resolutions.find(resolution => samePath(resolution.path, childPath))
       const classes = classnames({
         conspicuous: loadedForm.conspicuous,
         component: resolution

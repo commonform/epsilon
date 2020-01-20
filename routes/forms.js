@@ -51,7 +51,7 @@ module.exports = (request, response) => {
           done(null, { form, resolutions })
         })
       }],
-      comments: (done) => {
+      comments: done => {
         storage.formComment.find({ context: digest }, done)
       }
     }, (error, results) => {

@@ -1,6 +1,6 @@
 const html = require('../html')
 
-module.exports = (session) => {
+module.exports = session => {
   const handle = session && session.handle
   return html`
 <nav role=navigation>

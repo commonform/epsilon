@@ -2,7 +2,7 @@ const escape = require('../../util/escape')
 const html = require('../html')
 const passwordValidator = require('../../validators/password')
 
-module.exports = (options) => {
+module.exports = options => {
   options = options || {}
   const label = options.label || 'Password'
   return html`

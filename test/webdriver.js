@@ -22,7 +22,7 @@ module.exports = function () {
 tape.onFinish(() => {
   if (remote) {
     remote
-      .then((browser) => browser.deleteSession())
+      .then(browser => browser.deleteSession())
       .then(() => driver.kill(9))
   } else {
     driver.kill(9)

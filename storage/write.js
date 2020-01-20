@@ -39,7 +39,7 @@ function form (entry, callback) {
     callback(error)
   })
   queue.drain(callback)
-  Object.keys(forms).map((digest) => {
+  Object.keys(forms).map(digest => {
     queue.push({ digest, form: forms[digest] })
   })
 }
@@ -82,8 +82,8 @@ function account (entry, callback) {
   const confirmed = false
   const record = { handle, email, passwordHash, created, confirmed }
   runSeries([
-    (done) => { storage.account.write(handle, record, done) },
-    (done) => { storage.email.append(email, handle, done) }
+    done => { storage.account.write(handle, record, done) },
+    done => { storage.email.append(email, handle, done) }
   ], callback)
 }
 
@@ -97,16 +97,16 @@ function changeEMail (entry, callback) {
   const email = entry.email
   let oldEMail
   runSeries([
-    (done) => {
+    done => {
       storage.account.read(handle, (error, account) => {
         if (error) return done(error)
         oldEMail = account.email
         done()
       })
     },
-    (done) => storage.account.update(handle, { email }, done),
-    (done) => storage.email.remove(oldEMail, handle, done),
-    (done) => storage.email.append(email, handle, done)
+    done => storage.account.update(handle, { email }, done),
+    done => storage.email.remove(oldEMail, handle, done),
+    done => storage.email.append(email, handle, done)
   ], callback)
 }
 

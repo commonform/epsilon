@@ -4,7 +4,7 @@ const signup = require('./signup')
 const tape = require('tape')
 const webdriver = require('./webdriver')
 
-tape('change e-mail', (test) => {
+tape('change e-mail', test => {
   const handle = 'tester'
   const password = 'test password'
   const oldEMail = 'old@example.com'
@@ -12,39 +12,39 @@ tape('change e-mail', (test) => {
   server((port, done) => {
     let browser
     webdriver()
-      .then((loaded) => { browser = loaded })
+      .then(loaded => { browser = loaded })
       .then(() => {
         signup({
           browser, port, handle, password, email: oldEMail
-        }, (error) => {
+        }, error => {
           test.ifError(error, 'no signup error')
           browser.navigateTo('http://localhost:' + port)
             // Navigate to log-in page.
             .then(() => browser.$('a=Log In'))
-            .then((a) => a.click())
+            .then(a => a.click())
             // Log in.
             .then(() => browser.$('input[name="handle"]'))
-            .then((input) => input.addValue(handle))
+            .then(input => input.addValue(handle))
             .then(() => browser.$('input[name="password"]'))
-            .then((input) => input.addValue(password))
+            .then(input => input.addValue(password))
             .then(() => browser.$('button[type="submit"]'))
-            .then((submit) => submit.click())
+            .then(submit => submit.click())
             // Navigate to password-change page.
             .then(() => browser.$('a=Account'))
-            .then((a) => a.click())
+            .then(a => a.click())
             .then(() => browser.$('a=Change E-Mail'))
-            .then((a) => a.click())
+            .then(a => a.click())
             // Submit password-change form.
             .then(() => browser.$('input[name="email"]'))
-            .then((input) => input.addValue(newEMail))
+            .then(input => input.addValue(newEMail))
             .then(() => {
-              mail.once('sent', (options) => {
+              mail.once('sent', options => {
                 test.equal(options.to, newEMail, 'TO: new email')
                 test.equal(options.subject, 'Confirm Your E-Mail Change', 'confirm')
                 browser.navigateTo(options.text)
                   .then(() => browser.$('p.message'))
-                  .then((p) => p.getText())
-                  .then((text) => {
+                  .then(p => p.getText())
+                  .then(text => {
                     test.assert(text.includes('changed'), 'changed')
                     test.end()
                     done()
@@ -52,8 +52,8 @@ tape('change e-mail', (test) => {
               })
             })
             .then(() => browser.$('button[type="submit"]'))
-            .then((submit) => submit.click())
-            .catch((error) => {
+            .then(submit => submit.click())
+            .catch(error => {
               test.fail(error, 'catch')
               finish()
             })

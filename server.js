@@ -37,7 +37,7 @@ const client = TCPLogClient({
       : 4444
   }
 })
-  .on('error', (error) => { clientLog.error(error) })
+  .on('error', error => { clientLog.error(error) })
   .on('fail', () => {
     clientLog.error('fail')
     server.close()
@@ -67,7 +67,7 @@ function close () {
 process.on('SIGINT', close)
 process.on('SIGQUIT', close)
 process.on('SIGTERM', close)
-process.on('uncaughtException', (exception) => {
+process.on('uncaughtException', exception => {
   log.error(exception)
   close()
 })

@@ -25,7 +25,7 @@ module.exports = (entry, callback) => {
   runParallelLimit(
     universalValidations
       .concat(validation)
-      .map((validator) => (done) => {
+      .map(validator => done => {
         validator(entry, done)
       }),
     3,

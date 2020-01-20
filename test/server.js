@@ -21,12 +21,12 @@ const handle = USER.handle
 const password = USER.password
 const email = USER.email
 
-module.exports = (callback) => {
+module.exports = callback => {
   assert(typeof callback === 'function')
   const log = pino({}, fs.createWriteStream('test-server.log'))
   var directory, logServer, logServerPort, logClient
   runSeries([
-    (done) => {
+    done => {
       fs.mkdtemp(path.join(os.tmpdir(), 'epsilon-'), (error, tmp) => {
         if (error) return done(error)
         directory = tmp
@@ -34,12 +34,12 @@ module.exports = (callback) => {
         done()
       })
     },
-    (done) => {
+    done => {
       const file = path.join(directory, 'log', 'log')
       runSeries([
-        (done) => mkdirp(path.dirname(file), done),
-        (done) => fs.writeFile(file, '', done),
-        (done) => {
+        done => mkdirp(path.dirname(file), done),
+        done => fs.writeFile(file, '', done),
+        done => {
           const blobs = new AbstractBlobStore()
           const emitter = new EventEmitter()
           logServer = net.createServer(TCPLogServer({
@@ -52,12 +52,12 @@ module.exports = (callback) => {
         }
       ], done)
     },
-    (done) => {
+    done => {
       logClient = TCPLogClient({ server: { port: logServerPort } })
       logClient.once('current', done)
       logClient.connect()
     }
-  ], (error) => {
+  ], error => {
     if (error) throw error
     const handler = makeHandler({ log, client: logClient })
     const webServer = http.createServer(handler)
@@ -66,11 +66,11 @@ module.exports = (callback) => {
       process.env.BASE_HREF = 'http://localhost:' + port
       process.env.ADMIN_EMAIL = 'admin@example.com'
       runSeries([
-        (done) => logClient.write({
+        done => logClient.write({
           type: 'form',
           form: NDA.form
         }, done),
-        (done) => {
+        done => {
           hashPassword(password, (error, passwordHash) => {
             if (error) return done(error)
             logClient.write({
@@ -82,18 +82,18 @@ module.exports = (callback) => {
             }, done)
           })
         },
-        (done) => logClient.write({
+        done => logClient.write({
           type: 'confirmAccount',
           handle
         }, done)
-      ], (error) => {
+      ], error => {
         if (error) throw error
         callback(port, () => {
           logClient.destroy()
           runSeries([
-            (done) => { webServer.close(done) },
-            (done) => { logServer.close(done) },
-            (done) => { rimraf(directory, done) }
+            done => { webServer.close(done) },
+            done => { logServer.close(done) },
+            done => { rimraf(directory, done) }
           ])
         })
       })

@@ -131,7 +131,7 @@ function post (request, response) {
       created: new Date().toISOString(),
       handle,
       email: newEMail
-    }, (error) => {
+    }, error => {
       if (error) return done(error)
       request.log.info({ token }, 'e-mail change token')
       // TODO: Flesh out confirmation-link e-mail text.

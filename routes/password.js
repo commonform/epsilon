@@ -210,7 +210,7 @@ function post (request, response) {
         return done(unauthorized)
       }
       handle = request.account.handle
-      verifyPassword(handle, oldPassword, (error) => {
+      verifyPassword(handle, oldPassword, error => {
         if (error) {
           const invalidOldPassword = new Error('invalid password')
           invalidOldPassword.statusCode = 400
@@ -230,7 +230,7 @@ function post (request, response) {
           failed.statusCode = 401
           return done(failed)
         }
-        request.record({ type: 'useToken', token }, (error) => {
+        request.record({ type: 'useToken', token }, error => {
           if (error) return done(error)
           handle = tokenData.handle
           recordChange()
@@ -260,7 +260,7 @@ function post (request, response) {
         to: account.email,
         subject: 'Password Change',
         text: 'The password for your account was changed.'
-      }, (error) => {
+      }, error => {
         // Log and eat errors.
         if (error) request.log.error(error)
         done()

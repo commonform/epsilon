@@ -4,7 +4,7 @@ const storage = require('../storage')
 
 module.exports = (handle, password, callback) => {
   const file = storage.account.filePath(handle)
-  storage.lock(file, (unlock) => {
+  storage.lock(file, unlock => {
     callback = unlock(callback)
     storage.account.readWithoutLocking(handle, function (error, account) {
       if (error) {

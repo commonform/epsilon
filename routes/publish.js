@@ -110,7 +110,7 @@ function post (request, response) {
       new Busboy({
         headers: request.headers,
         limits: {
-          fieldNameSize: Math.max(fields.map((x) => x.length)),
+          fieldNameSize: Math.max(fields.map(x => x.length)),
           fields: fields.length,
           parts: 1
         }

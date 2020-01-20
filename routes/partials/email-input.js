@@ -1,7 +1,7 @@
 const escape = require('../../util/escape')
 const html = require('../html')
 
-module.exports = (options) => {
+module.exports = options => {
   return html`
 <p>
   <label for=email>E-Mail</label>

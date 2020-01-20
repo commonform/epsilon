@@ -31,7 +31,7 @@ const STATIC_FILES = [
   'normalize.css',
   'ui.css'
 ]
-STATIC_FILES.forEach((file) => {
+STATIC_FILES.forEach(file => {
   const filePath = path.join(__dirname, '..', 'static', file)
   routes.set('/' + file, (request, response) => {
     pump(send(request, filePath), response)

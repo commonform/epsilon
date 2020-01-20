@@ -17,7 +17,7 @@ module.exports = function (request, response) {
   storage.token.read(token, (error, tokenData) => {
     if (error) return internalError(request, response, error)
     if (!tokenData) return invalidToken(request, response)
-    request.record({ type: 'useToken', token }, (error) => {
+    request.record({ type: 'useToken', token }, error => {
       if (error) return internalError(request, response, error)
       if (!tokenData) return invalidToken(request, response)
       const action = tokenData.action
@@ -27,14 +27,14 @@ module.exports = function (request, response) {
       }
       const handle = tokenData.handle
       if (action === 'confirm') {
-        request.record({ type: 'confirmAccount', handle }, (error) => {
+        request.record({ type: 'confirmAccount', handle }, error => {
           if (error) return internalError(request, response, error)
           seeOther(request, response, '/login')
         })
       }
       if (action === 'email') {
         const email = tokenData.email
-        request.record({ type: 'changeEMail', handle, email }, (error) => {
+        request.record({ type: 'changeEMail', handle, email }, error => {
           if (error) return internalError(request, response, error)
           response.setHeader('Content-Type', 'text/html')
           response.end(html`

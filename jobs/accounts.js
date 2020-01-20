@@ -17,9 +17,9 @@ exports.handler = function (log, callback) {
       log.error(error)
       return callback()
     }
-    const tasks = handles.map((handle) => (done) => {
+    const tasks = handles.map(handle => done => {
       const file = storage.account.filePath(handle)
-      storage.lock(file, (unlock) => {
+      storage.lock(file, unlock => {
         done = unlock(done)
         storage.account.readWithoutLocking(handle, (error, record) => {
           if (error) return done(error)

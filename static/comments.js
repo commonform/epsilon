@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 })
 
-document.addEventListener('click', (event) => {
+document.addEventListener('click', event => {
   const target = event.target
   if (target.className.indexOf('commentButton') === -1) return
   const sibling = target.nextElementSibling

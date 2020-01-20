@@ -23,7 +23,7 @@ exports.write = (options, callback) => {
   const serialization = options.serialization || JSON
   const flag = options.flag || 'w'
   const stringified = serialization.stringify(data)
-  fs.writeFile(file, stringified, { flag }, (error) => {
+  fs.writeFile(file, stringified, { flag }, error => {
     if (error) {
       if (error.code === 'EEXIST') return callback(null, false)
       return callback(error, false)

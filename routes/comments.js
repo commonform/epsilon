@@ -43,7 +43,7 @@ function post (request, response) {
       new Busboy({
         headers: request.headers,
         limits: {
-          fieldNameSize: Math.max(fields.map((x) => x.length)),
+          fieldNameSize: Math.max(fields.map(x => x.length)),
           fields: fields.length,
           parts: 1
         }
@@ -68,7 +68,7 @@ function post (request, response) {
       error.statusCode = 400
       return done(error)
     }
-    if (!comment.replyTo.every((element) => UUID_RE.test(element))) {
+    if (!comment.replyTo.every(element => UUID_RE.test(element))) {
       error = new Error('invalid replyTo')
       error.statusCode = 400
       return done(error)

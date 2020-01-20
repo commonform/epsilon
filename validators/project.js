@@ -5,7 +5,7 @@ const RE = new RegExp(PATTERN)
 
 exports.pattern = PATTERN
 
-exports.valid = (argument) => RE.test(argument)
+exports.valid = argument => RE.test(argument)
 
 exports.html = 'Project names must be made of ' +
   'made of the characters <code>a</code> through <code>z</code>, ' +

@@ -1,6 +1,6 @@
 const assert = require('assert')
 
-module.exports = (options) => {
+module.exports = options => {
   assert(options.browser)
   assert(options.test)
   assert(Number.isSafeInteger(options.port))
@@ -13,11 +13,11 @@ module.exports = (options) => {
   const email = options.email
   return browser.navigateTo('http://localhost:' + port)
     .then(() => browser.$('a=Account'))
-    .then((a) => a.click())
+    .then(a => a.click())
     .then(() => browser.$('.handle'))
-    .then((element) => element.getText())
-    .then((text) => test.equal(text, handle, '/account shows handle'))
+    .then(element => element.getText())
+    .then(text => test.equal(text, handle, '/account shows handle'))
     .then(() => browser.$('.email'))
-    .then((element) => element.getText())
-    .then((text) => test.equal(text, email, '/account shows e-mail'))
+    .then(element => element.getText())
+    .then(text => test.equal(text, email, '/account shows e-mail'))
 }

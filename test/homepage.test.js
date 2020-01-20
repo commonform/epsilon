@@ -3,10 +3,10 @@ const server = require('./server')
 const tape = require('tape')
 const webdriver = require('./webdriver')
 
-tape('GET /', (test) => {
+tape('GET /', test => {
   server((port, done) => {
     http.request({ path: '/', port })
-      .once('response', (response) => {
+      .once('response', response => {
         test.equal(response.statusCode, 200, '200')
         test.end()
         done()
@@ -15,20 +15,20 @@ tape('GET /', (test) => {
   })
 })
 
-tape('browse /', (test) => {
+tape('browse /', test => {
   server((port, done) => {
     let browser
     webdriver()
-      .then((loaded) => { browser = loaded })
+      .then(loaded => { browser = loaded })
       .then(() => browser.navigateTo('http://localhost:' + port))
       .then(() => browser.$('h1'))
-      .then((title) => title.getText())
-      .then((text) => {
+      .then(title => title.getText())
+      .then(text => {
         test.equal(text, 'Common Form')
         test.end()
         done()
       })
-      .catch((error) => {
+      .catch(error => {
         test.fail(error)
         test.end()
         done()

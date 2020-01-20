@@ -5,10 +5,10 @@ const webdriver = require('./webdriver')
 
 const path = '/not-found'
 
-tape('GET ' + path, (test) => {
+tape('GET ' + path, test => {
   server((port, done) => {
     http.request({ path, port })
-      .once('response', (response) => {
+      .once('response', response => {
         test.equal(response.statusCode, 404, '404')
         test.end()
         done()
@@ -17,20 +17,20 @@ tape('GET ' + path, (test) => {
   })
 })
 
-tape('browse ' + path, (test) => {
+tape('browse ' + path, test => {
   server((port, done) => {
     let browser
     webdriver()
-      .then((loaded) => { browser = loaded })
+      .then(loaded => { browser = loaded })
       .then(() => browser.navigateTo('http://localhost:' + port + path))
       .then(() => browser.$('h2'))
-      .then((title) => title.getText())
-      .then((text) => {
+      .then(title => title.getText())
+      .then(text => {
         test.equal(text, 'Not Found')
         test.end()
         done()
       })
-      .catch((error) => {
+      .catch(error => {
         test.fail(error)
         test.end()
         done()

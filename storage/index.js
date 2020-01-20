@@ -17,7 +17,7 @@ module.exports = {
   comment: simpleFiles('comments'),
   formComment: appendOnlyLists('formComments'),
   publication: simpleFiles('publications', {
-    complexID: (argument) => path.join(
+    complexID: argument => path.join(
       argument.publisher,
       argument.project,
       argument.edition
@@ -37,12 +37,12 @@ const token = module.exports.token
 
 token.use = (id, callback) => {
   const file = token.filePath(id)
-  lock(file, (unlock) => {
+  lock(file, unlock => {
     callback = unlock(callback)
     token.readWithoutLocking(id, (error, record) => {
       if (error) return callback(error)
       if (!record) return callback(null, null)
-      token.deleteWithoutLocking(id, (error) => {
+      token.deleteWithoutLocking(id, error => {
         if (error) return callback(error)
         callback(null, record)
       })
@@ -82,7 +82,7 @@ formComment.find = (options, callback) => {
           done(error)
         })
         readQueue.drain(done)
-        ids.forEach((id) => { readQueue.push(id) })
+        ids.forEach(id => { readQueue.push(id) })
       })
     })
     digestQueue.error((error, task) => {
@@ -93,11 +93,11 @@ formComment.find = (options, callback) => {
       callback(null, comments)
     })
     if (!formDigest) {
-      Object.keys(contexts).forEach((digest) => {
+      Object.keys(contexts).forEach(digest => {
         digestQueue.push(digest)
       })
     } else {
-      Object.keys(contexts).forEach((digest) => {
+      Object.keys(contexts).forEach(digest => {
         if (
           // The form is query.form itself.
           digest === formDigest ||
@@ -138,45 +138,45 @@ function simpleFiles (subdirectory, options) {
   const serialization = options.serialization
   const complexID = options.complexID
   const filePath = complexID
-    ? (id) => path.join(process.env.INDEX_DIRECTORY, subdirectory, complexID(id) + '.json')
-    : (id) => path.join(process.env.INDEX_DIRECTORY, subdirectory, id + '.json')
+    ? id => path.join(process.env.INDEX_DIRECTORY, subdirectory, complexID(id) + '.json')
+    : id => path.join(process.env.INDEX_DIRECTORY, subdirectory, id + '.json')
   return {
     write: (id, value, callback) => {
-      lock(filePath(id), (unlock) => writeWithoutLocking(id, value, unlock(callback)))
+      lock(filePath(id), unlock => writeWithoutLocking(id, value, unlock(callback)))
     },
     writeWithoutLocking,
     read: (id, callback) => {
-      lock(filePath(id), (unlock) => readWithoutLocking(id, unlock(callback)))
+      lock(filePath(id), unlock => readWithoutLocking(id, unlock(callback)))
     },
     readWithoutLocking,
-    createRawReadStream: (id) => {
+    createRawReadStream: id => {
       return fs.createReadStream(filePath(id), 'utf8')
     },
     update: (id, properties, callback) => {
       const file = filePath(id)
-      lock(file, (unlock) => {
+      lock(file, unlock => {
         callback = unlock(callback)
         JSONFile.read({ file, serialization }, (error, record) => {
           if (error) return callback(error)
           if (!record) return callback(null, null)
           Object.assign(record, properties)
-          JSONFile.write({ file, data: record, serialization }, (error) => {
+          JSONFile.write({ file, data: record, serialization }, error => {
             if (error) return callback(error)
             callback(null, record)
           })
         })
       })
     },
-    list: (callback) => {
+    list: callback => {
       const directory = path.dirname(filePath('x'))
       fs.readdir(directory, (error, entries) => {
         if (error) return callback(error)
-        const ids = entries.map((entry) => path.basename(entry, '.json'))
+        const ids = entries.map(entry => path.basename(entry, '.json'))
         callback(null, ids)
       })
     },
     delete: (id, callback) => {
-      lock(filePath(id), (unlock) => deleteWithoutLocking(id, unlock(callback)))
+      lock(filePath(id), unlock => deleteWithoutLocking(id, unlock(callback)))
     },
     deleteWithoutLocking,
     filePath
@@ -185,7 +185,7 @@ function simpleFiles (subdirectory, options) {
   function writeWithoutLocking (id, value, callback) {
     const file = filePath(id)
     const directory = path.dirname(file)
-    mkdirp(directory, (error) => {
+    mkdirp(directory, error => {
       if (error) return callback(error)
       JSONFile.write({ file, data: value, serialization }, callback)
     })
@@ -196,7 +196,7 @@ function simpleFiles (subdirectory, options) {
   }
 
   function deleteWithoutLocking (id, callback) {
-    fs.unlink(filePath(id), (error) => {
+    fs.unlink(filePath(id), error => {
       if (error && error.code === 'ENOENT') return callback()
       return callback(error)
     })
@@ -208,7 +208,7 @@ function appendOnlyLists (subdirectory) {
     append: (id, string, callback) => {
       const file = filePath(id)
       const directory = path.dirname(file)
-      mkdirp(directory, (error) => {
+      mkdirp(directory, error => {
         if (error) return callback(error)
         fs.writeFile(
           filePath(id),
@@ -219,16 +219,16 @@ function appendOnlyLists (subdirectory) {
       })
     },
     read: (id, callback) => {
-      lock(filePath(id), (unlock) => readWithoutLocking(id, unlock(callback)))
+      lock(filePath(id), unlock => readWithoutLocking(id, unlock(callback)))
     },
     readWithoutLocking,
     remove: (id, string, callback) => {
       const file = filePath(id)
-      lock(file, (unlock) => {
+      lock(file, unlock => {
         callback = unlock(callback)
         readWithoutLocking(id, (error, items) => {
           if (error) return callback(error)
-          const filtered = items.filter((item) => item !== string)
+          const filtered = items.filter(item => item !== string)
           fs.writeFile(
             file,
             filtered.join('\n') + '\n',

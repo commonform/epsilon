@@ -158,7 +158,7 @@ function post (request, response) {
       token,
       created: new Date().toISOString(),
       handle
-    }, (error) => {
+    }, error => {
       if (error) return done(error)
       // TODO: Flesh out confirmation-link e-mail text.
       mail({
@@ -175,7 +175,7 @@ function post (request, response) {
       to: process.env.ADMIN_EMAIL,
       subject: 'Sign Up',
       text: `Handle: ${handle}\nE-Mail: ${email}\n`
-    }, (error) => {
+    }, error => {
       if (error) request.log.error(error)
       done()
     })

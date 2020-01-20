@@ -118,7 +118,7 @@ function post (request, response) {
         token,
         created: new Date().toISOString(),
         handle
-      }, (error) => {
+      }, error => {
         if (error) return done(error)
         const href = `${process.env.BASE_HREF}/password?token=${token}`
         // TODO: Flesh out password-reset e-mail text.

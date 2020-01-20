@@ -14,10 +14,10 @@ const path = '/edit'
 const handle = USER.handle
 const password = USER.password
 
-tape('GET ' + path, (test) => {
+tape('GET ' + path, test => {
   server((port, done) => {
     http.request({ path, port })
-      .once('response', (response) => {
+      .once('response', response => {
         test.equal(response.statusCode, 302, '302')
         test.end()
         done()
@@ -26,25 +26,25 @@ tape('GET ' + path, (test) => {
   })
 })
 
-tape('edit new form', (test) => {
+tape('edit new form', test => {
   const markup = 'test form'
   const parsed = commonmark.parse(markup)
   const normalized = normalize(parsed.form)
   server((port, done) => {
     let browser
     webdriver()
-      .then((loaded) => { browser = loaded })
+      .then(loaded => { browser = loaded })
       .then(() => saveForm({ markup, port, browser, handle, password }))
       .then(() => browser.$('=test form'))
-      .then((p) => {
+      .then(p => {
         test.assert(p, 'text appears')
         const path = '/forms/' + normalized.root + '.json'
         http.request({ port, path })
-          .once('response', (response) => {
+          .once('response', response => {
             test.equal(response.statusCode, 200, '200')
             const chunks = []
             response
-              .on('data', (chunk) => { chunks.push(chunk) })
+              .on('data', chunk => { chunks.push(chunk) })
               .once('end', () => {
                 const buffer = Buffer.concat(chunks)
                 try {
@@ -58,7 +58,7 @@ tape('edit new form', (test) => {
           })
           .end()
       })
-      .catch((error) => {
+      .catch(error => {
         test.fail(error)
         finish()
       })
@@ -69,21 +69,21 @@ tape('edit new form', (test) => {
   })
 })
 
-tape('edit existing form', (test) => {
+tape('edit existing form', test => {
   const markup = 'test form\n'
   const parsed = commonmark.parse(markup)
   const digest = normalize(parsed.form).root
   server((port, done) => {
     let browser
     webdriver()
-      .then((loaded) => { browser = loaded })
+      .then(loaded => { browser = loaded })
       .then(() => saveForm({ markup, port, browser, handle, password }))
       .then(() => browser.navigateTo('http://localhost:' + port + '/edit?digest=' + digest))
       .then(() => browser.$('#editor'))
-      .then((textarea) => textarea.getValue())
-      .then((value) => test.equal(value, markup, 'populates markup'))
+      .then(textarea => textarea.getValue())
+      .then(value => test.equal(value, markup, 'populates markup'))
       .then(finish)
-      .catch((error) => {
+      .catch(error => {
         test.fail(error)
         finish()
       })
@@ -94,22 +94,22 @@ tape('edit existing form', (test) => {
   })
 })
 
-tape('save nested form', (test) => {
+tape('save nested form', test => {
   const markup = '# A\n\nA\n\n# B\n\nB\n'
   const parsed = commonmark.parse(markup)
   const normalized = normalize(parsed.form)
-  const digests = Object.keys(normalized).filter((k) => k !== 'root')
+  const digests = Object.keys(normalized).filter(k => k !== 'root')
   server((port, done) => {
     let browser
     webdriver()
-      .then((loaded) => { browser = loaded })
+      .then(loaded => { browser = loaded })
       .then(() => saveForm({ markup, port, browser, handle, password }))
       .then(() => {
         runParellel(
-          digests.map((digest) => (done) => {
+          digests.map(digest => done => {
             const path = '/forms/' + digest + '.json'
             http.request({ port, path })
-              .once('response', (response) => {
+              .once('response', response => {
                 test.equal(response.statusCode, 200, '200')
                 done()
               })
@@ -118,7 +118,7 @@ tape('save nested form', (test) => {
           finish
         )
       })
-      .catch((error) => {
+      .catch(error => {
         test.fail(error)
         finish()
       })
@@ -129,27 +129,27 @@ tape('save nested form', (test) => {
   })
 })
 
-tape('save invalid markup', (test) => {
+tape('save invalid markup', test => {
   const invalidMarkup = '<h1>invalid</h1>'
   server((port, done) => {
     let browser
     webdriver()
-      .then((loaded) => { browser = loaded })
+      .then(loaded => { browser = loaded })
       .then(() => login({ browser, port, handle, password }))
-      .then(() => new Promise((resolve) => {
+      .then(() => new Promise(resolve => {
         setTimeout(resolve, 1000)
       }))
       .then(() => browser.$('a=New Form'))
-      .then((a) => a.click())
+      .then(a => a.click())
       .then(() => browser.$('#editor'))
-      .then((input) => input.setValue(invalidMarkup))
+      .then(input => input.setValue(invalidMarkup))
       .then(() => browser.$('button[type="submit"]'))
-      .then((submit) => submit.click())
+      .then(submit => submit.click())
       .then(() => browser.$('.error'))
-      .then((element) => element.getText())
-      .then((text) => test.assert(text.includes('markup'), 'markup error'))
+      .then(element => element.getText())
+      .then(text => test.assert(text.includes('markup'), 'markup error'))
       .then(finish)
-      .catch((error) => {
+      .catch(error => {
         test.fail(error)
         finish()
       })

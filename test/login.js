@@ -11,12 +11,12 @@ module.exports = (options, callback) => {
   const password = options.password
   return browser.navigateTo('http://localhost:' + port)
     .then(() => browser.$('a=Log In'))
-    .then((a) => a.click())
+    .then(a => a.click())
     .then(() => browser.$('input[name="handle"]'))
-    .then((input) => input.addValue(handle))
+    .then(input => input.addValue(handle))
     .then(() => browser.$('input[name="password"]'))
-    .then((input) => input.addValue(password))
+    .then(input => input.addValue(password))
     .then(() => browser.$('button[type="submit"]'))
-    .then((submit) => submit.click())
+    .then(submit => submit.click())
     .catch(callback)
 }

@@ -8,10 +8,10 @@ const webdriver = require('./webdriver')
 
 const path = '/signup'
 
-tape('GET ' + path, (test) => {
+tape('GET ' + path, test => {
   server((port, done) => {
     http.request({ path, port })
-      .once('response', (response) => {
+      .once('response', response => {
         test.equal(response.statusCode, 200, '200')
         test.end()
         done()
@@ -20,21 +20,21 @@ tape('GET ' + path, (test) => {
   })
 })
 
-tape('browse ' + path, (test) => {
+tape('browse ' + path, test => {
   server((port, done) => {
     let browser
     webdriver()
-      .then((loaded) => { browser = loaded })
+      .then(loaded => { browser = loaded })
       .then(() => browser.navigateTo('http://localhost:' + port))
       .then(() => browser.$('a=Sign Up'))
-      .then((a) => a.click())
+      .then(a => a.click())
       .then(() => browser.$('h2'))
-      .then((title) => title.getText())
-      .then((text) => {
+      .then(title => title.getText())
+      .then(text => {
         test.equal(text, 'Sign Up', '<h2>Sign Up</h2>')
         finish()
       })
-      .catch((error) => {
+      .catch(error => {
         test.fail(error)
         finish()
       })
@@ -45,52 +45,52 @@ tape('browse ' + path, (test) => {
   })
 })
 
-tape('sign up', (test) => {
+tape('sign up', test => {
   const email = 'test@example.com'
   const handle = 'tester'
   const password = 'test password'
   server((port, done) => {
     let browser
     webdriver()
-      .then((loaded) => { browser = loaded })
+      .then(loaded => { browser = loaded })
       .then(() => browser.navigateTo('http://localhost:' + port))
       .then(() => browser.$('a=Sign Up'))
-      .then((a) => a.click())
+      .then(a => a.click())
       .then(() => browser.$('input[name="email"]'))
-      .then((input) => input.addValue(email))
+      .then(input => input.addValue(email))
       .then(() => browser.$('input[name="handle"]'))
-      .then((input) => input.addValue(handle))
+      .then(input => input.addValue(handle))
       .then(() => browser.$('input[name="password"]'))
-      .then((input) => input.addValue(password))
+      .then(input => input.addValue(password))
       .then(() => browser.$('input[name="repeat"]'))
-      .then((input) => input.addValue(password))
+      .then(input => input.addValue(password))
       .then(() => browser.$('button[type="submit"]'))
-      .then((submit) => submit.click())
-      .catch((error) => {
+      .then(submit => submit.click())
+      .catch(error => {
         test.fail(error, 'catch')
         test.end()
         done()
       })
-    mail.once('sent', (options) => {
+    mail.once('sent', options => {
       test.equal(options.to, email, 'sends e-mail')
       test.equal(options.subject, 'Confirm Your Account', 'subject')
       test.assert(options.text.includes('/confirm?token='), 'link')
       browser.navigateTo(options.text)
         .then(() => browser.$('input[name="handle"]'))
-        .then((input) => input.addValue(handle))
+        .then(input => input.addValue(handle))
         .then(() => browser.$('input[name="password"]'))
-        .then((input) => input.addValue(password))
+        .then(input => input.addValue(password))
         .then(() => browser.$('button[type="submit"]'))
-        .then((submit) => submit.click())
+        .then(submit => submit.click())
         .then(() => verifyLogin({
           browser, port, test, handle, email
         }))
         .then(() => finish())
-        .catch((error) => {
+        .catch(error => {
           test.fail(error)
           finish()
         })
-      mail.once('sent', (options) => {
+      mail.once('sent', options => {
         test.equal(options.subject, 'Sign Up', 'admin notification')
         test.assert(options.text.includes(handle), 'includes handle')
         test.assert(options.text.includes(email), 'includes email')
@@ -103,7 +103,7 @@ tape('sign up', (test) => {
   })
 })
 
-tape('sign up same handle', (test) => {
+tape('sign up same handle', test => {
   const firstEMail = 'first@example.com'
   const secondEMail = 'first@example.com'
   const handle = 'tester'
@@ -111,7 +111,7 @@ tape('sign up same handle', (test) => {
   server((port, done) => {
     let browser
     webdriver()
-      .then((loaded) => { browser = loaded })
+      .then(loaded => { browser = loaded })
       // Sign up using the handle.
       .then(() => signup({
         browser, port, handle, password, email: firstEMail
@@ -119,36 +119,36 @@ tape('sign up same handle', (test) => {
       // Try to sign up again with the same handle.
       .then(() => browser.navigateTo('http://localhost:' + port))
       .then(() => browser.$('a=Sign Up'))
-      .then((a) => a.click())
+      .then(a => a.click())
       .then(() => browser.$('input[name="email"]'))
-      .then((input) => input.addValue(secondEMail))
+      .then(input => input.addValue(secondEMail))
       .then(() => browser.$('input[name="handle"]'))
-      .then((input) => input.addValue(handle))
+      .then(input => input.addValue(handle))
       .then(() => browser.$('input[name="password"]'))
-      .then((input) => input.addValue(password))
+      .then(input => input.addValue(password))
       .then(() => browser.$('input[name="repeat"]'))
-      .then((input) => input.addValue(password))
+      .then(input => input.addValue(password))
       .then(() => browser.$('button[type="submit"]'))
-      .then((submit) => submit.click())
+      .then(submit => submit.click())
       .then(() => browser.$('.error'))
-      .then((element) => element.getText())
-      .then((text) => {
+      .then(element => element.getText())
+      .then(text => {
         test.assert(text.includes('taken'), 'handle taken')
       })
       .then(() => browser.$('input[name="email"]'))
-      .then((input) => input.getValue())
-      .then((value) => test.equal(value, secondEMail, 'preserves e-mail value'))
+      .then(input => input.getValue())
+      .then(value => test.equal(value, secondEMail, 'preserves e-mail value'))
       .then(() => browser.$('input[name="handle"]'))
-      .then((input) => input.getValue())
-      .then((value) => test.equal(value, handle, 'preserves handle value'))
+      .then(input => input.getValue())
+      .then(value => test.equal(value, handle, 'preserves handle value'))
       .then(() => browser.$('input[name="password"]'))
-      .then((input) => input.getValue())
-      .then((value) => test.equal(value, '', 'empties password'))
+      .then(input => input.getValue())
+      .then(value => test.equal(value, '', 'empties password'))
       .then(() => browser.$('input[name="repeat"]'))
-      .then((input) => input.getValue())
-      .then((value) => test.equal(value, '', 'empties password repeat'))
+      .then(input => input.getValue())
+      .then(value => test.equal(value, '', 'empties password repeat'))
       .then(finish)
-      .catch((error) => {
+      .catch(error => {
         test.fail(error, 'catch')
         finish()
       })

@@ -5,7 +5,7 @@ const tape = require('tape')
 const verifyLogin = require('./verify-login')
 const webdriver = require('./webdriver')
 
-tape('change password', (test) => {
+tape('change password', test => {
   const handle = 'tester'
   const oldPassword = 'old password'
   const newPassword = 'new password'
@@ -13,58 +13,58 @@ tape('change password', (test) => {
   server((port, done) => {
     let browser
     webdriver()
-      .then((loaded) => { browser = loaded })
+      .then(loaded => { browser = loaded })
       .then(() => {
         signup({
           browser, port, handle, password: oldPassword, email
-        }, (error) => {
+        }, error => {
           test.ifError(error, 'no signup error')
           browser.navigateTo('http://localhost:' + port)
             // Navigate to log-in page.
             .then(() => browser.$('a=Log In'))
-            .then((a) => a.click())
+            .then(a => a.click())
             // Log in.
             .then(() => browser.$('input[name="handle"]'))
-            .then((input) => input.addValue(handle))
+            .then(input => input.addValue(handle))
             .then(() => browser.$('input[name="password"]'))
-            .then((input) => input.addValue(oldPassword))
+            .then(input => input.addValue(oldPassword))
             .then(() => browser.$('button[type="submit"]'))
-            .then((submit) => submit.click())
+            .then(submit => submit.click())
             // Navigate to password-change page.
             .then(() => browser.$('a=Account'))
-            .then((a) => a.click())
+            .then(a => a.click())
             .then(() => browser.$('a=Change Password'))
-            .then((a) => a.click())
+            .then(a => a.click())
             // Submit password-change form.
             .then(() => browser.$('input[name="old"]'))
-            .then((input) => input.addValue(oldPassword))
+            .then(input => input.addValue(oldPassword))
             .then(() => browser.$('input[name="password"]'))
-            .then((input) => input.addValue(newPassword))
+            .then(input => input.addValue(newPassword))
             .then(() => browser.$('input[name="repeat"]'))
-            .then((input) => input.addValue(newPassword))
+            .then(input => input.addValue(newPassword))
             .then(() => {
-              mail.once('sent', (options) => {
+              mail.once('sent', options => {
                 test.equal(options.to, email, 'email')
                 test.equal(options.subject, 'Password Change', 'Password Change')
               })
             })
             .then(() => browser.$('button[type="submit"]'))
-            .then((submit) => submit.click())
+            .then(submit => submit.click())
             .then(() => browser.$('p.message'))
-            .then((p) => p.getText())
-            .then((text) => {
+            .then(p => p.getText())
+            .then(text => {
               test.assert(text.includes('changed'), 'changed')
             })
             // Log out.
             .then(() => browser.$('a=Log Out'))
-            .then((a) => a.click())
+            .then(a => a.click())
             // Log in with new password.
             .then(() => browser.$('input[name="handle"]'))
-            .then((input) => input.addValue(handle))
+            .then(input => input.addValue(handle))
             .then(() => browser.$('input[name="password"]'))
-            .then((input) => input.addValue(newPassword))
+            .then(input => input.addValue(newPassword))
             .then(() => browser.$('button[type="submit"]'))
-            .then((submit) => submit.click())
+            .then(submit => submit.click())
             .then(() => verifyLogin({
               browser, test, port, handle, email
             }))
@@ -72,7 +72,7 @@ tape('change password', (test) => {
               test.end()
               done()
             })
-            .catch((error) => {
+            .catch(error => {
               test.fail(error, 'catch')
               finish()
             })

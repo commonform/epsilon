@@ -11,7 +11,7 @@ const write = require('./storage/write')
 
 const PUBLICATION_PATH = /^\/([a-z0-9]+)\/([a-z0-9]+)\/([0-9eucd]+)$/
 
-module.exports = (configuration) => {
+module.exports = configuration => {
   const client = configuration.client
   const log = configuration.log
 
@@ -45,7 +45,7 @@ module.exports = (configuration) => {
   }
 
   function record (entry, callback) {
-    validate(entry, (error) => {
+    validate(entry, error => {
       if (error) return callback(error)
       client.write(entry, callback)
     })

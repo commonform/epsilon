@@ -25,7 +25,7 @@ module.exports = (request, response) => {
     !editionValidator.valid(edition)
   ) return notFound(request, response)
   const tasks = {
-    publication: (done) => storage.publication.read({
+    publication: done => storage.publication.read({
       publisher, project, edition
     }, done),
     form: ['publication', (results, done) => {

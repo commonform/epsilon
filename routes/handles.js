@@ -97,7 +97,7 @@ function post (request, response) {
     storage.email.read(email, (error, handles) => {
       if (error) return done(error)
       if (handles.length === 0) return done()
-      const tasks = handles.map((handle) => (done) => {
+      const tasks = handles.map(handle => done => {
         storage.account.read(handle, (error, account) => {
           if (error) return done(error)
           if (account === null || !account.confirmed) return done()

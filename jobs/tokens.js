@@ -17,9 +17,9 @@ exports.handler = function (log, callback) {
       log.error(error)
       return callback()
     }
-    const tasks = ids.map((id) => (done) => {
+    const tasks = ids.map(id => done => {
       const file = storage.token.filePath(id)
-      storage.lock(file, (unlock) => {
+      storage.lock(file, unlock => {
         done = unlock(done)
         storage.token.readWithoutLocking(id, (error, record) => {
           if (error) return done(error)

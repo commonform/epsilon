@@ -113,7 +113,7 @@ function post (request, response) {
 
   function createSession (done) {
     sessionID = uuid.v4()
-    request.record({ type: 'session', handle, id: sessionID }, (error) => {
+    request.record({ type: 'session', handle, id: sessionID }, error => {
       if (error) return done(error)
       done()
     })

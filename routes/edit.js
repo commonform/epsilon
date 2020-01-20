@@ -32,7 +32,7 @@ function get (request, response, parameters) {
   const tasks = {}
   const digest = parameters.digest
   if (digest && DIGEST_RE.test(digest)) {
-    tasks.form = (done) => storage.form.read(digest, done)
+    tasks.form = done => storage.form.read(digest, done)
   }
   runAuto(tasks, (error, data) => {
     if (error) return internalError(request, response, error)

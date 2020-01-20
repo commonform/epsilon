@@ -25,7 +25,7 @@ This is the second child.
   server((port, done) => {
     let browser
     webdriver()
-      .then((loaded) => { browser = loaded })
+      .then(loaded => { browser = loaded })
       .then(() => saveForm({ markup, port, browser, handle, password }))
       .then(() => browser.$('.commentButton'))
       .then(button => button.waitForDisplayed())
@@ -33,7 +33,7 @@ This is the second child.
       .then(button => button.click())
       // Add comment.
       .then(() => browser.$('.commentForm textarea[name="text"]'))
-      .then((ta) => ta.addValue(comment))
+      .then(ta => ta.addValue(comment))
       .then(() => browser.$('.commentForm button[type="submit"]'))
       .then(button => button.click())
       // Browse the parent form.
