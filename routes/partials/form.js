@@ -193,7 +193,7 @@ function renderCommentForm (options) {
 
   return html`
 <button class="commentButton">
-  ${replyTo ? 'Reply' : 'Comment'}
+  ${replyTo ? 'Reply' : 'Add Comment'}
 </button>
 <form class="comment commentForm hidden" action=/comments method=post>
   ${contextMarkup}
