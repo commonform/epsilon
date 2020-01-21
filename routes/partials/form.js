@@ -3,11 +3,12 @@ const escape = require('../../util/escape')
 const group = require('commonform-group-series')
 const has = require('has')
 const html = require('../html')
-const linkify = require('../../util/linkify')
 const longDate = require('../../util/long-date')
+const markdown = require('../../util/markdown')
 const merkleize = require('commonform-merkleize')
 const predicate = require('commonform-predicate')
 const samePath = require('commonform-same-path')
+const toMentionLink = require('to-mention-link')
 
 // TODO: Figure out commenting on displayed components.
 
@@ -245,12 +246,12 @@ function renderComment (options) {
       replyTo: withParent
     })
   }
-  var content = comment.text
-    .split('\n\n')
-    .map(text => `<p>${linkify(escape(text))}</p>`)
+  var content = markdown(
+    toMentionLink(comment.text, { url: process.env.BASE_HREF })
+  )
   return html`
 <aside class=comment id=${id}>
-  ${content}
+  <blockquote>${content}</blockquote>
   <p class=byline>
     &mdash;&nbsp;${publisherLink(comment.handle)},
     ${escape(longDate(new Date(comment.date)))}
