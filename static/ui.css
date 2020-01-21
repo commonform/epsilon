@@ -26,6 +26,7 @@ input, textarea {
 }
 
 textarea {
+  box-sizing: border-box;
   display: block;
   margin: 1rem 0;
   width: 100%;
