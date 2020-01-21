@@ -3,7 +3,7 @@ const escape = require('../util/escape')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
-const mail = require('../mail')
+const passwordResetNotification = require('../notifications/password-reset')
 const runSeries = require('run-series')
 const storage = require('../storage')
 const uuid = require('uuid')
@@ -120,12 +120,11 @@ function post (request, response) {
         handle
       }, error => {
         if (error) return done(error)
-        const href = `${process.env.BASE_HREF}/password?token=${token}`
-        // TODO: Flesh out password-reset e-mail text.
-        mail({
+        const url = `${process.env.BASE_HREF}/password?token=${token}`
+        passwordResetNotification({
           to: account.email,
-          subject: 'Reset Your Password',
-          text: href
+          handle,
+          url
         }, done)
       })
     })

@@ -40,8 +40,9 @@ tape('change e-mail', test => {
             .then(() => {
               mail.once('sent', options => {
                 test.equal(options.to, newEMail, 'TO: new email')
-                test.equal(options.subject, 'Confirm Your E-Mail Change', 'confirm')
-                browser.navigateTo(options.text)
+                test.assert(options.subject.includes('Confirm'), 'Confirm')
+                const url = /http:\/\/[^ ]+/.exec(options.text)[0]
+                browser.navigateTo(url)
                   .then(() => browser.$('p.message'))
                   .then(p => p.getText())
                   .then(text => {

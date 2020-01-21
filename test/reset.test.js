@@ -48,8 +48,9 @@ tape('reset password', test => {
             })
           mail.once('sent', options => {
             test.equal(options.to, email, 'sent mail')
-            test.equal(options.subject, 'Reset Your Password', 'reset')
-            browser.navigateTo(options.text)
+            test.assert(options.subject.includes('Reset'), 'reset')
+            const url = /http:\/\/[^ ]+/.exec(options.text)[0]
+            browser.navigateTo(url)
               // Fill reset form.
               .then(() => browser.$('input[name="password"]'))
               .then(input => input.addValue(password))

@@ -4,14 +4,16 @@ const UUID_RE = require('../util/uuid-re')
 const authenticate = require('./authenticate')
 const found = require('./found')
 const internalError = require('./internal-error')
-const mail = require('../mail')
+const mentionNotification = require('../notifications/mention')
 const methodNotAllowed = require('./method-not-allowed')
 const parseMentions = require('parse-mentions')
+const replyNotification = require('../notifications/reply')
 const runParallelLimit = require('run-parallel-limit')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
 const storage = require('../storage')
 const uuid = require('uuid')
+const watchedCommentNotification = require('../notifications/watched-comment')
 
 module.exports = (request, response) => {
   if (request.method !== 'POST') return methodNotAllowed(request, response)
@@ -117,16 +119,10 @@ function post (request, response) {
               request.log.error({ handle }, 'no such account')
               return done()
             }
-            // TODO: Improve reply e-mail notifications.
-            mail({
+            replyNotification({
               to: account.email,
-              subject: 'Reply',
-              text: `
-@${comment.handle} replied to your comment on commonform.org.
-
-To read their comment, visit https://commonform.org/comments/${id}.
-              `.trim()
-            }, (error) => {
+              comment
+            }, error => {
               if (error) return done(error)
               request.log.info('notified parent')
               alreadyNotified.push(handle)
@@ -147,15 +143,10 @@ To read their comment, visit https://commonform.org/comments/${id}.
               request.log.info({ handle }, 'bad mention')
               return done()
             }
-            mail({
+            mentionNotification({
               to: account.email,
-              subject: 'Mention',
-              text: `
-@${comment.handle} mentioned you in a comment on commonform.org.
-
-To read their comment, visit https://commonform.org/comments/${id}.
-              `.trim()
-            }, (error) => {
+              comment
+            }, error => {
               if (error) return done(error)
               alreadyNotified.push(handle)
               done()
@@ -179,16 +170,10 @@ To read their comment, visit https://commonform.org/comments/${id}.
               if (alreadyNotified.includes(handle)) return done()
               storage.account.read(handle, (error, account) => {
                 if (error) return done(error)
-                // TODO: Improve watched comment reply notifications.
-                mail({
+                watchedCommentNotification({
                   to: account.email,
-                  subject: 'Reply',
-                  text: `
-@${comment.handle} replied to a comment you watch on commonform.org.
-
-To read the comment, visit https://commonform.org/comments/${id}.
-                  `.trim()
-                }, (error) => {
+                  comment
+                }, error => {
                   if (error) return done(error)
                   alreadyNotified.push(handle)
                   done()

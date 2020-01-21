@@ -1,9 +1,9 @@
 const Busboy = require('busboy')
 const escape = require('../util/escape')
+const handleNotification = require('../notifications/handle')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
-const mail = require('../mail')
 const runParallelLimit = require('run-parallel-limit')
 const runSeries = require('run-series')
 const storage = require('../storage')
@@ -101,11 +101,9 @@ function post (request, response) {
         storage.account.read(handle, (error, account) => {
           if (error) return done(error)
           if (account === null || !account.confirmed) return done()
-          // TODO: Improve handle-reminder e-mails.
-          mail({
+          handleNotification({
             to: account.email,
-            subject: 'Account Handle',
-            text: handle
+            handle
           }, done)
         })
       })

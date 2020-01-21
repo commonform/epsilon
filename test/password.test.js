@@ -45,7 +45,7 @@ tape('change password', test => {
             .then(() => {
               mail.once('sent', options => {
                 test.equal(options.to, email, 'email')
-                test.equal(options.subject, 'Password Change', 'Password Change')
+                test.assert(options.subject.includes('Password'), 'Password')
               })
             })
             .then(() => browser.$('button[type="submit"]'))

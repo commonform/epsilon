@@ -1,0 +1,14 @@
+const mail = require('../mail')
+const markdown = require('../util/markdown')
+
+module.exports = (options, callback) => {
+  const { to, comment } = options
+  const subject = 'Common Form Reply'
+  const text = `
+@${comment.handle} replied to your comment on commonform.org.
+
+To read their comment, visit https://commonform.org/comments/${comment.id}
+  `.trim()
+  const html = markdown(text)
+  mail({ to, subject, text, html }, callback)
+}

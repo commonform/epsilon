@@ -27,10 +27,11 @@ module.exports = (options, callback) => {
     .then(submit => submit.click())
     .catch(callback)
   mail.once('sent', options => {
-    if (options.subject !== 'Confirm Your Account') {
+    if (!options.subject.includes('Confirm')) {
       return callback(new Error('no confirmation e-mail'))
     }
-    browser.navigateTo(options.text)
+    const url = /http:\/\/[^ ]+/.exec(options.text)[0]
+    browser.navigateTo(url)
       .then(() => { callback() })
       .catch(callback)
   })

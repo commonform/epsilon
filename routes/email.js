@@ -1,12 +1,12 @@
 const Busboy = require('busboy')
 const EMAIL_RE = require('../util/email-re')
 const authenticate = require('./authenticate')
+const confirmEMailNotification = require('../notifications/confirm-email')
 const eMailInput = require('./partials/email-input')
 const escape = require('../util/escape')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
-const mail = require('../mail')
 const nav = require('./partials/nav')
 const runSeries = require('run-series')
 const uuid = require('uuid')
@@ -134,11 +134,9 @@ function post (request, response) {
     }, error => {
       if (error) return done(error)
       request.log.info({ token }, 'e-mail change token')
-      // TODO: Flesh out confirmation-link e-mail text.
-      mail({
+      confirmEMailNotification({
         to: newEMail,
-        subject: 'Confirm Your E-Mail Change',
-        text: `${process.env.BASE_HREF}/confirm?token=${token}`
+        url: `${process.env.BASE_HREF}/confirm?token=${token}`
       }, done)
     })
   }

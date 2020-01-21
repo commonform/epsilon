@@ -1,5 +1,6 @@
 const Busboy = require('busboy')
 const EMAIL_RE = require('../util/email-re')
+const confirmAccountNotification = require('../notifications/confirm-account')
 const eMailInput = require('./partials/email-input')
 const escape = require('../util/escape')
 const handleValidator = require('../validators/handle')
@@ -147,11 +148,10 @@ function post (request, response) {
       handle
     }, error => {
       if (error) return done(error)
-      // TODO: Flesh out confirmation-link e-mail text.
-      mail({
+      confirmAccountNotification({
         to: email,
-        subject: 'Confirm Your Account',
-        text: `${process.env.BASE_HREF}/confirm?token=${token}`
+        handle,
+        url: `${process.env.BASE_HREF}/confirm?token=${token}`
       }, done)
     })
   }

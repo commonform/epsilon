@@ -41,7 +41,7 @@ tape('discover handle', test => {
       })
     mail.once('sent', options => {
       test.equal(options.to, email, 'sent mail')
-      test.equal(options.text, handle, 'mailed handle')
+      test.assert(options.text.includes(handle), 'mailed handle')
       finish()
     })
     function finish () {

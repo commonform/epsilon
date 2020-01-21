@@ -7,8 +7,8 @@ const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
 const internalError = require('./internal-error')
-const mail = require('../mail')
 const nav = require('./partials/nav')
+const passwordChangeNotification = require('../notifications/password-change')
 const passwordInputs = require('./partials/password-inputs')
 const passwordValidator = require('../validators/password')
 const runSeries = require('run-series')
@@ -253,13 +253,11 @@ function post (request, response) {
   }
 
   function sendEMail (done) {
-    // TODO: Improve password-change notification e-mails.
     storage.account.read(handle, (error, account) => {
       if (error) return done(error)
-      mail({
+      passwordChangeNotification({
         to: account.email,
-        subject: 'Password Change',
-        text: 'The password for your account was changed.'
+        handle
       }, error => {
         // Log and eat errors.
         if (error) request.log.error(error)
