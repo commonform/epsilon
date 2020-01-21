@@ -19,7 +19,15 @@ module.exports = function () {
   return remote
 }
 
-tape.onFinish(() => {
+tape.onFinish(kill)
+process.on('SIGINT', kill)
+process.on('SIGQUIT', kill)
+process.on('SIGTERM', kill)
+
+let killed = false
+function kill () {
+  if (killed) return
+  killed = true
   if (remote) {
     remote
       .then(browser => browser.deleteSession())
@@ -27,4 +35,4 @@ tape.onFinish(() => {
   } else {
     driver.kill(9)
   }
-})
+}
