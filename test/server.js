@@ -27,6 +27,7 @@ module.exports = callback => {
   const writeClient = redis.createClient()
   const blobs = new AbstractBlobStore()
   let directory
+  process.env.REDIS_STREAM = 'commonformtest'
   runSeries([
     done => { testClient.flushall(done) },
     done => {
@@ -101,7 +102,7 @@ module.exports = callback => {
     const digest = hash(stringified)
     blobs.createWriteStream(digest, error => {
       if (error) return callback(error)
-      testClient.xadd('commonform', '*', 'digest', digest, callback)
+      testClient.xadd(process.env.REDIS_STREAM, '*', 'digest', digest, callback)
     }).end(stringified)
   }
 }

@@ -18,7 +18,7 @@ module.exports = configuration => {
 
   const dataLog = log.child({ subsystem: 'data' })
   let lastID = '0'
-  const xreadArguments = ['BLOCK', '30000', 'COUNT', 3, 'STREAMS', 'commonform']
+  const xreadArguments = ['BLOCK', '30000', 'COUNT', 3, 'STREAMS', process.env.REDIS_STREAM]
   forever(next => {
     if (readClient.closing) return
     readClient.xread(xreadArguments.concat(lastID), (error, results) => {
@@ -97,7 +97,7 @@ module.exports = configuration => {
             .end(stringified)
         },
         done => {
-          writeClient.xadd('commonform', '*', 'digest', digest, error => {
+          writeClient.xadd(process.env.REDIS_STREAM, '*', 'digest', digest, error => {
             if (error) return done(error)
             dataLog.info(entry, 'wrote to Redis')
             done()

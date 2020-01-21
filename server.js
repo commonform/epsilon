@@ -11,6 +11,7 @@ const log = pino({ server: uuid.v4() })
 requireEnvironmentVariable('BASE_HREF')
 requireEnvironmentVariable('BLOBS_DIRECTORY')
 requireEnvironmentVariable('INDEX_DIRECTORY')
+requireEnvironmentVariable('REDIS_STREAM')
 
 if (process.env.NODE_ENV !== 'test') {
   requireEnvironmentVariable('ADMIN_EMAIL')

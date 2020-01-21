@@ -30,6 +30,7 @@ tape('server', test => {
             PORT: serverPort,
             NODE_ENV: 'test',
             BASE_HREF: 'http://localhost:' + serverPort + '/',
+            REDIS_STREAM: 'commonformtest',
             BLOBS_DIRECTORY,
             INDEX_DIRECTORY
           }
