@@ -6,6 +6,7 @@ const lint = require('commonform-lint')
 document.addEventListener('DOMContentLoaded', function () {
   parseAndAnnotateOnEdit()
   setDirtyFlagOnEdit()
+  clearDirtyFlagOnSubmit()
 })
 
 // Parse and lint the form on every change.
@@ -66,6 +67,16 @@ function setDirtyFlagOnEdit () {
   const editors = ['editor', 'notes']
   editors.forEach(function (id) {
     const editor = document.getElementById(id)
-    editor.addEventListener('input', function () { dirty = true })
+    if (editor) editor.addEventListener('input', function () { dirty = true })
   })
+}
+
+function clearDirtyFlagOnSubmit () {
+  const forms = document.getElementsByTagName('form')
+  for (let index = 0; index < forms.length; index++) {
+    const form = forms[index]
+    form.addEventListener('submit', () => {
+      dirty = false
+    })
+  }
 }
