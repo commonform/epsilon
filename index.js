@@ -15,6 +15,7 @@ module.exports = configuration => {
   const client = configuration.client
   const log = configuration.log
 
+  const dataLog = log.child({ subsystem: 'data' })
   pump(
     client.readStream,
     flushWriteStream.obj((object, _, done) => {
@@ -47,7 +48,12 @@ module.exports = configuration => {
   function record (entry, callback) {
     validate(entry, error => {
       if (error) return callback(error)
-      client.write(entry, callback)
+      dataLog.info(entry, 'recorded')
+      client.write(entry, error => {
+        if (error) return callback(error)
+        dataLog.info(entry, 'indexed')
+        callback()
+      })
     })
   }
 }

@@ -16,7 +16,7 @@ function mentions (string) {
     {
       url: 'https://commonform.org',
       renderer: function (mention, url, title) {
-        return `<a href="${escape(url)}">${escape(mention)}</a>`
+        return `<a href="${escape(url)}">@${escape(mention)}</a>`
       }
     }
   )

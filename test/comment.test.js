@@ -1,13 +1,14 @@
-const USER = require('./user')
+const ANA = require('./ana')
+const BOB = require('./bob')
 const commonmark = require('commonform-commonmark')
+const login = require('./login')
+const logout = require('./logout')
+const mail = require('../mail').events
 const normalize = require('commonform-normalize')
 const saveForm = require('./save-form')
 const server = require('./server')
 const tape = require('tape')
 const webdriver = require('./webdriver')
-
-const handle = USER.handle
-const password = USER.password
 
 tape('comment', test => {
   const markup = `
@@ -26,7 +27,13 @@ This is the second child.
     let browser
     webdriver()
       .then(loaded => { browser = loaded })
-      .then(() => saveForm({ markup, port, browser, handle, password }))
+      .then(() => saveForm({
+        markup,
+        port,
+        browser,
+        handle: ANA.handle,
+        password: ANA.password
+      }))
       .then(() => browser.$('.commentButton'))
       .then(button => button.waitForDisplayed())
       .then(() => browser.$('.commentButton'))
@@ -53,6 +60,77 @@ This is the second child.
       .then(p => p.getText())
       .then(text => { test.equal(text, comment) })
       .then(finish)
+      .catch(error => {
+        test.fail(error)
+        finish()
+      })
+    function finish () {
+      test.end()
+      done()
+    }
+  })
+})
+
+tape('reply', test => {
+  const markup = 'form content'
+  const form = commonmark.parse(markup).form
+  const normalized = normalize(form)
+  const digest = normalized.root
+  server((port, done) => {
+    let browser
+    webdriver()
+      .then(loaded => { browser = loaded })
+      .then(() => login({
+        browser,
+        port,
+        handle: ANA.handle,
+        password: ANA.password
+      }))
+      // Save form.
+      .then(() => browser.$('=New Form'))
+      .then(a => a.click())
+      .then(() => browser.$('#editor'))
+      .then(input => input.setValue(markup))
+      .then(() => browser.$('button[type="submit"]'))
+      .then(submit => submit.click())
+      // Add comment.
+      .then(() => browser.$('.commentButton'))
+      .then(button => button.waitForDisplayed())
+      .then(() => browser.$('.commentButton'))
+      .then(button => button.click())
+      .then(() => browser.$('.commentForm textarea[name="text"]'))
+      .then(ta => ta.addValue('first comment'))
+      .then(() => browser.$('.commentForm button[type="submit"]'))
+      .then(button => button.click())
+      // Log out.
+      .then(() => logout({ browser, port }))
+      // Log in as Bob.
+      .then(() => login({
+        browser,
+        port,
+        handle: BOB.handle,
+        password: BOB.password
+      }))
+      .then(() => browser.navigateTo('http://localhost:' + port + '/forms/' + digest))
+      // Await e-mail notification.
+      .then(() => {
+        mail.once('sent', options => {
+          test.equal(options.to, ANA.email, 'TO: Ana')
+          test.assert(options.text.includes('replied'), 'replied')
+          test.assert(options.text.includes('@' + BOB.handle), 'Bob')
+          test.assert(options.text.includes('/comments/'), 'link')
+          finish()
+        })
+      })
+      // Add reply.
+      .then(() => browser.$('.commentButton'))
+      .then(button => button.waitForDisplayed())
+      .then(() => browser.$('.commentButton'))
+      .then(button => button.click())
+      .then(() => browser.$('.commentForm textarea[name="text"]'))
+      .then(ta => ta.addValue('first reply'))
+      .then(() => browser.$('.commentForm button[type="submit"]'))
+      .then(button => button.click())
       .catch(error => {
         test.fail(error)
         finish()

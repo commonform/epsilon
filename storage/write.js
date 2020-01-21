@@ -163,5 +163,5 @@ function comment (entry, callback) {
   runSeries([
     done => storage.comment.write(entry.id, entry, done),
     done => storage.formComment.append(entry.form, entry.id, done)
-  ])
+  ], callback)
 }

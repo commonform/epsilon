@@ -12,7 +12,7 @@ module.exports = function (request, response, handler) {
   storage.session.read(sessionID, function (error, session) {
     if (error) return internalError(request, response, error)
     if (!session) {
-      request.log.info('expired session')
+      request.log.info({ id: sessionID }, 'expired session')
       return proceed()
     }
     const handle = session.handle

@@ -1,4 +1,4 @@
-const USER = require('./user')
+const ANA = require('./ana')
 const http = require('http')
 const mail = require('../mail').events
 const server = require('./server')
@@ -6,8 +6,8 @@ const tape = require('tape')
 const webdriver = require('./webdriver')
 
 const path = '/handles'
-const handle = USER.handle
-const email = USER.email
+const handle = ANA.handle
+const email = ANA.email
 
 tape('GET ' + path, test => {
   server((port, done) => {

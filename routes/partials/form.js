@@ -36,6 +36,7 @@ ${renderTableOfContents(loaded, resolutions)}
     mappings,
     path: [],
     resolutions,
+    root: digest,
     tree
   })}
   ${account && renderCommentForm({
@@ -118,6 +119,7 @@ function renderForm (options) {
     mappings,
     path,
     resolutions,
+    root,
     tree
   } = options
   let offset = 0
@@ -137,6 +139,7 @@ function renderForm (options) {
           loadedSeries: loadedGroup,
           mappings,
           tree,
+          root,
           resolutions
         })
         : renderParagraph({
@@ -153,7 +156,7 @@ function renderForm (options) {
     ${renderComments({
       account,
       comments: comments.filter(comment => comment.form === digest),
-      root: digest
+      root
     })}
   `
 }
@@ -206,7 +209,7 @@ function renderComments (options) {
   const { account, comments, root } = options
   const roots = comments
     .filter(comment => comment.replyTo.length === 0)
-    .sort((a, b) => parseInt(a.timestamp) - parseInt(b.timestamp))
+    .sort((a, b) => a.date.localeCompare(b.date))
   return roots
     .map(comment => renderComment({
       account,
@@ -220,8 +223,8 @@ function renderComments (options) {
 
 function renderComment (options) {
   const { account, comment, comments, parents, root } = options
-  const uuid = comment.uuid
-  const withParent = [uuid].concat(parents)
+  const id = comment.id
+  const withParent = [id].concat(parents)
   const replies = comments.filter(comment => {
     const slice = comment.replyTo.slice(0, withParent.length)
     return (
@@ -246,7 +249,7 @@ function renderComment (options) {
     .split('\n\n')
     .map(text => `<p>${linkify(escape(text))}</p>`)
   return html`
-<aside class=comment id=${uuid}>
+<aside class=comment id=${id}>
   ${content}
   <p class=byline>
     &mdash;&nbsp;${publisherLink(comment.handle)},
@@ -273,6 +276,7 @@ function renderSeries (options) {
     offset,
     path,
     resolutions,
+    root,
     tree
   } = options
   return loadedSeries.content
@@ -300,12 +304,10 @@ ${renderForm({
   mappings,
   path: childPath.concat('form'),
   resolutions,
+  root,
   tree: childTree
 })}
-${account && renderCommentForm({
-  root: tree.digest,
-  form: digest
-})}
+${account && renderCommentForm({ form: digest, root })}
 </section>
       `
     })

@@ -3907,12 +3907,9 @@
       }
     },
     "parse-mentions": {
-      "version": "0.1.0",
-      "resolved": "https://registry.npmjs.org/parse-mentions/-/parse-mentions-0.1.0.tgz",
-      "integrity": "sha1-fWVLFJBXvO1vEvac7VOhxWJqPiM=",
-      "requires": {
-        "extend-shallow": "^2.0.1"
-      }
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/parse-mentions/-/parse-mentions-1.0.0.tgz",
+      "integrity": "sha1-okHJ2qd4hWiinYr5PsAu6EA61cg="
     },
     "path-browserify": {
       "version": "0.0.1",
@@ -5370,6 +5367,16 @@
         "extend-shallow": "^2.0.1",
         "markdown-link": "^0.1.1",
         "parse-mentions": "^0.1.0"
+      },
+      "dependencies": {
+        "parse-mentions": {
+          "version": "0.1.0",
+          "resolved": "https://registry.npmjs.org/parse-mentions/-/parse-mentions-0.1.0.tgz",
+          "integrity": "sha1-fWVLFJBXvO1vEvac7VOhxWJqPiM=",
+          "requires": {
+            "extend-shallow": "^2.0.1"
+          }
+        }
       }
     },
     "toidentifier": {

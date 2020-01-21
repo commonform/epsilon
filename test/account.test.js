@@ -1,4 +1,4 @@
-const USER = require('./user')
+const ANA = require('./ana')
 const http = require('http')
 const login = require('./login')
 const server = require('./server')
@@ -22,9 +22,9 @@ tape('GET ' + path, test => {
 })
 
 tape('browse ' + path, test => {
-  const email = USER.email
-  const handle = USER.handle
-  const password = USER.password
+  const email = ANA.email
+  const handle = ANA.handle
+  const password = ANA.password
   server((port, done) => {
     let browser
     webdriver()

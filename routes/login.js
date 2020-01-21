@@ -108,13 +108,18 @@ function post (request, response) {
   }
 
   function authenticate (done) {
-    verifyPassword(handle, password, done)
+    verifyPassword(handle, password, (error) => {
+      if (error) return done(error)
+      request.log.info('verified credentials')
+      done()
+    })
   }
 
   function createSession (done) {
     sessionID = uuid.v4()
     request.record({ type: 'session', handle, id: sessionID }, error => {
       if (error) return done(error)
+      request.log.info({ id: sessionID }, 'recorded session')
       done()
     })
   }
@@ -124,6 +129,7 @@ function post (request, response) {
       Date.now() + (30 * 24 * 60 * 60 * 1000) // thirty days
     )
     setCookie(response, sessionID, expires)
+    request.log.info({ expires }, 'set cookie')
     done()
   }
 

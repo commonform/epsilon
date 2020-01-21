@@ -15,6 +15,7 @@ module.exports = {
   session: simpleFiles('sessions'),
   form: simpleFiles('forms', { serialization: serialize }),
   comment: simpleFiles('comments'),
+  commentWatchers: appendOnlyLists('commentWatchers'),
   formComment: appendOnlyLists('formComments'),
   publication: simpleFiles('publications', {
     complexID: argument => path.join(

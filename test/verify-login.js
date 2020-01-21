@@ -13,6 +13,8 @@ module.exports = options => {
   const email = options.email
   return browser.navigateTo('http://localhost:' + port)
     .then(() => browser.$('a=Account'))
+    .then(a => a.waitForExist())
+    .then(() => browser.$('a=Account'))
     .then(a => a.click())
     .then(() => browser.$('.handle'))
     .then(element => element.getText())

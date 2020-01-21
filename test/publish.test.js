@@ -1,11 +1,11 @@
-const USER = require('./user')
+const ANA = require('./ana')
 const login = require('./login')
 const server = require('./server')
 const tape = require('tape')
 const webdriver = require('./webdriver')
 
-const handle = USER.handle
-const password = USER.password
+const handle = ANA.handle
+const password = ANA.password
 
 tape('publish', test => {
   const markup = 'applesauce test'

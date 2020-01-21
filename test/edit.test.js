@@ -1,4 +1,4 @@
-const USER = require('./user')
+const ANA = require('./ana')
 const commonmark = require('commonform-commonmark')
 const http = require('http')
 const login = require('./login')
@@ -11,8 +11,8 @@ const webdriver = require('./webdriver')
 
 const path = '/edit'
 
-const handle = USER.handle
-const password = USER.password
+const handle = ANA.handle
+const password = ANA.password
 
 tape('GET ' + path, test => {
   server((port, done) => {

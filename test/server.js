@@ -1,9 +1,10 @@
+const ANA = require('./ana')
 const AbstractBlobStore = require('abstract-blob-store')
+const BOB = require('./bob')
 const EventEmitter = require('events').EventEmitter
 const NDA = require('./nda')
 const TCPLogClient = require('tcp-log-client')
 const TCPLogServer = require('tcp-log-server')
-const USER = require('./user')
 const assert = require('assert')
 const fs = require('fs')
 const hashPassword = require('../util/hash-password')
@@ -15,11 +16,8 @@ const os = require('os')
 const path = require('path')
 const pino = require('pino')
 const rimraf = require('rimraf')
+const runParallel = require('run-parallel')
 const runSeries = require('run-series')
-
-const handle = USER.handle
-const password = USER.password
-const email = USER.email
 
 module.exports = callback => {
   assert(typeof callback === 'function')
@@ -40,10 +38,11 @@ module.exports = callback => {
         done => mkdirp(path.dirname(file), done),
         done => fs.writeFile(file, '', done),
         done => {
+          const tcpLogServerLog = log.child({ subsystem: 'logserver' })
           const blobs = new AbstractBlobStore()
           const emitter = new EventEmitter()
           logServer = net.createServer(TCPLogServer({
-            log, file, blobs, emitter
+            log: tcpLogServerLog, file, blobs, emitter
           }))
           logServer.listen(0, function () {
             logServerPort = this.address().port
@@ -66,26 +65,35 @@ module.exports = callback => {
       process.env.BASE_HREF = 'http://localhost:' + port
       process.env.ADMIN_EMAIL = 'admin@example.com'
       runSeries([
-        done => logClient.write({
-          type: 'form',
-          form: NDA.form
-        }, done),
         done => {
-          hashPassword(password, (error, passwordHash) => {
-            if (error) return done(error)
-            logClient.write({
-              type: 'account',
-              created: new Date().toISOString(),
-              handle,
-              email,
-              passwordHash
-            }, done)
-          })
+          logClient.write({ type: 'form', form: NDA.form }, done)
         },
-        done => logClient.write({
-          type: 'confirmAccount',
-          handle
-        }, done)
+        done => {
+          const users = [ANA, BOB]
+          const tasks = users.map(user => done => {
+            runSeries([
+              done => {
+                hashPassword(user.password, (error, passwordHash) => {
+                  if (error) return done(error)
+                  logClient.write({
+                    type: 'account',
+                    created: new Date().toISOString(),
+                    handle: user.handle,
+                    email: user.email,
+                    passwordHash
+                  }, done)
+                })
+              },
+              done => {
+                logClient.write({
+                  type: 'confirmAccount',
+                  handle: user.handle
+                }, done)
+              }
+            ], done)
+          })
+          runParallel(tasks, done)
+        }
       ], error => {
         if (error) throw error
         callback(port, () => {

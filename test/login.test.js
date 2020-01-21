@@ -1,3 +1,5 @@
+const ANA = require('./ana')
+const BOB = require('./bob')
 const http = require('http')
 const server = require('./server')
 const tape = require('tape')
@@ -37,6 +39,68 @@ tape('browse ' + path, test => {
         test.end()
         done()
       })
+  })
+})
+
+tape('log in as Ana', test => {
+  server((port, done) => {
+    let browser
+    webdriver()
+      .then(loaded => { browser = loaded })
+      .then(() => browser.navigateTo('http://localhost:' + port))
+      .then(() => browser.$('a=Log In'))
+      .then(a => a.click())
+      .then(() => browser.$('input[name="handle"]'))
+      .then(input => input.addValue(ANA.handle))
+      .then(() => browser.$('input[name="password"]'))
+      .then(input => input.addValue(ANA.password))
+      .then(() => browser.$('button[type="submit"]'))
+      .then(submit => submit.click())
+      .then(() => browser.$('p.welcome'))
+      .then(p => p.getText())
+      .then(text => {
+        test.assert(text.includes(ANA.handle), 'welcome')
+        finish()
+      })
+      .catch(error => {
+        test.fail(error)
+        finish()
+      })
+    function finish () {
+      test.end()
+      done()
+    }
+  })
+})
+
+tape('log in as Bob', test => {
+  server((port, done) => {
+    let browser
+    webdriver()
+      .then(loaded => { browser = loaded })
+      .then(() => browser.navigateTo('http://localhost:' + port))
+      .then(() => browser.$('a=Log In'))
+      .then(a => a.click())
+      .then(() => browser.$('input[name="handle"]'))
+      .then(input => input.addValue(BOB.handle))
+      .then(() => browser.$('input[name="password"]'))
+      .then(input => input.addValue(BOB.password))
+      .then(() => browser.$('button[type="submit"]'))
+      .then(submit => submit.click())
+      .then(() => browser.$('p.welcome'))
+      .then(p => p.getText())
+      .then(text => {
+        test.assert(text.includes(BOB.handle), 'welcome')
+        finish()
+      })
+      .catch(error => {
+        test.fail(error)
+        finish()
+      })
+    function finish () {
+      test.end()
+      done()
+    }
   })
 })
 
