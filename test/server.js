@@ -21,14 +21,23 @@ const stringify = require('../util/stringify')
 module.exports = callback => {
   assert(typeof callback === 'function')
   const log = pino({}, fs.createWriteStream('test-server.log'))
-  const redisServer = spawn('redis-server')
-  const testClient = redis.createClient()
-  const readClient = redis.createClient()
-  const writeClient = redis.createClient()
   const blobs = new AbstractBlobStore()
   let directory
+  let redisServer, testClient, readClient, writeClient
   process.env.REDIS_STREAM = 'commonformtest'
   runSeries([
+    done => {
+      redisServer = spawn('redis-server')
+      redisServer.stdout.once('data', () => {
+        setImmediate(done)
+      })
+    },
+    done => {
+      testClient = redis.createClient()
+      readClient = redis.createClient()
+      writeClient = redis.createClient()
+      done()
+    },
     done => { testClient.flushall(done) },
     done => {
       fs.mkdtemp(path.join(os.tmpdir(), 'epsilon-'), (error, tmp) => {
