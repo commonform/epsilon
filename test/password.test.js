@@ -58,6 +58,8 @@ tape('change password', test => {
             // Log out.
             .then(() => browser.$('a=Log Out'))
             .then(a => a.click())
+            .then(() => browser.$('a=Log In'))
+            .then(a => a.click())
             // Log in with new password.
             .then(() => browser.$('input[name="handle"]'))
             .then(input => input.addValue(handle))
