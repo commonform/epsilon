@@ -55,15 +55,8 @@ module.exports = callback => {
       logClient = TCPLogClient({ server: { port: logServerPort } })
       logClient.once('current', done)
       logClient.connect()
-    }
-  ], error => {
-    if (error) throw error
-    const handler = makeHandler({ log, client: logClient })
-    const webServer = http.createServer(handler)
-    webServer.listen(0, function () {
-      const port = this.address().port
-      process.env.BASE_HREF = 'http://localhost:' + port
-      process.env.ADMIN_EMAIL = 'admin@example.com'
+    },
+    done => {
       runSeries([
         done => {
           logClient.write({ type: 'form', form: NDA.form }, done)
@@ -94,16 +87,23 @@ module.exports = callback => {
           })
           runParallel(tasks, done)
         }
-      ], error => {
-        if (error) throw error
-        callback(port, () => {
-          logClient.destroy()
-          runSeries([
-            done => { webServer.close(done) },
-            done => { logServer.close(done) },
-            done => { rimraf(directory, done) }
-          ])
-        })
+      ], done)
+    }
+  ], error => {
+    if (error) throw error
+    const handler = makeHandler({ log, client: logClient })
+    const webServer = http.createServer(handler)
+    webServer.listen(0, function () {
+      const port = this.address().port
+      process.env.BASE_HREF = 'http://localhost:' + port
+      process.env.ADMIN_EMAIL = 'admin@example.com'
+      callback(port, () => {
+        logClient.destroy()
+        runSeries([
+          done => { webServer.close(done) },
+          done => { logServer.close(done) },
+          done => { rimraf(directory, done) }
+        ])
       })
     })
   })
