@@ -54,6 +54,7 @@ module.exports = callback => {
     done => {
       logClient = TCPLogClient({ server: { port: logServerPort } })
       logClient.once('current', done)
+      logClient.once('error', () => { /* pass */ })
       logClient.connect()
     },
     done => {
@@ -98,12 +99,11 @@ module.exports = callback => {
       process.env.BASE_HREF = 'http://localhost:' + port
       process.env.ADMIN_EMAIL = 'admin@example.com'
       callback(port, () => {
+        webServer.close(noop)
         logClient.destroy()
-        runSeries([
-          done => { webServer.close(done) },
-          done => { logServer.close(done) },
-          done => { rimraf(directory, done) }
-        ])
+        logServer.close(noop)
+        rimraf(directory, noop)
+        function noop () { }
       })
     })
   })
