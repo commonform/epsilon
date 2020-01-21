@@ -1149,9 +1149,9 @@
       }
     },
     "commonform-commonmark": {
-      "version": "5.2.1",
-      "resolved": "https://registry.npmjs.org/commonform-commonmark/-/commonform-commonmark-5.2.1.tgz",
-      "integrity": "sha512-0+XOdVES8YCx+FA1bpHSIv7jYm6uPPoW6bLqqcV2Qo5B6k11NjnG0SU0ebR6jyThxF9Vg72vQA3RbN/5c683sA==",
+      "version": "5.3.0",
+      "resolved": "https://registry.npmjs.org/commonform-commonmark/-/commonform-commonmark-5.3.0.tgz",
+      "integrity": "sha512-sA5iN7XN+Zc683IxRHrbTN4kSJHcb6+l2aJahJURGQpY8FeOVepqoYf3xUknDikbi7kMGpBxksTIMzOX8iL8uQ==",
       "requires": {
         "commonform-fix-strings": "^2.0.1",
         "commonform-group-series": "^2.0.0",
@@ -3215,9 +3215,9 @@
       }
     },
     "kind-of": {
-      "version": "6.0.2",
-      "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-6.0.2.tgz",
-      "integrity": "sha512-s5kLOcnH0XqDO+FvuaLX8DDjZ18CGFk7VygH40QoKPUQhW4e2rvM0rwUq0t8IQDOwYSeLK01U90OjzBTme2QqA=="
+      "version": "6.0.3",
+      "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-6.0.3.tgz",
+      "integrity": "sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw=="
     },
     "labeled-stream-splicer": {
       "version": "2.0.2",
