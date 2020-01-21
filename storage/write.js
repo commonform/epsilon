@@ -71,7 +71,15 @@ function publication (entry, callback) {
   const date = new Date().toISOString()
   const record = { form, date }
 
-  storage.publication.write(id, record, callback)
+  const line = project + '/' + edition
+
+  runSeries([
+    done => storage.publication.write(id, record, done),
+    done => storage.publisherPublication.append(publisher, line, done),
+    done => storage.projectEdition.append(
+      publisher + '/' + project, edition, done
+    )
+  ], callback)
 }
 
 function account (entry, callback) {

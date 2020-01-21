@@ -24,6 +24,8 @@ module.exports = {
       argument.edition
     )
   }),
+  projectEdition: appendOnlyLists('projectEditions'),
+  publisherPublication: appendOnlyLists('publisherPublications'),
   lock
 }
 
