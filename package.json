@@ -58,6 +58,9 @@
     "prestart": "npm run build",
     "dependencies": "depcheck",
     "test": "NODE_ENV=test tape test/*.test.js",
+    "pretestserver": "redis-server &",
+    "testserver": "PORT=8080 INDEX_DIRECTORY=$(mktemp -d /tmp/commonform-testserver.XXX) BASE_HREF=http://localhost:8080 BLOBS_DIRECTORY=memory REDIS_STREAM=commonform-testserver NODE_ENV=test npm run start",
+    "posttestserver": "killall redis-server",
     "licenses": "licensee --errors-only",
     "lint": "standard"
   }
