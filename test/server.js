@@ -1,29 +1,34 @@
 const ANA = require('./ana')
 const AbstractBlobStore = require('abstract-blob-store')
 const BOB = require('./bob')
-const EventEmitter = require('events').EventEmitter
 const NDA = require('./nda')
-const TCPLogClient = require('tcp-log-client')
-const TCPLogServer = require('tcp-log-server')
 const assert = require('assert')
 const fs = require('fs')
+const hash = require('../util/hash')
 const hashPassword = require('../util/hash-password')
 const http = require('http')
 const makeHandler = require('../')
-const mkdirp = require('mkdirp')
-const net = require('net')
 const os = require('os')
 const path = require('path')
 const pino = require('pino')
+const redis = require('redis')
 const rimraf = require('rimraf')
 const runParallel = require('run-parallel')
 const runSeries = require('run-series')
+const spawn = require('child_process').spawn
+const stringify = require('../util/stringify')
 
 module.exports = callback => {
   assert(typeof callback === 'function')
   const log = pino({}, fs.createWriteStream('test-server.log'))
-  var directory, logServer, logServerPort, logClient
+  const redisServer = spawn('redis-server')
+  const testClient = redis.createClient()
+  const readClient = redis.createClient()
+  const writeClient = redis.createClient()
+  const blobs = new AbstractBlobStore()
+  let directory
   runSeries([
+    done => { testClient.flushall(done) },
     done => {
       fs.mkdtemp(path.join(os.tmpdir(), 'epsilon-'), (error, tmp) => {
         if (error) return done(error)
@@ -33,35 +38,8 @@ module.exports = callback => {
       })
     },
     done => {
-      const file = path.join(directory, 'log', 'log')
       runSeries([
-        done => mkdirp(path.dirname(file), done),
-        done => fs.writeFile(file, '', done),
-        done => {
-          const tcpLogServerLog = log.child({ subsystem: 'logserver' })
-          const blobs = new AbstractBlobStore()
-          const emitter = new EventEmitter()
-          logServer = net.createServer(TCPLogServer({
-            log: tcpLogServerLog, file, blobs, emitter
-          }))
-          logServer.listen(0, function () {
-            logServerPort = this.address().port
-            done()
-          })
-        }
-      ], done)
-    },
-    done => {
-      logClient = TCPLogClient({ server: { port: logServerPort } })
-      logClient.once('current', done)
-      logClient.once('error', () => { /* pass */ })
-      logClient.connect()
-    },
-    done => {
-      runSeries([
-        done => {
-          logClient.write({ type: 'form', form: NDA.form }, done)
-        },
+        done => { record({ type: 'form', form: NDA.form }, done) },
         done => {
           const users = [ANA, BOB]
           const tasks = users.map(user => done => {
@@ -69,7 +47,7 @@ module.exports = callback => {
               done => {
                 hashPassword(user.password, (error, passwordHash) => {
                   if (error) return done(error)
-                  logClient.write({
+                  record({
                     type: 'account',
                     created: new Date().toISOString(),
                     handle: user.handle,
@@ -79,7 +57,7 @@ module.exports = callback => {
                 })
               },
               done => {
-                logClient.write({
+                record({
                   type: 'confirmAccount',
                   handle: user.handle
                 }, done)
@@ -89,10 +67,19 @@ module.exports = callback => {
           runParallel(tasks, done)
         }
       ], done)
+    },
+    done => {
+      testClient.quit()
+      done()
     }
   ], error => {
     if (error) throw error
-    const handler = makeHandler({ log, client: logClient })
+    const handler = makeHandler({
+      log,
+      blobs,
+      readClient,
+      writeClient
+    })
     const webServer = http.createServer(handler)
     webServer.listen(0, function () {
       const port = this.address().port
@@ -100,11 +87,21 @@ module.exports = callback => {
       process.env.ADMIN_EMAIL = 'admin@example.com'
       callback(port, () => {
         webServer.close(noop)
-        logClient.destroy()
-        logServer.close(noop)
+        readClient.end(true)
+        writeClient.end(true)
+        redisServer.kill(9)
         rimraf(directory, noop)
         function noop () { }
       })
     })
   })
+
+  function record (entry, callback) {
+    const stringified = stringify(entry)
+    const digest = hash(stringified)
+    blobs.createWriteStream(digest, error => {
+      if (error) return callback(error)
+      testClient.xadd('commonform', '*', 'digest', digest, callback)
+    }).end(stringified)
+  }
 }

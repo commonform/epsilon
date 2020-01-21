@@ -1,7 +1,7 @@
-const TCPLogClient = require('tcp-log-client')
 const http = require('http')
 const makeHandler = require('./')
 const pino = require('pino')
+const redis = require('redis')
 const uuid = require('uuid')
 
 const log = pino({ server: uuid.v4() })
@@ -9,6 +9,7 @@ const log = pino({ server: uuid.v4() })
 // Environment Variables
 
 requireEnvironmentVariable('BASE_HREF')
+requireEnvironmentVariable('BLOBS_DIRECTORY')
 requireEnvironmentVariable('INDEX_DIRECTORY')
 
 if (process.env.NODE_ENV !== 'test') {
@@ -26,34 +27,26 @@ function requireEnvironmentVariable (name) {
   }
 }
 
-// Server
+// Redis
 
-const clientLog = log.child({ system: 'client' })
-const client = TCPLogClient({
-  server: {
-    host: process.env.TCP_LOG_SERVER_HOST || 'localhost',
-    port: process.env.TCP_LOG_SERVER_PORT
-      ? parseInt(process.env.TCP_LOG_SERVER_PORT)
-      : 4444
-  }
-})
-  .on('error', error => { clientLog.error(error) })
-  .on('fail', () => {
-    clientLog.error('fail')
-    server.close()
-  })
-logClientEvent('connect')
-logClientEvent('disconnect')
-logClientEvent('reconnect')
-logClientEvent('backoff')
-logClientEvent('ready')
-logClientEvent('current')
-
-function logClientEvent (event) {
-  client.on(event, () => { clientLog.info(event) })
+const redisOptions = {
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+  password: process.env.REDIS_PASSWORD
 }
 
-const handler = makeHandler({ log, client })
+const readClient = redis.createClient(redisOptions)
+const writeClient = redis.createClient(redisOptions)
+
+// Blobs
+
+const blobs = process.env.BLOBS_DIRECTORY === 'memory'
+  ? require('abstract-blob-store')()
+  : require('fs-blob-store')(process.env.BLOBS_DIRECTORY)
+
+// Server
+
+const handler = makeHandler({ log, blobs, readClient, writeClient })
 const server = http.createServer(handler)
 
 function close () {
@@ -76,8 +69,6 @@ server.listen(process.env.PORT || 8080, function () {
   // If the environment set PORT=0, we'll get a random high port.
   log.info({ port: this.address().port }, 'listening')
 })
-
-client.connect()
 
 // Job Scheduler
 
