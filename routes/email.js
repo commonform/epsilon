@@ -47,6 +47,7 @@ function get (request, response) {
   ${head()}
   <body>
     ${header()}
+    ${nav(request.session)}
     <main role=main>
       <h2>Change E-Mail</h2>
       ${messageParagraph}
