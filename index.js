@@ -18,6 +18,7 @@ module.exports = configuration => {
 
   const streamLog = log.child({ subsystem: 'stream' })
 
+  const localEntries = new Set()
   const options = stream
     .subscriptionOptions()
     .setDeliverAllAvailable()
@@ -26,10 +27,14 @@ module.exports = configuration => {
     process.env.NATSS_STREAM, options
   )
   subscription.on('message', (message) => {
-    const sequence = message.getSequence()
-    const data = JSON.parse(message.getData())
-    write(data, () => {
-      streamLog.info({ sequence }, 'indexed')
+    const entry = JSON.parse(message.getData())
+    const id = entry._id
+    if (localEntries.delete(id)) {
+      streamLog.info({ id }, 'local')
+      return
+    }
+    write(entry, () => {
+      streamLog.info({ id }, 'indexed')
     })
   })
 
@@ -73,13 +78,19 @@ module.exports = configuration => {
   function record (entry, callback) {
     validate(entry, error => {
       if (error) return callback(error)
+      const id = entry._id = uuid.v4()
       const json = JSON.stringify(entry)
+      localEntries.add(id)
       stream.publish(
         process.env.NATSS_STREAM, json,
         (error, guid) => {
           if (error) return callback(error)
-          streamLog.info({ guid }, 'published')
-          callback()
+          streamLog.info({ id }, 'published')
+          write(entry, (error) => {
+            if (error) return callback(error)
+            streamLog.info({ id }, 'indexed')
+            callback()
+          })
         }
       )
     })
