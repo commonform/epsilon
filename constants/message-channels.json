@@ -1,0 +1,14 @@
+{
+  "account": "accounts",
+  "changeEMail": "accounts",
+  "changeEMailToken": "tokens",
+  "changePassword": "accounts",
+  "comment": "comments",
+  "confirmAccount": "accounts",
+  "confirmAccountToken": "tokens",
+  "form": "forms",
+  "publication": "publications",
+  "resetPasswordToken": "tokens",
+  "session": "sessions",
+  "useToken": "tokens"
+}

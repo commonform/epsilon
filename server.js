@@ -13,7 +13,6 @@ const log = pino({ server: serverID })
 requireEnvironmentVariable('BASE_HREF')
 requireEnvironmentVariable('DIRECTORY')
 requireEnvironmentVariable('NATSS_CLUSTER')
-requireEnvironmentVariable('NATSS_STREAM')
 
 if (process.env.NODE_ENV !== 'test') {
   requireEnvironmentVariable('ADMIN_EMAIL')

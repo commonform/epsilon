@@ -1,3 +1,5 @@
+const CHANNELS = require('./constants/channels')
+const MESSAGE_CHANNELS = require('./constants/message-channels')
 const notFound = require('./routes/not-found')
 const parseURL = require('url-parse')
 const pinoHTTP = require('pino-http')
@@ -18,18 +20,20 @@ module.exports = configuration => {
 
   const streamLog = log.child({ subsystem: 'stream' })
 
-  const options = stream
-    .subscriptionOptions()
-    .setDeliverAllAvailable()
-    .setMaxInFlight(2)
-  const subscription = stream.subscribe(
-    process.env.NATSS_STREAM, options
-  )
-  subscription.on('message', (message) => {
-    const sequence = message.getSequence()
-    const data = JSON.parse(message.getData())
-    write(data, () => {
-      streamLog.info({ sequence }, 'indexed')
+  const subscriptions = {}
+  CHANNELS.forEach(channel => {
+    const options = stream
+      .subscriptionOptions()
+      .setDeliverAllAvailable()
+      .setMaxInFlight(2)
+    const subscription = stream.subscribe(channel, options)
+    subscriptions[channel] = subscription
+    subscription.on('message', (message) => {
+      const sequence = message.getSequence()
+      const data = JSON.parse(message.getData())
+      write(data, () => {
+        streamLog.info({ channel, sequence }, 'indexed')
+      })
     })
   })
 
@@ -73,15 +77,17 @@ module.exports = configuration => {
   function record (entry, callback) {
     validate(entry, error => {
       if (error) return callback(error)
+      const type = entry.type
+      const channel = MESSAGE_CHANNELS[type]
+      if (!channel) {
+        return callback(new Error('no channel for type ' + type))
+      }
       const json = JSON.stringify(entry)
-      stream.publish(
-        process.env.NATSS_STREAM, json,
-        (error, guid) => {
-          if (error) return callback(error)
-          streamLog.info({ guid }, 'published')
-          callback()
-        }
-      )
+      stream.publish(channel, json, (error, guid) => {
+        if (error) return callback(error)
+        streamLog.info({ channel, guid }, 'published')
+        callback()
+      })
     })
   }
 }

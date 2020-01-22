@@ -1,4 +1,6 @@
+const MESSAGE_TYPES = require('../constants/message-types')
 const TOKEN_LIFETIME = require('../constants/token-lifetime')
+const assert = require('assert')
 const async = require('async')
 const expired = require('../util/expired')
 const has = require('has')
@@ -20,6 +22,10 @@ const writers = {
   useToken,
   account
 }
+
+Object.keys(writers).forEach(key => {
+  assert(MESSAGE_TYPES.includes(key), 'Unknown Message Type: ' + key)
+})
 
 module.exports = (entry, callback) => {
   const type = entry.type

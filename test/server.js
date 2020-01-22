@@ -1,5 +1,6 @@
 const ANA = require('./ana')
 const BOB = require('./bob')
+const MESSAGE_CHANNELS = require('../constants/message-channels')
 const NDA = require('./nda')
 const STAN = require('node-nats-streaming')
 const assert = require('assert')
@@ -21,7 +22,6 @@ module.exports = callback => {
   const log = pino({}, fs.createWriteStream('test-server.log'))
   let directory
   const cluster = process.env.NATSS_CLUSTER = 'commonform-test'
-  process.env.NATSS_STREAM = 'commonform'
   let nats
   let fixtureClient
   let serverClient
@@ -110,8 +110,9 @@ module.exports = callback => {
   }
 
   function record (entry, callback) {
+    const channel = MESSAGE_CHANNELS[entry.type]
     fixtureClient.publish(
-      'commonform',
+      channel,
       JSON.stringify(entry),
       (error, guid) => {
         if (error) return callback(error)

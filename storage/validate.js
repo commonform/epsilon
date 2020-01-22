@@ -1,4 +1,6 @@
+const MESSAGE_TYPES = require('../constants/message-types')
 const arrayEqual = require('array-equal')
+const assert = require('assert')
 const has = require('has')
 const normalize = require('commonform-normalize')
 const runParallelLimit = require('run-parallel-limit')
@@ -18,6 +20,10 @@ const typeSpecificValidations = {
   session: [handleExists],
   useToken: [tokenExists]
 }
+
+Object.keys(typeSpecificValidations).forEach(key => {
+  assert(MESSAGE_TYPES.includes(key), 'Unknown Message Type: ' + key)
+})
 
 module.exports = (entry, callback) => {
   const type = entry.type
