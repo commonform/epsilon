@@ -1,17 +1,19 @@
+const STAN = require('node-nats-streaming')
 const http = require('http')
 const makeHandler = require('./')
 const pino = require('pino')
-const redis = require('redis')
 const uuid = require('uuid')
 
-const log = pino({ server: uuid.v4() })
+const serverID = uuid.v4()
+
+const log = pino({ server: serverID })
 
 // Environment Variables
 
 requireEnvironmentVariable('BASE_HREF')
-requireEnvironmentVariable('BLOBS_DIRECTORY')
-requireEnvironmentVariable('INDEX_DIRECTORY')
-requireEnvironmentVariable('REDIS_STREAM')
+requireEnvironmentVariable('DIRECTORY')
+requireEnvironmentVariable('NATSS_CLUSTER')
+requireEnvironmentVariable('NATSS_STREAM')
 
 if (process.env.NODE_ENV !== 'test') {
   requireEnvironmentVariable('ADMIN_EMAIL')
@@ -28,48 +30,37 @@ function requireEnvironmentVariable (name) {
   }
 }
 
-// Redis
-
-const redisOptions = {
-  host: process.env.REDIS_HOST,
-  port: process.env.REDIS_PORT,
-  password: process.env.REDIS_PASSWORD
-}
-
-const readClient = redis.createClient(redisOptions)
-const writeClient = redis.createClient(redisOptions)
-
-// Blobs
-
-const blobs = process.env.BLOBS_DIRECTORY === 'memory'
-  ? require('abstract-blob-store')()
-  : require('fs-blob-store')(process.env.BLOBS_DIRECTORY)
-
-// Server
-
-const handler = makeHandler({ log, blobs, readClient, writeClient })
-const server = http.createServer(handler)
-
-function close () {
-  log.info('closing')
-  server.close(() => {
-    log.info('closed')
-    process.exit(0)
+const streamLog = log.child({ subsystem: 'stream' })
+const stream = STAN.connect(process.env.NATSS_CLUSTER, serverID)
+  .once('error', (error) => {
+    streamLog.error(error)
+    process.exit(1)
   })
-}
+  .once('connect', () => {
+    const handler = makeHandler({ log, stream })
+    const server = http.createServer(handler)
+    function close () {
+      log.info('closing')
+      stream.close()
+      server.close(() => {
+        log.info('closed')
+        process.exit(0)
+      })
+    }
 
-process.on('SIGINT', close)
-process.on('SIGQUIT', close)
-process.on('SIGTERM', close)
-process.on('uncaughtException', exception => {
-  log.error(exception)
-  close()
-})
+    process.on('SIGINT', close)
+    process.on('SIGQUIT', close)
+    process.on('SIGTERM', close)
+    process.on('uncaughtException', exception => {
+      log.error(exception)
+      close()
+    })
 
-server.listen(process.env.PORT || 8080, function () {
-  // If the environment set PORT=0, we'll get a random high port.
-  log.info({ port: this.address().port }, 'listening')
-})
+    server.listen(process.env.PORT || 8080, function () {
+      // If the environment set PORT=0, we'll get a random high port.
+      log.info({ port: this.address().port }, 'listening')
+    })
+  })
 
 // Job Scheduler
 

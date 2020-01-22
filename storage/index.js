@@ -141,8 +141,8 @@ function simpleFiles (subdirectory, options) {
   const serialization = options.serialization
   const complexID = options.complexID
   const filePath = complexID
-    ? id => path.join(process.env.INDEX_DIRECTORY, subdirectory, complexID(id) + '.json')
-    : id => path.join(process.env.INDEX_DIRECTORY, subdirectory, id + '.json')
+    ? id => path.join(process.env.DIRECTORY, subdirectory, complexID(id) + '.json')
+    : id => path.join(process.env.DIRECTORY, subdirectory, id + '.json')
   return {
     write: (id, value, callback) => {
       lock(filePath(id), unlock => writeWithoutLocking(id, value, unlock(callback)))
@@ -265,6 +265,6 @@ function appendOnlyLists (subdirectory) {
   }
 
   function filePath (id) {
-    return path.join(process.env.INDEX_DIRECTORY, subdirectory, id + '.txt')
+    return path.join(process.env.DIRECTORY, subdirectory, id + '.txt')
   }
 }

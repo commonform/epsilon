@@ -1,38 +1,33 @@
 const fs = require('fs')
-const mkdirp = require('mkdirp')
-const path = require('path')
-const redis = require('redis')
 const rimraf = require('rimraf')
 const runSeries = require('run-series')
 const spawn = require('child_process').spawn
+const spawnNats = require('./spawn-nats')
 const tape = require('tape')
 
 tape('server', test => {
   fs.mkdtemp('/tmp/', (_, directory) => {
-    let server, curl
-    const redisServer = spawn('redis-server')
+    let nats, server, curl
+    const NATSS_CLUSTER = 'commonform-test'
+    const NATSS_STREAM = 'commonform'
     const serverPort = 8080
-    const BLOBS_DIRECTORY = path.join(directory, 'blobs')
-    const INDEX_DIRECTORY = path.join(directory, 'index')
     runSeries([
       done => {
-        const client = redis.createClient()
-        client.flushall(() => {
-          client.quit()
+        spawnNats({ cluster: NATSS_CLUSTER }, (error, spawned) => {
+          if (error) return done(error)
+          nats = spawned
           done()
         })
       },
-      done => { mkdirp(BLOBS_DIRECTORY, done) },
-      done => { mkdirp(INDEX_DIRECTORY, done) },
       done => {
         server = spawn('node', ['server.js'], {
           env: {
             PORT: serverPort,
             NODE_ENV: 'test',
             BASE_HREF: 'http://localhost:' + serverPort + '/',
-            REDIS_STREAM: 'commonformtest',
-            BLOBS_DIRECTORY,
-            INDEX_DIRECTORY
+            NATSS_CLUSTER,
+            NATSS_STREAM,
+            DIRECTORY: directory
           }
         })
         server.stdout.once('data', () => {
@@ -53,7 +48,7 @@ tape('server', test => {
             'output includes <h1>Common Form</h1>'
           )
           server.kill(9)
-          redisServer.kill(9)
+          nats.kill(9)
           curl.kill(9)
           rimraf.sync(directory)
           test.end()

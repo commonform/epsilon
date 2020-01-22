@@ -1,49 +1,56 @@
 const ANA = require('./ana')
-const AbstractBlobStore = require('abstract-blob-store')
 const BOB = require('./bob')
 const NDA = require('./nda')
+const STAN = require('node-nats-streaming')
 const assert = require('assert')
 const fs = require('fs')
-const hash = require('../util/hash')
 const hashPassword = require('../util/hash-password')
 const http = require('http')
 const makeHandler = require('../')
 const os = require('os')
 const path = require('path')
 const pino = require('pino')
-const redis = require('redis')
 const rimraf = require('rimraf')
 const runParallel = require('run-parallel')
 const runSeries = require('run-series')
-const spawn = require('child_process').spawn
-const stringify = require('../util/stringify')
+const spawnNats = require('./spawn-nats')
+const uuid = require('uuid')
 
 module.exports = callback => {
   assert(typeof callback === 'function')
   const log = pino({}, fs.createWriteStream('test-server.log'))
-  const blobs = new AbstractBlobStore()
   let directory
-  let redisServer, testClient, readClient, writeClient
-  process.env.REDIS_STREAM = 'commonformtest'
+  const cluster = process.env.NATSS_CLUSTER = 'commonform-test'
+  process.env.NATSS_STREAM = 'commonform'
+  let nats
+  let fixtureClient
+  let serverClient
+  let webServer
   runSeries([
     done => {
-      redisServer = spawn('redis-server')
-      redisServer.stdout.once('data', () => {
-        setImmediate(done)
+      spawnNats({ cluster }, (error, spawned) => {
+        if (error) return done(error)
+        nats = spawned
+        done()
       })
     },
     done => {
-      testClient = redis.createClient()
-      readClient = redis.createClient()
-      writeClient = redis.createClient()
-      done()
+      fixtureClient = STAN
+        .connect(cluster, uuid.v4())
+        .once('error', done)
+        .once('connect', () => { done() })
     },
-    done => { testClient.flushall(done) },
+    done => {
+      serverClient = STAN
+        .connect(cluster, uuid.v4())
+        .once('error', done)
+        .once('connect', () => { done() })
+    },
     done => {
       fs.mkdtemp(path.join(os.tmpdir(), 'epsilon-'), (error, tmp) => {
         if (error) return done(error)
         directory = tmp
-        process.env.INDEX_DIRECTORY = path.join(tmp, 'indexes')
+        process.env.DIRECTORY = path.join(tmp, 'indexes')
         done()
       })
     },
@@ -77,41 +84,39 @@ module.exports = callback => {
           runParallel(tasks, done)
         }
       ], done)
-    },
-    done => {
-      testClient.quit()
-      done()
     }
   ], error => {
-    if (error) throw error
-    const handler = makeHandler({
-      log,
-      blobs,
-      readClient,
-      writeClient
-    })
-    const webServer = http.createServer(handler)
+    if (error) {
+      cleanup()
+      console.error(error)
+      throw error
+    }
+    const handler = makeHandler({ log, stream: serverClient })
+    webServer = http.createServer(handler)
     webServer.listen(0, function () {
       const port = this.address().port
       process.env.BASE_HREF = 'http://localhost:' + port
       process.env.ADMIN_EMAIL = 'admin@example.com'
-      callback(port, () => {
-        webServer.close(noop)
-        readClient.end(true)
-        writeClient.end(true)
-        redisServer.kill(9)
-        rimraf(directory, noop)
-        function noop () { }
-      })
+      callback(port, cleanup)
     })
   })
 
+  function cleanup () {
+    if (serverClient) serverClient.close()
+    if (fixtureClient) fixtureClient.close()
+    if (nats) nats.kill(9)
+    if (webServer) webServer.close()
+    if (directory) rimraf(directory, () => {})
+  }
+
   function record (entry, callback) {
-    const stringified = stringify(entry)
-    const digest = hash(stringified)
-    blobs.createWriteStream(digest, error => {
-      if (error) return callback(error)
-      testClient.xadd(process.env.REDIS_STREAM, '*', 'digest', digest, callback)
-    }).end(stringified)
+    fixtureClient.publish(
+      'commonform',
+      JSON.stringify(entry),
+      (error, guid) => {
+        if (error) return callback(error)
+        callback()
+      }
+    )
   }
 }
