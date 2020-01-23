@@ -16,6 +16,7 @@ const typeSpecificValidations = {
   changeEMail: [handleExists],
   changePassword: [handleExists],
   confirmAccount: [handleExists],
+  lockAccount: [handleExists],
   publication: [formExists, publicationDoesNotExist],
   session: [handleExists],
   useToken: [tokenExists]

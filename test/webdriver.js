@@ -23,7 +23,8 @@ tape.onFinish(kill)
 process.on('SIGINT', kill)
 process.on('SIGQUIT', kill)
 process.on('SIGTERM', kill)
-process.on('uncaughtException', () => {
+process.on('uncaughtException', error => {
+  process.stderr.write(error.message)
   process.exitCode = 1
   kill()
 })

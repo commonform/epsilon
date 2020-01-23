@@ -134,3 +134,73 @@ tape('log in with bad credentials', test => {
     }
   })
 })
+
+tape('log in with bad password', test => {
+  server((port, done) => {
+    let browser
+    webdriver()
+      .then(loaded => { browser = loaded })
+      .then(() => browser.navigateTo('http://localhost:' + port))
+      .then(() => browser.$('a=Log In'))
+      .then(a => a.click())
+      .then(() => browser.$('input[name="handle"]'))
+      .then(input => input.addValue(ANA.handle))
+      .then(() => browser.$('input[name="password"]'))
+      .then(input => input.addValue('invalid'))
+      .then(() => browser.$('button[type="submit"]'))
+      .then(submit => submit.click())
+      .then(() => browser.$('p.message'))
+      .then(p => p.getText())
+      .then(text => {
+        test.assert(text.includes('invalid'), 'invalid')
+        finish()
+      })
+      .catch(error => {
+        test.fail(error)
+        finish()
+      })
+    function finish () {
+      test.end()
+      done()
+    }
+  })
+})
+
+tape('lockout', test => {
+  server((port, done) => {
+    let browser
+    webdriver()
+      .then(loaded => { browser = loaded })
+      .then(() => logInWithPassword('invalid', 'invalid password'))
+      .then(() => logInWithPassword('invalid', 'invalid password'))
+      .then(() => logInWithPassword('invalid', 'invalid password'))
+      .then(() => logInWithPassword('invalid', 'invalid password'))
+      .then(() => logInWithPassword('invalid', 'invalid password'))
+      .then(() => logInWithPassword(ANA.password, 'account locked'))
+      .then(finish)
+      .catch(error => {
+        test.fail(error)
+        finish()
+      })
+
+    function logInWithPassword (password, message) {
+      return browser.navigateTo('http://localhost:' + port)
+        .then(() => browser.$('a=Log In'))
+        .then(a => a.click())
+        .then(() => browser.$('input[name="handle"]'))
+        .then(input => input.addValue(ANA.handle))
+        .then(() => browser.$('input[name="password"]'))
+        .then(input => input.addValue(password))
+        .then(() => browser.$('button[type="submit"]'))
+        .then(submit => submit.click())
+        .then(() => browser.$('p.message'))
+        .then(p => p.getText())
+        .then(text => { test.equal(text, message, message) })
+    }
+
+    function finish () {
+      test.end()
+      done()
+    }
+  })
+})

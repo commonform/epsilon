@@ -14,6 +14,7 @@ const writers = {
   changePassword,
   comment,
   form,
+  lockAccount,
   publication,
   confirmAccountToken,
   changeEMailToken,
@@ -94,7 +95,17 @@ function account (entry, callback) {
   const passwordHash = entry.passwordHash
   const created = entry.created
   const confirmed = false
-  const record = { handle, email, passwordHash, created, confirmed }
+  const failures = 0
+  const locked = false
+  const record = {
+    handle,
+    email,
+    passwordHash,
+    created,
+    confirmed,
+    failures,
+    locked
+  }
   runSeries([
     done => { storage.account.write(handle, record, done) },
     done => { storage.email.write(email, handle, done) }
@@ -178,4 +189,10 @@ function comment (entry, callback) {
     done => storage.comment.write(entry.id, entry, done),
     done => storage.formComment.append(entry.form, entry.id, done)
   ], callback)
+}
+
+function lockAccount (entry, callback) {
+  const locked = new Date().toISOString()
+  const properties = { locked, failures: 0 }
+  storage.account.update(entry.handle, properties, callback)
 }

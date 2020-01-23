@@ -1,3 +1,4 @@
+const expired = require('../util/expired')
 const passwordHashing = require('./password-hashing')
 const securePassword = require('secure-password')
 const storage = require('../storage')
@@ -14,7 +15,13 @@ module.exports = (handle, password, callback) => {
       if (account === null || account.confirmed === false) {
         const invalid = new Error('invalid handle or password')
         invalid.statusCode = 401
-        return callback(invalid)
+        return callback(invalid, account)
+      }
+      const locked = account.locked
+      if (locked && !expired(locked, 1)) {
+        const locked = new Error('account locked')
+        locked.statusCode = 401
+        return callback(locked, account)
       }
       const passwordHash = Buffer.from(account.passwordHash, 'hex')
       const passwordBuffer = Buffer.from(password, 'utf8')
@@ -32,7 +39,7 @@ module.exports = (handle, password, callback) => {
             case securePassword.INVALID:
               var invalid = new Error('invalid password')
               invalid.statusCode = 403
-              return callback(invalid)
+              return callback(invalid, account)
             case securePassword.VALID_NEEDS_REHASH:
               return passwordHashing.hash(passwordBuffer, (error, newHash) => {
                 if (error) {
@@ -40,10 +47,13 @@ module.exports = (handle, password, callback) => {
                   return callback(error)
                 }
                 account.passwordHash = newHash.toString('hex')
-                storage.account.writeWithoutLocking(handle, account, callback)
+                storage.account.writeWithoutLocking(handle, account, error => {
+                  if (error) return callback(error)
+                  callback(null, account)
+                })
               })
             case securePassword.VALID:
-              return callback(null)
+              return callback(null, account)
             default:
               var otherError = new Error(
                 'unexpected password hash result: ' + result

@@ -88,7 +88,6 @@ module.exports = callback => {
   ], error => {
     if (error) {
       cleanup()
-      console.error(error)
       throw error
     }
     const handler = makeHandler({ log, stream: serverClient })

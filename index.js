@@ -1,5 +1,6 @@
 const CHANNELS = require('./constants/channels')
 const MESSAGE_CHANNELS = require('./constants/message-channels')
+const async = require('async')
 const notFound = require('./routes/not-found')
 const parseURL = require('url-parse')
 const pinoHTTP = require('pino-http')
@@ -21,6 +22,13 @@ module.exports = configuration => {
   const streamLog = log.child({ subsystem: 'stream' })
 
   const subscriptions = {}
+  const messageQueue = async.queue((task, done) => {
+    const { channel, sequence, data } = task
+    write(data, () => {
+      streamLog.info({ channel, sequence }, 'indexed')
+      done()
+    })
+  })
   CHANNELS.forEach(channel => {
     const options = stream
       .subscriptionOptions()
@@ -31,9 +39,7 @@ module.exports = configuration => {
     subscription.on('message', (message) => {
       const sequence = message.getSequence()
       const data = JSON.parse(message.getData())
-      write(data, () => {
-        streamLog.info({ channel, sequence }, 'indexed')
-      })
+      messageQueue.push({ channel, sequence, data })
     })
   })
 

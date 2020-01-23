@@ -7,6 +7,7 @@
   "confirmAccount": "accounts",
   "confirmAccountToken": "tokens",
   "form": "forms",
+  "lockAccount": "accounts",
   "publication": "publications",
   "resetPasswordToken": "tokens",
   "session": "sessions",

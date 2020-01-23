@@ -7,6 +7,7 @@ const html = require('./html')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
 const setCookie = require('./set-cookie')
+const storage = require('../storage')
 const uuid = require('uuid')
 const verifyPassword = require('../util/verify-password')
 
@@ -63,7 +64,8 @@ function post (request, response) {
     redirect
   ], function (error) {
     if (error) {
-      if (error.statusCode === 401) {
+      const statusCode = error.statusCode
+      if (statusCode === 401 || statusCode === 403) {
         response.statusCode = 401
         return get(request, response, error.message)
       }
@@ -108,8 +110,30 @@ function post (request, response) {
   }
 
   function authenticate (done) {
-    verifyPassword(handle, password, (error) => {
-      if (error) return done(error)
+    verifyPassword(handle, password, (verifyError, account) => {
+      if (verifyError) {
+        const statusCode = verifyError.statusCode
+        if (statusCode === 500) return done(verifyError)
+        if (!account) return done(verifyError)
+        request.log.info(verifyError, 'authentication error')
+        const failures = account.failures + 1
+        if (failures >= 5) {
+          return request.record({
+            type: 'lockAccount',
+            handle
+          }, recordError => {
+            if (recordError) return done(recordError)
+            done(verifyError)
+          })
+        }
+        return storage.account.update(
+          handle, { failures },
+          (updateError) => {
+            if (updateError) return done(updateError)
+            done(verifyError)
+          }
+        )
+      }
       request.log.info('verified credentials')
       done()
     })
