@@ -2,11 +2,11 @@ const UUID_RE = require('../util/uuid-re')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
+const indexes = require('../indexes')
 const internalError = require('./internal-error')
 const methodNotAllowed = require('./method-not-allowed')
 const nav = require('./partials/nav')
 const seeOther = require('./see-other')
-const storage = require('../storage')
 
 module.exports = function (request, response) {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
@@ -14,7 +14,7 @@ module.exports = function (request, response) {
   const token = request.query.token
   if (!UUID_RE.test(token)) return invalidToken(request, response)
 
-  storage.token.read(token, (error, tokenData) => {
+  indexes.token.read(token, (error, tokenData) => {
     if (error) return internalError(request, response, error)
     if (!tokenData) return invalidToken(request, response)
     request.record({ type: 'useToken', token }, error => {

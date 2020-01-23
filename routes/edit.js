@@ -7,6 +7,7 @@ const found = require('./found')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
+const indexes = require('../indexes')
 const internalError = require('./internal-error')
 const methodNotAllowed = require('./method-not-allowed')
 const nav = require('./partials/nav')
@@ -14,7 +15,6 @@ const normalize = require('commonform-normalize')
 const runAuto = require('run-auto')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
-const storage = require('../storage')
 
 module.exports = (request, response) => {
   const method = request.method
@@ -32,7 +32,7 @@ function get (request, response, parameters) {
   const tasks = {}
   const digest = parameters.digest
   if (digest && DIGEST_RE.test(digest)) {
-    tasks.form = done => storage.form.read(digest, done)
+    tasks.form = done => indexes.form.read(digest, done)
   }
   runAuto(tasks, (error, data) => {
     if (error) return internalError(request, response, error)

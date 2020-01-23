@@ -3,6 +3,7 @@ const DIGEST_RE = require('../util/digest-re')
 const UUID_RE = require('../util/uuid-re')
 const authenticate = require('./authenticate')
 const found = require('./found')
+const indexes = require('../indexes')
 const internalError = require('./internal-error')
 const mentionNotification = require('../notifications/mention')
 const methodNotAllowed = require('./method-not-allowed')
@@ -11,7 +12,6 @@ const replyNotification = require('../notifications/reply')
 const runParallelLimit = require('run-parallel-limit')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
-const storage = require('../storage')
 const uuid = require('uuid')
 const watchedCommentNotification = require('../notifications/watched-comment')
 
@@ -110,10 +110,10 @@ function post (request, response) {
       done => {
         if (comment.replyTo.length === 0) return done()
         const parentID = comment.replyTo[0]
-        storage.comment.read(parentID, (error, parent) => {
+        indexes.comment.read(parentID, (error, parent) => {
           if (error) return done(error)
           const handle = parent.handle
-          storage.account.read(handle, (error, account) => {
+          indexes.account.read(handle, (error, account) => {
             if (error) return done(error)
             if (!account) {
               request.log.error({ handle }, 'no such account')
@@ -137,7 +137,7 @@ function post (request, response) {
         const mentions = parseMentions(comment.text).matches
         if (mentions.length === 0) return done()
         const tasks = mentions.map(handle => done => {
-          storage.account.read(handle, (error, account) => {
+          indexes.account.read(handle, (error, account) => {
             if (error) return done(error)
             if (!account) {
               request.log.info({ handle }, 'bad mention')
@@ -164,11 +164,11 @@ function post (request, response) {
       done => {
         if (comment.replyTo.length === 0) return done()
         const parentTasks = comment.replyTo.map(id => done => {
-          storage.commentWatchers.read(id, (error, watchers) => {
+          indexes.commentWatchers.read(id, (error, watchers) => {
             if (error) return done(error)
             const watcherTasks = watchers.map(handle => done => {
               if (alreadyNotified.includes(handle)) return done()
-              storage.account.read(handle, (error, account) => {
+              indexes.account.read(handle, (error, account) => {
                 if (error) return done(error)
                 watchedCommentNotification({
                   to: account.email,

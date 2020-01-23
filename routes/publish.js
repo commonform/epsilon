@@ -7,6 +7,7 @@ const found = require('./found')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
+const indexes = require('../indexes')
 const internalError = require('./internal-error')
 const loadComponents = require('commonform-load-components')
 const methodNotAllowed = require('./method-not-allowed')
@@ -15,7 +16,6 @@ const projectValidator = require('../validators/project')
 const renderForm = require('./partials/form')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
-const storage = require('../storage')
 
 module.exports = (request, response) => {
   const method = request.method
@@ -135,7 +135,7 @@ function post (request, response) {
   }
 
   function verifyForm (done) {
-    storage.form.read(body.form, (error, read) => {
+    indexes.form.read(body.form, (error, read) => {
       if (error) return done(error)
       if (!read) return done('unknown form')
       form = read

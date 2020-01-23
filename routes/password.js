@@ -6,13 +6,13 @@ const hashPassword = require('../util/hash-password')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
+const indexes = require('../indexes')
 const internalError = require('./internal-error')
 const nav = require('./partials/nav')
 const passwordChangeNotification = require('../notifications/password-change')
 const passwordInputs = require('./partials/password-inputs')
 const passwordValidator = require('../validators/password')
 const runSeries = require('run-series')
-const storage = require('../storage')
 const verifyPassword = require('../util/verify-password')
 
 module.exports = function (request, response) {
@@ -69,7 +69,7 @@ function getAuthenticated (request, response) {
 function getWithToken (request, response) {
   const token = request.query.token
   if (!UUID_RE.test(token)) return invalidToken(request, response)
-  storage.token.read(token, (error, tokenData) => {
+  indexes.token.read(token, (error, tokenData) => {
     if (error) return internalError(request, response, error)
     if (!tokenData) return invalidToken(request, response)
     if (tokenData.action !== 'reset') {
@@ -225,7 +225,7 @@ function post (request, response) {
 
   function changePassword (done) {
     if (token) {
-      return storage.token.read(token, (error, tokenData) => {
+      return indexes.token.read(token, (error, tokenData) => {
         if (error) return done(error)
         if (!tokenData || tokenData.action !== 'reset') {
           const failed = new Error('invalid token')
@@ -255,7 +255,7 @@ function post (request, response) {
   }
 
   function sendEMail (done) {
-    storage.account.read(handle, (error, account) => {
+    indexes.account.read(handle, (error, account) => {
       if (error) return done(error)
       passwordChangeNotification({
         to: account.email,

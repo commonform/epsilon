@@ -4,10 +4,10 @@ const escape = require('../util/escape')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
+const indexes = require('../indexes')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
 const setCookie = require('./set-cookie')
-const storage = require('../storage')
 const uuid = require('uuid')
 const verifyPassword = require('../util/verify-password')
 
@@ -126,7 +126,7 @@ function post (request, response) {
             done(verifyError)
           })
         }
-        return storage.account.update(
+        return indexes.account.update(
           handle, { failures },
           (updateError) => {
             if (updateError) return done(updateError)

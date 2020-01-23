@@ -9,8 +9,8 @@ const publications = require('./routes/publications')
 const publishers = require('./routes/publishers')
 const routes = require('./routes')
 const uuid = require('uuid')
-const validate = require('./storage/validate')
-const write = require('./storage/write')
+const validate = require('./indexes/validate')
+const write = require('./indexes/write')
 
 const PUBLISHER_PATH = /^\/([a-z0-9]+)$/
 const PROJECT_PATH = /^\/([a-z0-9]+)\/([a-z0-9]+)$/

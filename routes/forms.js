@@ -5,6 +5,7 @@ const escape = require('../util/escape')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
+const indexes = require('../indexes')
 const internalError = require('./internal-error')
 const loadComponents = require('commonform-load-components')
 const methodNotAllowed = require('./method-not-allowed')
@@ -14,7 +15,6 @@ const projectValidator = require('../validators/project')
 const pump = require('pump')
 const renderForm = require('./partials/form')
 const runAuto = require('run-auto')
-const storage = require('../storage')
 
 module.exports = (request, response) => {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
@@ -29,13 +29,13 @@ module.exports = (request, response) => {
     if (json) {
       response.setHeader('Content-Type', 'application/json')
       return pump(
-        storage.form.createRawReadStream(digest),
+        indexes.form.createRawReadStream(digest),
         response
       )
     }
     runAuto({
       form: done => {
-        storage.form.read(digest, (error, form) => {
+        indexes.form.read(digest, (error, form) => {
           if (error) return done(error)
           if (!form) {
             const error = new Error('not found')
@@ -52,7 +52,7 @@ module.exports = (request, response) => {
         })
       }],
       comments: done => {
-        storage.formComment.find({ context: digest }, done)
+        indexes.formComment.find({ context: digest }, done)
       }
     }, (error, results) => {
       if (error) {

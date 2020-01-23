@@ -4,9 +4,9 @@ const assert = require('assert')
 const async = require('async')
 const expired = require('../util/expired')
 const has = require('has')
+const indexes = require('./')
 const normalize = require('commonform-normalize')
 const runSeries = require('run-series')
-const storage = require('./')
 
 const writers = {
   confirmAccount,
@@ -39,7 +39,7 @@ function form (entry, callback) {
   const form = entry.form
   const forms = mapAllForms(form)
   const queue = async.queue((task, done) => {
-    storage.form.write(task.digest, task.form, done)
+    indexes.form.write(task.digest, task.form, done)
   }, 3)
   queue.error((error, _) => {
     queue.kill()
@@ -81,9 +81,9 @@ function publication (entry, callback) {
   const line = project + '/' + edition
 
   runSeries([
-    done => storage.publication.write(id, record, done),
-    done => storage.publisherPublication.append(publisher, line, done),
-    done => storage.projectEdition.append(
+    done => indexes.publication.write(id, record, done),
+    done => indexes.publisherPublication.append(publisher, line, done),
+    done => indexes.projectEdition.append(
       publisher + '/' + project, edition, done
     )
   ], callback)
@@ -107,14 +107,14 @@ function account (entry, callback) {
     locked
   }
   runSeries([
-    done => { storage.account.write(handle, record, done) },
-    done => { storage.email.write(email, handle, done) }
+    done => { indexes.account.write(handle, record, done) },
+    done => { indexes.email.write(email, handle, done) }
   ], callback)
 }
 
 function confirmAccount (entry, callback) {
   const handle = entry.handle
-  storage.account.confirm(handle, callback)
+  indexes.account.confirm(handle, callback)
 }
 
 function changeEMail (entry, callback) {
@@ -123,22 +123,22 @@ function changeEMail (entry, callback) {
   let oldEMail
   runSeries([
     done => {
-      storage.account.read(handle, (error, account) => {
+      indexes.account.read(handle, (error, account) => {
         if (error) return done(error)
         oldEMail = account.email
         done()
       })
     },
-    done => storage.account.update(handle, { email }, done),
-    done => storage.email.delete(oldEMail, done),
-    done => storage.email.write(email, handle, done)
+    done => indexes.account.update(handle, { email }, done),
+    done => indexes.email.delete(oldEMail, done),
+    done => indexes.email.write(email, handle, done)
   ], callback)
 }
 
 function changePassword (entry, callback) {
   const handle = entry.handle
   const passwordHash = entry.passwordHash
-  storage.account.update(handle, { passwordHash }, callback)
+  indexes.account.update(handle, { passwordHash }, callback)
 }
 
 function confirmAccountToken (entry, callback) {
@@ -147,7 +147,7 @@ function confirmAccountToken (entry, callback) {
   const token = entry.token
   const handle = entry.handle
   const tokenData = { action: 'confirm', created, handle }
-  storage.token.write(token, tokenData, callback)
+  indexes.token.write(token, tokenData, callback)
 }
 
 function changeEMailToken (entry, callback) {
@@ -157,7 +157,7 @@ function changeEMailToken (entry, callback) {
   const token = entry.token
   const email = entry.email
   const tokenData = { action: 'email', created, handle, email }
-  storage.token.write(token, tokenData, callback)
+  indexes.token.write(token, tokenData, callback)
 }
 
 function resetPasswordToken (entry, callback) {
@@ -166,18 +166,18 @@ function resetPasswordToken (entry, callback) {
   const token = entry.token
   const handle = entry.handle
   const tokenData = { action: 'reset', created, handle }
-  storage.token.write(token, tokenData, callback)
+  indexes.token.write(token, tokenData, callback)
 }
 
 function useToken (entry, callback) {
-  storage.token.use(entry.token, callback)
+  indexes.token.use(entry.token, callback)
 }
 
 function session (entry, callback) {
   const handle = entry.handle
   const id = entry.id
   const created = new Date().toISOString()
-  storage.session.write(id, { handle, created }, (error, success) => {
+  indexes.session.write(id, { handle, created }, (error, success) => {
     if (error) return callback(error)
     if (!success) return callback(new Error('session collision'))
     callback()
@@ -186,13 +186,13 @@ function session (entry, callback) {
 
 function comment (entry, callback) {
   runSeries([
-    done => storage.comment.write(entry.id, entry, done),
-    done => storage.formComment.append(entry.form, entry.id, done)
+    done => indexes.comment.write(entry.id, entry, done),
+    done => indexes.formComment.append(entry.form, entry.id, done)
   ], callback)
 }
 
 function lockAccount (entry, callback) {
   const locked = new Date().toISOString()
   const properties = { locked, failures: 0 }
-  storage.account.update(entry.handle, properties, callback)
+  indexes.account.update(entry.handle, properties, callback)
 }

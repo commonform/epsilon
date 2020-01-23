@@ -3,9 +3,9 @@ const escape = require('../util/escape')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
+const indexes = require('../indexes')
 const passwordResetNotification = require('../notifications/password-reset')
 const runSeries = require('run-series')
-const storage = require('../storage')
 const uuid = require('uuid')
 
 module.exports = function (request, response) {
@@ -105,7 +105,7 @@ function post (request, response) {
   }
 
   function sendResetLink (done) {
-    storage.account.read(handle, (error, account) => {
+    indexes.account.read(handle, (error, account) => {
       if (error) return done(error)
       if (!account) {
         const invalid = new Error('invalid handle')

@@ -3,13 +3,13 @@ const handleValidator = require('../validators/handle')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
+const indexes = require('../indexes')
 const internalError = require('./internal-error')
 const methodNotAllowed = require('./method-not-allowed')
 const nav = require('./partials/nav')
 const notFound = require('./not-found')
 const runAuto = require('run-auto')
 const runParallelLimit = require('run-parallel-limit')
-const storage = require('../storage')
 
 module.exports = (request, response) => {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
@@ -18,12 +18,12 @@ module.exports = (request, response) => {
     !handleValidator.valid(publisher)
   ) return notFound(request, response)
   const tasks = {
-    publisher: done => storage.account.read(publisher, done),
-    slugs: done => storage.publisherPublication.read(publisher, done),
+    publisher: done => indexes.account.read(publisher, done),
+    slugs: done => indexes.publisherPublication.read(publisher, done),
     publications: ['slugs', (results, done) => {
       const tasks = results.slugs.map(slug => done => {
         const [project, edition] = slug.split('/')
-        storage.publication.read({
+        indexes.publication.read({
           publisher, project, edition
         }, (error, publication) => {
           if (error) return done(error)

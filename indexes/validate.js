@@ -2,9 +2,9 @@ const MESSAGE_TYPES = require('../constants/message-types')
 const arrayEqual = require('array-equal')
 const assert = require('assert')
 const has = require('has')
+const indexes = require('./')
 const normalize = require('commonform-normalize')
 const runParallelLimit = require('run-parallel-limit')
-const storage = require('./')
 
 const universalValidations = [
   doesNotContainPassword
@@ -47,7 +47,7 @@ function doesNotContainPassword (entry, callback) {
 }
 
 function handleExists (entry, callback) {
-  storage.account.exists(entry.handle, (error, exists) => {
+  indexes.account.exists(entry.handle, (error, exists) => {
     if (error) return callback(error)
     if (!exists) callback(new Error('no such handle'))
     callback()
@@ -55,7 +55,7 @@ function handleExists (entry, callback) {
 }
 
 function handleDoesNotExist (entry, callback) {
-  storage.account.exists(entry.handle, (error, exists) => {
+  indexes.account.exists(entry.handle, (error, exists) => {
     if (error) return callback(error)
     const handleTaken = new Error('handle taken')
     handleTaken.handleTaken = true
@@ -65,7 +65,7 @@ function handleDoesNotExist (entry, callback) {
 }
 
 function tokenExists (entry, callback) {
-  storage.token.exists(entry.token, (error, exists) => {
+  indexes.token.exists(entry.token, (error, exists) => {
     if (error) return callback(error)
     if (!exists) callback(new Error('no such token'))
     callback()
@@ -73,7 +73,7 @@ function tokenExists (entry, callback) {
 }
 
 function publicationDoesNotExist (entry, callback) {
-  storage.publication.exists({
+  indexes.publication.exists({
     edition: entry.edition,
     project: entry.project,
     publisher: entry.publisher
@@ -85,7 +85,7 @@ function publicationDoesNotExist (entry, callback) {
 }
 
 function formExists (entry, callback) {
-  storage.form.exists(entry.form, (error, exists) => {
+  indexes.form.exists(entry.form, (error, exists) => {
     if (error) return callback(error)
     if (!exists) return callback(new Error('no such form'))
     callback()
@@ -94,7 +94,7 @@ function formExists (entry, callback) {
 
 function formInContext (entry, callback) {
   if (entry.context === entry.form) return callback()
-  storage.form.read(entry.context, (error, context) => {
+  indexes.form.read(entry.context, (error, context) => {
     if (error) return callback(error)
     const normalized = normalize(context)
     const digests = Object.keys(normalized)
@@ -108,7 +108,7 @@ function formInContext (entry, callback) {
 function validReply (entry, callback) {
   if (entry.replyTo.length === 0) return callback()
   const parentID = entry.replyTo[0]
-  storage.comment.read(parentID, (error, parent) => {
+  indexes.comment.read(parentID, (error, parent) => {
     if (error) return callback(error)
     var isReply = (
       entry.context === parent.context &&
@@ -123,7 +123,7 @@ function validReply (entry, callback) {
 }
 
 function eMailDoesNotHaveAccount (entry, callback) {
-  storage.email.read(entry.email, (error, handle) => {
+  indexes.email.read(entry.email, (error, handle) => {
     if (error) return callback(error)
     if (!handle) return callback()
     const hasAccount = new Error('e-mail address has an account')

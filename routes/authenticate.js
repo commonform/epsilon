@@ -1,7 +1,7 @@
 const cookie = require('cookie')
+const indexes = require('../indexes')
 const internalError = require('./internal-error')
 const runParallel = require('run-parallel')
-const storage = require('../storage')
 
 module.exports = function (request, response, handler) {
   const header = request.headers.cookie
@@ -9,7 +9,7 @@ module.exports = function (request, response, handler) {
   const parsed = cookie.parse(header)
   const sessionID = parsed.commonform
   if (!sessionID) return proceed()
-  storage.session.read(sessionID, function (error, session) {
+  indexes.session.read(sessionID, function (error, session) {
     if (error) return internalError(request, response, error)
     if (!session) {
       request.log.info({ id: sessionID }, 'expired session')
@@ -20,7 +20,7 @@ module.exports = function (request, response, handler) {
     request.session = session
     runParallel({
       account: function (done) {
-        storage.account.read(handle, done)
+        indexes.account.read(handle, done)
       }
     }, function (error, results) {
       if (error) return internalError(request, response, error)

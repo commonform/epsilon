@@ -4,6 +4,7 @@ const handleValidator = require('../validators/handle')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
+const indexes = require('../indexes')
 const internalError = require('./internal-error')
 const loadComponents = require('commonform-load-components')
 const methodNotAllowed = require('./method-not-allowed')
@@ -12,7 +13,6 @@ const notFound = require('./not-found')
 const projectValidator = require('../validators/project')
 const renderForm = require('./partials/form')
 const runAuto = require('run-auto')
-const storage = require('../storage')
 
 module.exports = (request, response) => {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
@@ -25,12 +25,12 @@ module.exports = (request, response) => {
     !editionValidator.valid(edition)
   ) return notFound(request, response)
   const tasks = {
-    publication: done => storage.publication.read({
+    publication: done => indexes.publication.read({
       publisher, project, edition
     }, done),
     form: ['publication', (results, done) => {
       if (!results.publication) return done()
-      storage.form.read(results.publication.form, done)
+      indexes.form.read(results.publication.form, done)
     }]
   }
   runAuto(tasks, (error, data) => {
