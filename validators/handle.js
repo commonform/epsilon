@@ -31,9 +31,3 @@ exports.html = 'Handles must be ' +
   'and the digits ‘0’ through ‘9’. ' +
   'They must be at least three characters long, ' +
   'but no more than sixteen.'
-
-exports.html = 'Project names must be made of ' +
-  'made of the characters <code>a</code> through <code>z</code>, ' +
-  'the digits <code>0</code> through <code>9</code>. ' +
-  `They must be at least ${MIN_LENGTH} characters long, ` +
-  `but no more than ${MAX_LENGTH}.`

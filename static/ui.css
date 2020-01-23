@@ -81,3 +81,7 @@ a[href]:hover {
   margin: 1rem 0;
   padding: 1rem;
 }
+
+.error {
+  color: darkred;
+}

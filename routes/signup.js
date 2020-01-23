@@ -1,72 +1,96 @@
-const Busboy = require('busboy')
 const EMAIL_RE = require('../util/email-re')
 const confirmAccountNotification = require('../notifications/confirm-account')
 const eMailInput = require('./partials/email-input')
 const escape = require('../util/escape')
+const formRoute = require('./form-route')
 const handleValidator = require('../validators/handle')
 const hashPassword = require('../util/hash-password')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
-const internalError = require('./internal-error')
 const mail = require('../mail')
-const methodNotAllowed = require('./method-not-allowed')
-const passwordInputs = require('./partials/password-inputs')
+const passwordInput = require('./partials/password-input')
+const passwordRepeatInput = require('./partials/password-repeat-input')
 const passwordValidator = require('../validators/password')
 const runSeries = require('run-series')
 const uuid = require('uuid')
 
-module.exports = function (request, response) {
-  const method = request.method
-  if (method === 'GET') return get(request, response)
-  if (method === 'POST') return post(request, response)
-  methodNotAllowed(request, response)
+const fields = {
+  email: {
+    filter: (e) => e.toLowerCase().trim(),
+    validate: (e) => EMAIL_RE.test(e)
+  },
+  handle: {
+    filter: (e) => e.toLowerCase().trim(),
+    validate: handleValidator.valid
+  },
+  password: {
+    validate: passwordValidator.valid
+  },
+  repeat: {
+    validate: (value, body) => value === body.password
+  }
 }
 
-function get (request, response, data) {
-  data = data || {}
-  const error = data.error
-  if (error) response.statusCode = 400
+module.exports = formRoute({ form, fields, processBody, onSuccess })
+
+function processBody (request, body, done) {
+  const { handle, email, password } = body
+  runSeries([
+    done => {
+      hashPassword(password, (error, passwordHash) => {
+        if (error) return done(error)
+        request.record({
+          type: 'account',
+          handle,
+          email,
+          created: new Date().toISOString(),
+          passwordHash
+        }, error => {
+          if (error) return done(error)
+          request.log.info('recorded account')
+          done()
+        })
+      })
+    },
+    done => {
+      const token = uuid.v4()
+      request.record({
+        type: 'confirmAccountToken',
+        token,
+        created: new Date().toISOString(),
+        handle
+      }, error => {
+        if (error) return done(error)
+        request.log.info('recorded token')
+        confirmAccountNotification({
+          to: email,
+          handle,
+          url: `${process.env.BASE_HREF}/confirm?token=${token}`
+        }, error => {
+          if (error) return done(error)
+          request.log.info('e-mailed token')
+          done()
+        })
+      })
+    },
+    done => {
+      if (!process.env.ADMIN_EMAIL) return done()
+      mail({
+        to: process.env.ADMIN_EMAIL,
+        subject: 'Sign Up',
+        text: `Handle: ${handle}\nE-Mail: ${email}\n`
+      }, error => {
+        if (error) request.log.error(error)
+        done()
+      })
+    }
+  ], done)
+}
+
+function onSuccess (request, response) {
   response.setHeader('Content-Type', 'text/html')
   response.end(html`
-<!doctype html>
-<html lang=en-US>
-  ${head()}
-  <body>
-    ${header()}
-    <main role=main>
-      <h2>Sign Up</h2>
-      ${signUpForm(data)}
-    </main>
-  </body>
-</html>
-  `)
-}
-
-function post (request, response) {
-  let email, handle, password, repeat
-  runSeries([
-    readPostBody,
-    validateInputs,
-    recordAccount,
-    generateConfirmToken,
-    sendAdminEMail
-  ], function (error) {
-    if (error) {
-      if (
-        error.statusCode === 400 ||
-        error.handleTaken ||
-        error.hasAccount
-      ) {
-        return get(request, response, {
-          email, handle, password, repeat, error
-        })
-      } else {
-        return internalError(request, response, error)
-      }
-    }
-    response.setHeader('Content-Type', 'text/html')
-    response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
@@ -78,123 +102,41 @@ function post (request, response) {
     </main>
   </body>
 </html>
-    `)
-  })
-
-  function readPostBody (done) {
-    request.pipe(
-      new Busboy({
-        headers: request.headers,
-        limits: {
-          fieldNameSize: 8,
-          fieldSize: 128,
-          fields: 4,
-          parts: 1
-        }
-      })
-        .on('field', function (fieldName, value, truncated, encoding, mime) {
-          if (fieldName === 'email') email = value.toLowerCase()
-          else if (fieldName === 'handle') handle = value.toLowerCase()
-          else if (fieldName === 'password') password = value
-          else if (fieldName === 'repeat') repeat = value
-        })
-        .once('finish', done)
-    )
-  }
-
-  function validateInputs (done) {
-    let error
-    if (!EMAIL_RE.test(email)) {
-      error = new Error('invalid e-mail address')
-      error.fieldName = 'email'
-      return done(error)
-    }
-    if (!handle || !handleValidator.valid(handle)) {
-      error = new Error('Invalid handle.')
-      error.fieldName = 'handle'
-      return done(error)
-    }
-    if (password !== repeat) {
-      error = new Error('passwords did not match')
-      error.fieldName = 'repeat'
-      return done(error)
-    }
-    if (!passwordValidator.valid(password)) {
-      error = new Error('invalid password')
-      error.fieldName = 'password'
-      return done(error)
-    }
-    done()
-  }
-
-  function recordAccount (done) {
-    hashPassword(password, (error, passwordHash) => {
-      if (error) return done(error)
-      request.record({
-        type: 'account',
-        handle,
-        email,
-        created: new Date().toISOString(),
-        passwordHash
-      }, done)
-    })
-  }
-
-  function generateConfirmToken (done) {
-    const token = uuid.v4()
-    request.record({
-      type: 'confirmAccountToken',
-      token,
-      created: new Date().toISOString(),
-      handle
-    }, error => {
-      if (error) return done(error)
-      confirmAccountNotification({
-        to: email,
-        handle,
-        url: `${process.env.BASE_HREF}/confirm?token=${token}`
-      }, done)
-    })
-  }
-
-  function sendAdminEMail (done) {
-    if (!process.env.ADMIN_EMAIL) return done()
-    mail({
-      to: process.env.ADMIN_EMAIL,
-      subject: 'Sign Up',
-      text: `Handle: ${handle}\nE-Mail: ${email}\n`
-    }, error => {
-      if (error) request.log.error(error)
-      done()
-    })
-  }
+  `)
 }
 
-function signUpForm (data) {
-  data = data || {}
-  const error = data.error
-  const errorMessage = error ? `<p class=error>${escape(error.message)}</p>` : ''
+function form (data) {
   return html`
-<form method=post>
-  ${errorMessage}
-  ${eMailInput({ autofocus: true, value: data.email })}
-  <p>
-    <label for=handle>Handle</label>
-    <input
-        name=handle
-        type=text
-        pattern="${handleValidator.pattern}"
-        value="${value('handle')}"
-        autofocus
-        required>
-  </p>
-  <p>${handleValidator.html}</p>
-  ${passwordInputs()}
-  <button type=submit>Join</button>
-</form>
+<!doctype html>
+<html lang=en-US>
+  ${head()}
+    ${header()}
+    <main role=main>
+      <h2>Sign Up</h2>
+      <form method=post>
+        ${data.error}
+        ${eMailInput({ autofocus: true, value: data.email.value })}
+        ${data.email.error}
+        <p>
+          <label for=handle>Handle</label>
+          <input
+              name=handle
+              type=text
+              pattern="${handleValidator.pattern}"
+              value="${escape(data.handle.value)}"
+              autofocus
+              required>
+        </p>
+        ${data.handle.error}
+        <p>${handleValidator.html}</p>
+        ${passwordInput()}
+        ${data.password.error}
+        ${passwordRepeatInput()}
+        ${data.repeat.error}
+        <button type=submit>Join</button>
+      </form>
+    </main>
+  </body>
+</html>
   `
-
-  function value (fieldName) {
-    return data[fieldName] || ''
-  }
 }

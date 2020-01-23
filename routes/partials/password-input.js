@@ -15,15 +15,6 @@ module.exports = options => {
       autocomplete=off
       ${options.autofocus ? 'autofocus' : ''}>
 </p>
-<p>
-  <label for=repeat>Repeat</label>
-  <input
-      name=repeat
-      type=password
-      pattern="${passwordValidator.pattern}"
-      required
-      autocomplete=off>
-</p>
 <p>${escape(passwordValidator.html)}</p>
   `
 }

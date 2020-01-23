@@ -37,7 +37,7 @@ module.exports = (handle, password, callback) => {
               unrecognized.statusCode = 500
               return callback(unrecognized)
             case securePassword.INVALID:
-              var invalid = new Error('invalid password')
+              var invalid = new Error('invalid handle or password')
               invalid.statusCode = 403
               return callback(invalid, account)
             case securePassword.VALID_NEEDS_REHASH:

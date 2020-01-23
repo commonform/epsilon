@@ -171,11 +171,11 @@ tape('lockout', test => {
     let browser
     webdriver()
       .then(loaded => { browser = loaded })
-      .then(() => logInWithPassword('invalid', 'invalid password'))
-      .then(() => logInWithPassword('invalid', 'invalid password'))
-      .then(() => logInWithPassword('invalid', 'invalid password'))
-      .then(() => logInWithPassword('invalid', 'invalid password'))
-      .then(() => logInWithPassword('invalid', 'invalid password'))
+      .then(() => logInWithPassword('invalid', 'invalid handle or password'))
+      .then(() => logInWithPassword('invalid', 'invalid handle or password'))
+      .then(() => logInWithPassword('invalid', 'invalid handle or password'))
+      .then(() => logInWithPassword('invalid', 'invalid handle or password'))
+      .then(() => logInWithPassword('invalid', 'invalid handle or password'))
       .then(() => logInWithPassword(ANA.password, 'account locked'))
       .then(finish)
       .catch(error => {

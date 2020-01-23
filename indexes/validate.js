@@ -59,6 +59,8 @@ function handleDoesNotExist (entry, callback) {
     if (error) return callback(error)
     const handleTaken = new Error('handle taken')
     handleTaken.handleTaken = true
+    handleTaken.statusCode = 401
+    handleTaken.fieldName = 'handle'
     if (exists) return callback(handleTaken)
     callback()
   })
@@ -79,7 +81,12 @@ function publicationDoesNotExist (entry, callback) {
     publisher: entry.publisher
   }, (error, exists) => {
     if (error) return callback(error)
-    if (exists) return callback(new Error('publication exists'))
+    if (exists) {
+      const exists = new Error('publication already exists')
+      exists.exists = true
+      exists.statusCode = 401
+      return callback(exists)
+    }
     callback()
   })
 }
@@ -128,6 +135,8 @@ function eMailDoesNotHaveAccount (entry, callback) {
     if (!handle) return callback()
     const hasAccount = new Error('e-mail address has an account')
     hasAccount.hasAccount = true
+    hasAccount.statusCode = 401
+    hasAccount.fieldName = 'email'
     callback(hasAccount)
   })
 }

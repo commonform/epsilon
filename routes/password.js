@@ -10,7 +10,8 @@ const indexes = require('../indexes')
 const internalError = require('./internal-error')
 const nav = require('./partials/nav')
 const passwordChangeNotification = require('../notifications/password-change')
-const passwordInputs = require('./partials/password-inputs')
+const passwordInput = require('./partials/password-input')
+const passwordRepeatInput = require('./partials/password-repeat-input')
 const passwordValidator = require('../validators/password')
 const runSeries = require('run-series')
 const verifyPassword = require('../util/verify-password')
@@ -57,7 +58,8 @@ function getAuthenticated (request, response) {
           <label for=old>Old Password</label>
           <input name=old type=password required autofocus autocomplete=off>
         </p>
-        ${passwordInputs({ label: 'New Password' })}
+        ${passwordInput({ label: 'New Password' })}
+        ${passwordRepeatInput()}
         <button type=submit>Change Password</button>
       </form>
     </main>
@@ -94,7 +96,8 @@ function getWithToken (request, response) {
       ${messageParagraph}
       <form method=post>
         <input type=hidden name=token value="${token}">
-        ${passwordInputs({ label: 'New Password', autofocus: true })}
+        ${passwordInput({ label: 'New Password', autofocus: true })}
+        ${passwordRepeatInput()}
         <button type=submit>Change Password</button>
       </form>
     </main>

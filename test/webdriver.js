@@ -25,6 +25,7 @@ process.on('SIGQUIT', kill)
 process.on('SIGTERM', kill)
 process.on('uncaughtException', error => {
   process.stderr.write(error.message)
+  process.stderr.write(error.stack)
   process.exitCode = 1
   kill()
 })
