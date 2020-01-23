@@ -23,6 +23,10 @@ tape.onFinish(kill)
 process.on('SIGINT', kill)
 process.on('SIGQUIT', kill)
 process.on('SIGTERM', kill)
+process.on('uncaughtException', () => {
+  process.exitCode = 1
+  kill()
+})
 
 let killed = false
 function kill () {
