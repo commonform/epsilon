@@ -1,11 +1,15 @@
 const Busboy = require('busboy')
+const authenticate = require('./authenticate')
 const escape = require('../util/escape')
 const internalError = require('./internal-error')
 const methodNotAllowed = require('./method-not-allowed')
 const runSeries = require('run-series')
+const seeOther = require('./see-other')
 
 module.exports = options => {
   const {
+    authenticateRequests,
+    requireAuthentication,
     form,
     fields,
     processBody,
@@ -39,9 +43,19 @@ module.exports = options => {
 
   return (request, response) => {
     const method = request.method
-    if (method === 'GET') return get(request, response)
-    if (method === 'POST') return post(request, response)
-    methodNotAllowed(request, response)
+    const isGet = method === 'GET'
+    const isPost = !isGet && method === 'POST'
+    if (!isGet && !isPost) return methodNotAllowed(request, response)
+    if (authenticateRequests) authenticate(request, response, proceed)
+    else proceed()
+
+    function proceed () {
+      if (requireAuthentication && !request.account) {
+        return seeOther(request, response, '/login')
+      }
+      if (isGet) return get(request, response)
+      post(request, response)
+    }
   }
 
   function get (request, response, body, error) {
@@ -65,7 +79,7 @@ module.exports = options => {
     if (error && !error.fieldName) {
       data.error = `<p class=error>${escape(error.message)}</p>`
     }
-    response.end(form(data))
+    response.end(form(request, data))
   }
 
   function post (request, response) {

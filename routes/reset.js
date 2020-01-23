@@ -14,7 +14,7 @@ const fields = {
   }
 }
 
-function form (data) {
+function form (request, data) {
   return html`
 <!doctype html>
 <html lang=en-US>
