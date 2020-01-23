@@ -1,6 +1,5 @@
-const Busboy = require('busboy')
 const clearCookie = require('./clear-cookie')
-const escape = require('../util/escape')
+const formRoute = require('./form-route')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
@@ -11,38 +10,44 @@ const setCookie = require('./set-cookie')
 const uuid = require('uuid')
 const verifyPassword = require('../util/verify-password')
 
-module.exports = function (request, response) {
-  const method = request.method
-  if (method === 'GET') return get(request, response)
-  if (method === 'POST') return post(request, response)
-  response.statusCode = 405
-  response.end()
+const fields = {
+  handle: {
+    filter: (e) => e.toLowerCase().trim(),
+    validate: x => x.length !== 0
+  },
+  password: {
+    validate: x => x.length !== 0
+  }
 }
 
-function get (request, response, error) {
-  clearCookie(response)
-  const message = request.query.message || error
-  const messageParagraph = message
-    ? `<p class=message>${escape(message)}</p>`
-    : ''
-  response.setHeader('Content-Type', 'text/html')
-  response.end(html`
+module.exports = formRoute({
+  form,
+  fields,
+  onGet,
+  processBody,
+  onSuccess
+})
+
+function form (request, data) {
+  return html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
     ${header()}
     <main role=main>
       <h2>Log In</h2>
-      ${messageParagraph}
       <form method=post>
+        ${data.error}
         <p>
           <label for=handle>Handle</label>
           <input name=handle type=text required autofocus>
         </p>
+        ${data.handle.error}
         <p>
           <label for=password>Password</label>
           <input name=password type=password required>
         </p>
+        ${data.password.error}
         <button type=submit>Log In</button>
       </form>
       <a href=/handle>Forgot Handle</a>
@@ -50,64 +55,24 @@ function get (request, response, error) {
     </main>
   </body>
 </html>
-  `)
+  `
 }
 
-function post (request, response) {
-  let handle, password, sessionID
+function onGet (rqeuest, response) {
+  clearCookie(response)
+}
+
+function processBody (request, body, done) {
+  const { handle, password } = body
+
+  let sessionID
   runSeries([
-    readPostBody,
-    validateInputs,
     authenticate,
-    createSession,
-    issueCookie,
-    redirect
-  ], function (error) {
-    if (error) {
-      const statusCode = error.statusCode
-      if (statusCode === 401 || statusCode === 403) {
-        response.statusCode = 401
-        return get(request, response, error.message)
-      }
-      request.log.error(error)
-      response.statusCode = error.statusCode || 500
-      response.end()
-    }
+    createSession
+  ], error => {
+    if (error) return done(error)
+    done(null, sessionID)
   })
-
-  function readPostBody (done) {
-    request.pipe(
-      new Busboy({
-        headers: request.headers,
-        limits: {
-          fieldNameSize: 8,
-          fieldSize: 128,
-          fields: 2,
-          parts: 1
-        }
-      })
-        .on('field', function (name, value, truncated, encoding, mime) {
-          if (name === 'handle') handle = value.toLowerCase()
-          else if (name === 'password') password = value
-        })
-        .once('finish', done)
-    )
-  }
-
-  function validateInputs (done) {
-    let error
-    if (!password) {
-      error = new Error('missing password')
-      error.fieldName = 'password'
-      return done(error)
-    }
-    if (!handle) {
-      error = new Error('missing handle')
-      error.fieldName = 'handle'
-      return done(error)
-    }
-    done()
-  }
 
   function authenticate (done) {
     verifyPassword(handle, password, (verifyError, account) => {
@@ -147,18 +112,13 @@ function post (request, response) {
       done()
     })
   }
+}
 
-  function issueCookie (done) {
-    const expires = new Date(
-      Date.now() + (30 * 24 * 60 * 60 * 1000) // thirty days
-    )
-    setCookie(response, sessionID, expires)
-    request.log.info({ expires }, 'set cookie')
-    done()
-  }
-
-  function redirect (done) {
-    seeOther(request, response, '/')
-    done()
-  }
+function onSuccess (request, response, body, sessionID) {
+  const expires = new Date(
+    Date.now() + (30 * 24 * 60 * 60 * 1000) // thirty days
+  )
+  setCookie(response, sessionID, expires)
+  request.log.info({ expires }, 'set cookie')
+  seeOther(request, response, '/')
 }

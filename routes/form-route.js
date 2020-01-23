@@ -36,8 +36,8 @@ module.exports = options => {
     if (typeof description.validate !== 'function') {
       throw new TypeError('missing validate function for ' + fieldName)
     }
-    if (!description.display) {
-      description.display = fieldName
+    if (!description.displayName) {
+      description.displayName = fieldName
     }
   })
 
@@ -86,6 +86,7 @@ module.exports = options => {
     if (onPost) onPost(request, response)
 
     const body = {}
+    let fromProcess
     runSeries([
       parse,
       validate,
@@ -99,7 +100,7 @@ module.exports = options => {
         }
         return internalError(request, response, error)
       }
-      onSuccess(request, response, body)
+      onSuccess(request, response, body, fromProcess)
     })
 
     function parse (done) {
@@ -137,7 +138,11 @@ module.exports = options => {
     }
 
     function process (done) {
-      processBody(request, body, done)
+      processBody(request, body, (error, result) => {
+        if (error) return done(error)
+        fromProcess = result
+        done()
+      })
     }
   }
 }

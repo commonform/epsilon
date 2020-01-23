@@ -118,7 +118,7 @@ tape('log in with bad credentials', test => {
       .then(input => input.addValue('invalid'))
       .then(() => browser.$('button[type="submit"]'))
       .then(submit => submit.click())
-      .then(() => browser.$('p.message'))
+      .then(() => browser.$('p.error'))
       .then(p => p.getText())
       .then(text => {
         test.assert(text.includes('invalid'), 'invalid')
@@ -149,7 +149,7 @@ tape('log in with bad password', test => {
       .then(input => input.addValue('invalid'))
       .then(() => browser.$('button[type="submit"]'))
       .then(submit => submit.click())
-      .then(() => browser.$('p.message'))
+      .then(() => browser.$('p.error'))
       .then(p => p.getText())
       .then(text => {
         test.assert(text.includes('invalid'), 'invalid')
@@ -193,7 +193,7 @@ tape('lockout', test => {
         .then(input => input.addValue(password))
         .then(() => browser.$('button[type="submit"]'))
         .then(submit => submit.click())
-        .then(() => browser.$('p.message'))
+        .then(() => browser.$('p.error'))
         .then(p => p.getText())
         .then(text => { test.equal(text, message, message) })
     }
