@@ -44,7 +44,7 @@ function get (request, response, error) {
         </p>
         <button type=submit>Log In</button>
       </form>
-      <a href=/handles>Forgot Handle</a>
+      <a href=/handle>Forgot Handle</a>
       <a href=/reset>Reset Password</a>
     </main>
   </body>

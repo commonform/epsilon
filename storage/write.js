@@ -97,7 +97,7 @@ function account (entry, callback) {
   const record = { handle, email, passwordHash, created, confirmed }
   runSeries([
     done => { storage.account.write(handle, record, done) },
-    done => { storage.email.append(email, handle, done) }
+    done => { storage.email.write(email, handle, done) }
   ], callback)
 }
 
@@ -119,8 +119,8 @@ function changeEMail (entry, callback) {
       })
     },
     done => storage.account.update(handle, { email }, done),
-    done => storage.email.remove(oldEMail, handle, done),
-    done => storage.email.append(email, handle, done)
+    done => storage.email.delete(oldEMail, done),
+    done => storage.email.write(email, handle, done)
   ], callback)
 }
 

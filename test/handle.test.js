@@ -5,7 +5,7 @@ const server = require('./server')
 const tape = require('tape')
 const webdriver = require('./webdriver')
 
-const path = '/handles'
+const path = '/handle'
 const handle = ANA.handle
 const email = ANA.email
 

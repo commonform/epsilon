@@ -55,7 +55,8 @@ function post (request, response) {
     if (error) {
       if (
         error.statusCode === 400 ||
-        error.message === 'handle taken'
+        error.handleTaken ||
+        error.hasAccount
       ) {
         return get(request, response, {
           email, handle, password, repeat, error

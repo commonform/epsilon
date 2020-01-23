@@ -10,7 +10,7 @@ const serialize = require('commonform-serialize')
 
 module.exports = {
   account: simpleFiles('accounts'),
-  email: appendOnlyLists('emails'),
+  email: simpleFiles('emails'),
   token: simpleFiles('tokens'),
   session: simpleFiles('sessions'),
   form: simpleFiles('forms', { serialization: serialize }),

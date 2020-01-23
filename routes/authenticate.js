@@ -25,6 +25,11 @@ module.exports = function (request, response, handler) {
     }, function (error, results) {
       if (error) return internalError(request, response, error)
       const account = results.account
+      if (!account) {
+        return internalError(
+          request, response, new Error('could not load account')
+        )
+      }
       if (account.confirmed) request.account = account
       proceed()
     })

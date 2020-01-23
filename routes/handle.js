@@ -4,7 +4,6 @@ const handleNotification = require('../notifications/handle')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
-const runParallelLimit = require('run-parallel-limit')
 const runSeries = require('run-series')
 const storage = require('../storage')
 
@@ -94,20 +93,13 @@ function post (request, response) {
   }
 
   function sendEMail (done) {
-    storage.email.read(email, (error, handles) => {
+    storage.email.read(email, (error, handle) => {
       if (error) return done(error)
-      if (handles.length === 0) return done()
-      const tasks = handles.map(handle => done => {
-        storage.account.read(handle, (error, account) => {
-          if (error) return done(error)
-          if (account === null || !account.confirmed) return done()
-          handleNotification({
-            to: account.email,
-            handle
-          }, done)
-        })
-      })
-      runParallelLimit(tasks, 3, done)
+      if (!handle) return done()
+      handleNotification({
+        to: email,
+        handle
+      }, done)
     })
   }
 }

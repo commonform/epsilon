@@ -159,3 +159,46 @@ tape('sign up same handle', test => {
     }
   })
 })
+
+tape('sign up same email', test => {
+  const email = 'first@example.com'
+  const firstHandle = 'first'
+  const secondHandle = 'second'
+  const password = 'test password'
+  server((port, done) => {
+    let browser
+    webdriver()
+      .then(loaded => { browser = loaded })
+      .then(() => signup({
+        browser, port, handle: firstHandle, password, email
+      }))
+      // Try to sign up again with the same e-mail.
+      .then(() => browser.navigateTo('http://localhost:' + port))
+      .then(() => browser.$('a=Sign Up'))
+      .then(a => a.click())
+      .then(() => browser.$('input[name="email"]'))
+      .then(input => input.addValue(email))
+      .then(() => browser.$('input[name="handle"]'))
+      .then(input => input.addValue(secondHandle))
+      .then(() => browser.$('input[name="password"]'))
+      .then(input => input.addValue(password))
+      .then(() => browser.$('input[name="repeat"]'))
+      .then(input => input.addValue(password))
+      .then(() => browser.$('button[type="submit"]'))
+      .then(submit => submit.click())
+      .then(() => browser.$('.error'))
+      .then(element => element.getText())
+      .then(text => {
+        test.assert(text.includes('e-mail'), 'e-mail')
+      })
+      .then(finish)
+      .catch(error => {
+        test.fail(error, 'catch')
+        finish()
+      })
+    function finish () {
+      test.end()
+      done()
+    }
+  })
+})

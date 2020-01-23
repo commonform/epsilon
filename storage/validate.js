@@ -11,7 +11,7 @@ const universalValidations = [
 ]
 
 const typeSpecificValidations = {
-  account: [handleDoesNotExist],
+  account: [handleDoesNotExist, eMailDoesNotHaveAccount],
   comment: [formExists, formInContext, validReply],
   changeEMail: [handleExists],
   changePassword: [handleExists],
@@ -56,7 +56,9 @@ function handleExists (entry, callback) {
 function handleDoesNotExist (entry, callback) {
   storage.account.exists(entry.handle, (error, exists) => {
     if (error) return callback(error)
-    if (exists) callback(new Error('handle taken'))
+    const handleTaken = new Error('handle taken')
+    handleTaken.handleTaken = true
+    if (exists) return callback(handleTaken)
     callback()
   })
 }
@@ -116,5 +118,15 @@ function validReply (entry, callback) {
       return callback(new Error('does not match parent'))
     }
     callback()
+  })
+}
+
+function eMailDoesNotHaveAccount (entry, callback) {
+  storage.email.read(entry.email, (error, handle) => {
+    if (error) return callback(error)
+    if (!handle) return callback()
+    const hasAccount = new Error('e-mail address has an account')
+    hasAccount.hasAccount = true
+    callback(hasAccount)
   })
 }
