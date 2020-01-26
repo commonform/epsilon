@@ -6,7 +6,7 @@ module.exports = function (response, value, expires) {
     cookie.serialize('commonform', value, {
       expires,
       httpOnly: true,
-      sameSite: true,
+      sameSite: 'lax',
       secure: process.env.NODE_ENV !== 'test'
     })
   )
