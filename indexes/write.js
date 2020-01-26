@@ -1,5 +1,4 @@
 const MESSAGE_TYPES = require('../constants/message-types')
-const TOKEN_LIFETIME = require('../constants/token-lifetime')
 const assert = require('assert')
 const async = require('async')
 const expired = require('../util/expired')
@@ -143,7 +142,7 @@ function changePassword (entry, callback) {
 
 function confirmAccountToken (entry, callback) {
   const created = entry.created
-  if (expired(created, TOKEN_LIFETIME)) return callback()
+  if (expired.confirmAccountToken(created)) return callback()
   const token = entry.token
   const handle = entry.handle
   const tokenData = { action: 'confirm', created, handle }
@@ -152,7 +151,7 @@ function confirmAccountToken (entry, callback) {
 
 function changeEMailToken (entry, callback) {
   const created = entry.created
-  if (expired(created, TOKEN_LIFETIME)) return callback()
+  if (expired.changeEMailToken(created)) return callback()
   const handle = entry.handle
   const token = entry.token
   const email = entry.email
@@ -162,7 +161,7 @@ function changeEMailToken (entry, callback) {
 
 function resetPasswordToken (entry, callback) {
   const created = entry.created
-  if (expired(created, TOKEN_LIFETIME)) return callback()
+  if (expired.resetPasswordToken(created)) return callback()
   const token = entry.token
   const handle = entry.handle
   const tokenData = { action: 'reset', created, handle }

@@ -1,4 +1,3 @@
-const TOKEN_LIFETIME = require('../constants/token-lifetime')
 const assert = require('assert')
 const expired = require('../util/expired')
 const indexes = require('../indexes')
@@ -23,7 +22,7 @@ exports.handler = function (log, callback) {
         done = unlock(done)
         indexes.token.readWithoutLocking(id, (error, record) => {
           if (error) return done(error)
-          if (expired(record.created, TOKEN_LIFETIME)) {
+          if (expired.token(record)) {
             log.info({ token: id }, 'deleting')
             indexes.token.deletWithoutLocking(id, done)
           }

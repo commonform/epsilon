@@ -18,7 +18,7 @@ module.exports = (handle, password, callback) => {
         return callback(invalid, account)
       }
       const locked = account.locked
-      if (locked && !expired(locked, 1)) {
+      if (locked && !expired.accountLock(locked)) {
         const locked = new Error('account locked')
         locked.statusCode = 401
         return callback(locked, account)
