@@ -1,4 +1,5 @@
 const classnames = require('classnames')
+const csrf = require('../../util/csrf')
 const escape = require('../../util/escape')
 const group = require('commonform-group-series')
 const has = require('has')
@@ -18,16 +19,22 @@ module.exports = function ({
   form,
   loaded,
   mappings = [],
+  session,
   resolutions
 }) {
   const tree = merkleize(loaded)
   const digest = tree.digest
+  const csrfInputs = csrf.inputs({
+    action: '/comments',
+    sessionID: session.id
+  })
   return html`
 ${renderTableOfContents(loaded, resolutions)}
 <article class=commonform>
   ${renderForm({
     account,
     comments,
+    csrfInputs,
     depth: 0,
     form,
     loaded,
@@ -38,6 +45,7 @@ ${renderTableOfContents(loaded, resolutions)}
     tree
   })}
   ${account && renderCommentForm({
+    csrfInputs,
     form: digest,
     root: digest
   })}
@@ -110,6 +118,7 @@ function containsHeading (form) {
 function renderForm ({
   account,
   comments,
+  csrfInputs,
   depth,
   form,
   loaded,
@@ -129,6 +138,7 @@ function renderForm ({
         ? renderSeries({
           account,
           comments,
+          csrfInputs,
           depth: depth + 1,
           offset,
           path,
@@ -153,12 +163,14 @@ function renderForm ({
     ${renderComments({
       account,
       comments: comments.filter(comment => comment.form === digest),
+      csrfInputs,
       root
     })}
   `
 }
 
 function renderCommentForm ({
+  csrfInputs,
   context,
   form,
   replyTo,
@@ -199,6 +211,7 @@ function renderCommentForm ({
 <form class="comment commentForm hidden" action=/comments method=post>
   ${contextMarkup}
   ${replyTos}
+  ${csrfInputs}
   <input type=hidden name=form value=${form}>
   <textarea name=text required></textarea>
   <button type=submit>Publish Comment</button>
@@ -206,7 +219,7 @@ function renderCommentForm ({
   `
 }
 
-function renderComments ({ account, comments, root }) {
+function renderComments ({ account, comments, csrfInputs, root }) {
   const roots = comments
     .filter(comment => comment.replyTo.length === 0)
     .sort((a, b) => a.date.localeCompare(b.date))
@@ -215,6 +228,7 @@ function renderComments ({ account, comments, root }) {
       account,
       comment,
       comments,
+      csrfInputs,
       parents: [],
       root
     }))
@@ -225,6 +239,7 @@ function renderComment ({
   account,
   comment,
   comments,
+  csrfInputs,
   parents,
   root
 }) {
@@ -244,6 +259,7 @@ function renderComment ({
   }))
   if (account) {
     var replyForm = renderCommentForm({
+      csrfInputs,
       form: comment.form,
       root,
       context: comment.context,
@@ -273,6 +289,7 @@ function publisherLink (handle) {
 function renderSeries ({
   account,
   comments,
+  csrfInputs,
   depth,
   formSeries,
   loadedSeries,
@@ -311,7 +328,7 @@ ${renderForm({
   root,
   tree: childTree
 })}
-${account && renderCommentForm({ form: digest, root })}
+${account && renderCommentForm({ csrfInputs, form: digest, root })}
 </section>
       `
     })

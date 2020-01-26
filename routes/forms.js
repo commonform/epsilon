@@ -70,6 +70,7 @@ module.exports = (request, response) => {
     <main role=main>
       <a class=button href=/edit?digest=${escape(digest)}>Edit this Form</a>
       ${renderForm({
+        session: request.session,
         account: request.account,
         comments: results.comments,
         form: results.form,

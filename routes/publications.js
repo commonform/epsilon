@@ -50,6 +50,7 @@ module.exports = (request, response) => {
     <main role=main>
       <h2>${escape(project)} ${escape(edition)}</h2>
       ${renderForm({
+        session: request.session,
         form,
         loaded,
         resolutions

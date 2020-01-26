@@ -1,6 +1,7 @@
 const Busboy = require('busboy')
 const DIGEST_RE = require('../util/digest-re')
 const UUID_RE = require('../util/uuid-re')
+const csrf = require('../util/csrf')
 const found = require('./found')
 const indexes = require('../indexes')
 const internalError = require('./internal-error')
@@ -22,8 +23,11 @@ module.exports = (request, response) => {
 function post (request, response) {
   if (!request.account) return found(request, response, '/signin')
   const handle = request.account.handle
-  const comment = { handle, replyTo: [] }
-  const fields = ['context', 'form', 'replyTo[]', 'text']
+  const body = { handle, replyTo: [] }
+  const fields = [
+    'context', 'form', 'replyTo[]', 'text',
+    'token', 'nonce'
+  ]
   let id
   runSeries([
     readPostBody,
@@ -53,8 +57,8 @@ function post (request, response) {
         }
       })
         .on('field', function (name, value, truncated, encoding, mime) {
-          if (name === 'replyTo[]') comment.replyTo.push(value)
-          else if (fields.includes(name)) comment[name] = value
+          if (name === 'replyTo[]') body.replyTo.push(value)
+          else if (fields.includes(name)) body[name] = value
         })
         .once('finish', done)
     )
@@ -62,41 +66,46 @@ function post (request, response) {
 
   function validate (done) {
     let error
-    if (!comment.context || !DIGEST_RE.test(comment.context)) {
+    if (!body.context || !DIGEST_RE.test(body.context)) {
       error = new Error('invalid context')
       error.statusCode = 400
       return done(error)
     }
-    if (!comment.form || !DIGEST_RE.test(comment.form)) {
+    if (!body.form || !DIGEST_RE.test(body.form)) {
       error = new Error('invalid form')
       error.statusCode = 400
       return done(error)
     }
-    if (!comment.replyTo.every(element => UUID_RE.test(element))) {
+    if (!body.replyTo.every(element => UUID_RE.test(element))) {
       error = new Error('invalid replyTo')
       error.statusCode = 400
       return done(error)
     }
     // TODO: comment text length limit
-    if (!comment.text) {
+    if (!body.text) {
       error = new Error('invalid text')
       error.statusCode = 400
       return done(error)
     }
-    done()
+    csrf.verify({
+      action: '/comments',
+      sessionID: request.session.id,
+      token: body.token,
+      nonce: body.nonce
+    }, done)
   }
 
   function record (done) {
     id = uuid.v4()
     request.record({
       type: 'comment',
-      context: comment.context,
+      context: body.context,
       date: new Date().toISOString(),
-      form: comment.form,
+      form: body.form,
       handle,
       id,
-      replyTo: comment.replyTo,
-      text: comment.text
+      replyTo: body.replyTo,
+      text: body.text
     }, done)
   }
 
@@ -105,8 +114,8 @@ function post (request, response) {
     runParallelLimit([
       // Notify author of parent comment.
       done => {
-        if (comment.replyTo.length === 0) return done()
-        const parentID = comment.replyTo[0]
+        if (body.replyTo.length === 0) return done()
+        const parentID = body.replyTo[0]
         indexes.comment.read(parentID, (error, parent) => {
           if (error) return done(error)
           const handle = parent.handle
@@ -118,7 +127,7 @@ function post (request, response) {
             }
             replyNotification({
               to: account.email,
-              comment
+              comment: body
             }, error => {
               if (error) return done(error)
               request.log.info('notified parent')
@@ -131,7 +140,7 @@ function post (request, response) {
 
       // Notify mentioned.
       done => {
-        const mentions = parseMentions(comment.text).matches
+        const mentions = parseMentions(body.text).matches
         if (mentions.length === 0) return done()
         const tasks = mentions.map(handle => done => {
           indexes.account.read(handle, (error, account) => {
@@ -142,7 +151,7 @@ function post (request, response) {
             }
             mentionNotification({
               to: account.email,
-              comment
+              comment: body
             }, error => {
               if (error) return done(error)
               alreadyNotified.push(handle)
@@ -159,8 +168,8 @@ function post (request, response) {
 
       // Notify watchers.
       done => {
-        if (comment.replyTo.length === 0) return done()
-        const parentTasks = comment.replyTo.map(id => done => {
+        if (body.replyTo.length === 0) return done()
+        const parentTasks = body.replyTo.map(id => done => {
           indexes.commentWatchers.read(id, (error, watchers) => {
             if (error) return done(error)
             const watcherTasks = watchers.map(handle => done => {
@@ -169,7 +178,7 @@ function post (request, response) {
                 if (error) return done(error)
                 watchedCommentNotification({
                   to: account.email,
-                  comment
+                  comment: body
                 }, error => {
                   if (error) return done(error)
                   alreadyNotified.push(handle)

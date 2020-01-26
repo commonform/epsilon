@@ -61,6 +61,7 @@ function post (request, response) {
       <h2>Proofread and Publish</h2>
       ${confirmationForm()}
       ${renderForm({
+        session: request.session,
         form,
         loaded: loadedForm,
         resolutions

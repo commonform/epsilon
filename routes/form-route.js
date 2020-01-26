@@ -1,7 +1,6 @@
 const Busboy = require('busboy')
 const csrf = require('../util/csrf')
 const escape = require('../util/escape')
-const html = require('./html')
 const internalError = require('./internal-error')
 const methodNotAllowed = require('./method-not-allowed')
 const runSeries = require('run-series')
