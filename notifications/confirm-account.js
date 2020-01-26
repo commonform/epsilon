@@ -1,8 +1,7 @@
 const mail = require('../mail')
 const markdown = require('../util/markdown')
 
-module.exports = (options, callback) => {
-  const { to, handle, url } = options
+module.exports = ({ to, handle, url }, callback) => {
   const subject = 'Confirm Common Form Account'
   const text = `
 To confirm "${handle}" account on commonform.org, visit this link:

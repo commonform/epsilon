@@ -1,7 +1,6 @@
 const signin = require('./signin')
 
-module.exports = options => {
-  const { markup, port, browser, handle, password } = options
+module.exports = ({ markup, port, browser, handle, password }) => {
   return signin({ browser, port, handle, password })
     .then(() => browser.$('#edit'))
     .then(a => a.click())

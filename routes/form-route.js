@@ -7,17 +7,15 @@ const methodNotAllowed = require('./method-not-allowed')
 const runSeries = require('run-series')
 const seeOther = require('./see-other')
 
-module.exports = options => {
-  const {
-    action,
-    requireAuthentication,
-    form,
-    fields,
-    processBody,
-    onPost,
-    onSuccess
-  } = options
-
+module.exports = ({
+  action,
+  requireAuthentication,
+  form,
+  fields,
+  processBody,
+  onPost,
+  onSuccess
+}) => {
   if (typeof form !== 'function') {
     throw new TypeError('missing form function')
   }

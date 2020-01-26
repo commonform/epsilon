@@ -1,8 +1,7 @@
 const mail = require('../mail')
 const markdown = require('../util/markdown')
 
-module.exports = (options, callback) => {
-  const { to, comment } = options
+module.exports = ({ to, comment }, callback) => {
   const subject = 'Common Form Mention'
   const text = `
 @${comment.handle} mentioned you in a comment on commonform.org.

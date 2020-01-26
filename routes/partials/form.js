@@ -12,17 +12,14 @@ const toMentionLink = require('to-mention-link')
 
 // TODO: Figure out commenting on displayed components.
 
-module.exports = function (options) {
-  if (!options.mappings) options.mappings = []
-  if (!options.comments) options.comments = []
-  const {
-    account,
-    comments,
-    form,
-    loaded,
-    mappings,
-    resolutions
-  } = options
+module.exports = function ({
+  account,
+  comments = [],
+  form,
+  loaded,
+  mappings = [],
+  resolutions
+}) {
   const tree = merkleize(loaded)
   const digest = tree.digest
   return html`
@@ -110,19 +107,18 @@ function containsHeading (form) {
   ))
 }
 
-function renderForm (options) {
-  const {
-    account,
-    comments,
-    depth,
-    form,
-    loaded,
-    mappings,
-    path,
-    resolutions,
-    root,
-    tree
-  } = options
+function renderForm ({
+  account,
+  comments,
+  depth,
+  form,
+  loaded,
+  mappings,
+  path,
+  resolutions,
+  root,
+  tree
+}) {
   let offset = 0
   const digest = tree.digest
   const formGroups = form && group(form)
@@ -162,8 +158,12 @@ function renderForm (options) {
   `
 }
 
-function renderCommentForm (options) {
-  const { context, form, replyTo, root } = options
+function renderCommentForm ({
+  context,
+  form,
+  replyTo,
+  root
+}) {
   let contextMarkup = ''
   if (context) {
     contextMarkup = html`
@@ -206,8 +206,7 @@ function renderCommentForm (options) {
   `
 }
 
-function renderComments (options) {
-  const { account, comments, root } = options
+function renderComments ({ account, comments, root }) {
   const roots = comments
     .filter(comment => comment.replyTo.length === 0)
     .sort((a, b) => a.date.localeCompare(b.date))
@@ -222,8 +221,13 @@ function renderComments (options) {
     .join('')
 }
 
-function renderComment (options) {
-  const { account, comment, comments, parents, root } = options
+function renderComment ({
+  account,
+  comment,
+  comments,
+  parents,
+  root
+}) {
   const id = comment.id
   const withParent = [id].concat(parents)
   const replies = comments.filter(comment => {
@@ -266,20 +270,19 @@ function publisherLink (handle) {
   return `<a href="/${escape(handle)}">${escape(handle)}</a>`
 }
 
-function renderSeries (options) {
-  const {
-    account,
-    comments,
-    depth,
-    formSeries,
-    loadedSeries,
-    mappings,
-    offset,
-    path,
-    resolutions,
-    root,
-    tree
-  } = options
+function renderSeries ({
+  account,
+  comments,
+  depth,
+  formSeries,
+  loadedSeries,
+  mappings,
+  offset,
+  path,
+  resolutions,
+  root,
+  tree
+}) {
   return loadedSeries.content
     .map((loadedChild, index) => {
       const loadedForm = loadedChild.form
@@ -340,13 +343,7 @@ function renderHeading (heading) {
   return `<h1 class=heading id="heading:${encodeURIComponent(heading)}">${escape(heading)}</h1>`
 }
 
-function renderParagraph (options) {
-  const {
-    mappings,
-    offset,
-    paragraph,
-    path
-  } = options
+function renderParagraph ({ mappings, offset, paragraph, path }) {
   const content = paragraph.content
     .map((element, index) => {
       if (predicate.text(element)) {
@@ -381,8 +378,7 @@ function renderReference (heading) {
   return `<a class=reference href="#heading:${encodeURIComponent(heading)}">${escape(heading)}</a>`
 }
 
-function matchingValue (options) {
-  const { mappings, path } = options
+function matchingValue ({ mappings, path }) {
   const length = mappings.length
   for (let index = 0; index < length; index++) {
     const mapping = mappings[index]

@@ -1,5 +1,4 @@
-module.exports = options => {
-  const { port, browser, digest, project, edition } = options
+module.exports = ({ port, browser, digest, project, edition }) => {
   return browser.navigateTo('http://localhost:' + port + '/forms/' + digest)
     // Publish.
     .then(() => addValue('input[name="project"]', project))

@@ -1,8 +1,7 @@
 const mail = require('../mail')
 const markdown = require('../util/markdown')
 
-module.exports = (options, callback) => {
-  const { to, handle } = options
+module.exports = ({ to, handle }, callback) => {
   const subject = 'Common Form Handle Reminder'
   const text = `
 The e-mail address ${to} has the handle "${handle}" on commonform.org

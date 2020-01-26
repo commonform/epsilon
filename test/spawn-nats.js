@@ -1,7 +1,6 @@
 const spawn = require('child_process').spawn
 
-module.exports = (options, callback) => {
-  const { cluster } = options
+module.exports = ({ cluster }, callback) => {
   const nats = spawn('nats-streaming-server', [
     '-cid', cluster,
     '-store', 'memory'
