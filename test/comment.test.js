@@ -91,7 +91,7 @@ tape('reply', test => {
       .then(a => a.click())
       .then(() => browser.$('#editor'))
       .then(input => input.setValue(markup))
-      .then(() => browser.$('button[type="submit"]'))
+      .then(() => browser.$('#editForm button[type="submit"]'))
       .then(submit => submit.click())
       // Add comment.
       .then(() => browser.$('.commentButton'))

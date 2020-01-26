@@ -85,3 +85,8 @@ a[href]:hover {
 .error {
   color: darkred;
 }
+
+#logoutForm {
+  display: inline;
+  padding: 0;
+}

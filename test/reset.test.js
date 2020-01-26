@@ -34,13 +34,13 @@ tape('reset password', test => {
         }, error => {
           test.ifError(error, 'no signup error')
           browser.navigateTo('http://localhost:' + port)
-            .then(() => browser.$('a=Log In'))
+            .then(() => browser.$('#login'))
             .then(a => a.click())
             .then(() => browser.$('a=Reset Password'))
             .then(a => a.click())
-            .then(() => browser.$('input[name="handle"]'))
+            .then(() => browser.$('#resetForm input[name="handle"]'))
             .then(input => input.addValue(handle))
-            .then(() => browser.$('button[type="submit"]'))
+            .then(() => browser.$('#resetForm button[type="submit"]'))
             .then(submit => submit.click())
             .catch(error => {
               test.fail(error, 'catch')
@@ -52,21 +52,21 @@ tape('reset password', test => {
             const url = /http:\/\/[^ ]+/.exec(options.text)[0]
             browser.navigateTo(url)
               // Fill reset form.
-              .then(() => browser.$('input[name="password"]'))
+              .then(() => browser.$('#passwordForm input[name="password"]'))
               .then(input => input.addValue(password))
-              .then(() => browser.$('input[name="repeat"]'))
+              .then(() => browser.$('#passwordForm input[name="repeat"]'))
               .then(input => input.addValue(password))
-              .then(() => browser.$('button[type="submit"]'))
+              .then(() => browser.$('#passwordForm button[type="submit"]'))
               .then(submit => submit.click())
               // Navigate to log-in form.
-              .then(() => browser.$('a=Log In'))
+              .then(() => browser.$('#login'))
               .then(a => a.click())
               // Fill log-in form.
-              .then(() => browser.$('input[name="handle"]'))
+              .then(() => browser.$('#loginForm input[name="handle"]'))
               .then(input => input.addValue(handle))
-              .then(() => browser.$('input[name="password"]'))
+              .then(() => browser.$('#loginForm input[name="password"]'))
               .then(input => input.addValue(password))
-              .then(() => browser.$('button[type="submit"]'))
+              .then(() => browser.$('#loginForm button[type="submit"]'))
               .then(submit => submit.click())
               .then(() => verifyLogin({
                 browser, port, test, handle, email

@@ -53,7 +53,7 @@ function getAuthenticated (request, response) {
     <main role=main>
       <h2>Change Password</h2>
       ${messageParagraph}
-      <form method=post>
+      <form id=passwordForm method=post>
         <p>
           <label for=old>Old Password</label>
           <input name=old type=password required autofocus autocomplete=off>
@@ -94,7 +94,7 @@ function getWithToken (request, response) {
     <main role=main>
       <h2>Change Password</h2>
       ${messageParagraph}
-      <form method=post>
+      <form id=passwordForm method=post>
         <input type=hidden name=token value="${token}">
         ${passwordInput({ label: 'New Password', autofocus: true })}
         ${passwordRepeatInput()}

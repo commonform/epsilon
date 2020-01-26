@@ -20,14 +20,14 @@ tape('change e-mail', test => {
           test.ifError(error, 'no signup error')
           browser.navigateTo('http://localhost:' + port)
             // Navigate to log-in page.
-            .then(() => browser.$('a=Log In'))
+            .then(() => browser.$('#login'))
             .then(a => a.click())
             // Log in.
-            .then(() => browser.$('input[name="handle"]'))
+            .then(() => browser.$('#loginForm input[name="handle"]'))
             .then(input => input.addValue(handle))
-            .then(() => browser.$('input[name="password"]'))
+            .then(() => browser.$('#loginForm input[name="password"]'))
             .then(input => input.addValue(password))
-            .then(() => browser.$('button[type="submit"]'))
+            .then(() => browser.$('#loginForm button[type="submit"]'))
             .then(submit => submit.click())
             // Navigate to password-change page.
             .then(() => browser.$('a=Account'))
@@ -35,7 +35,7 @@ tape('change e-mail', test => {
             .then(() => browser.$('a=Change E-Mail'))
             .then(a => a.click())
             // Submit password-change form.
-            .then(() => browser.$('input[name="email"]'))
+            .then(() => browser.$('#emailForm input[name="email"]'))
             .then(input => input.addValue(newEMail))
             .then(() => {
               mail.once('sent', options => {
@@ -52,7 +52,7 @@ tape('change e-mail', test => {
                   })
               })
             })
-            .then(() => browser.$('button[type="submit"]'))
+            .then(() => browser.$('#emailForm button[type="submit"]'))
             .then(submit => submit.click())
             .catch(error => {
               test.fail(error, 'catch')

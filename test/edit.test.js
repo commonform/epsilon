@@ -143,7 +143,7 @@ tape('save invalid markup', test => {
       .then(a => a.click())
       .then(() => browser.$('#editor'))
       .then(input => input.setValue(invalidMarkup))
-      .then(() => browser.$('button[type="submit"]'))
+      .then(() => browser.$('#editForm button[type="submit"]'))
       .then(submit => submit.click())
       .then(() => browser.$('.error'))
       .then(element => element.getText())

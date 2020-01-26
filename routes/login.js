@@ -1,4 +1,3 @@
-const clearCookie = require('./clear-cookie')
 const formRoute = require('./form-route')
 const head = require('./partials/head')
 const header = require('./partials/header')
@@ -23,7 +22,6 @@ const fields = {
 module.exports = formRoute({
   form,
   fields,
-  onGet,
   processBody,
   onSuccess
 })
@@ -36,7 +34,7 @@ function form (request, data) {
     ${header()}
     <main role=main>
       <h2>Log In</h2>
-      <form method=post>
+      <form id=loginForm method=post>
         ${data.error}
         <p>
           <label for=handle>Handle</label>
@@ -56,10 +54,6 @@ function form (request, data) {
   </body>
 </html>
   `
-}
-
-function onGet (rqeuest, response) {
-  clearCookie(response)
 }
 
 function processBody (request, body, done) {

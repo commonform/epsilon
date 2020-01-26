@@ -21,14 +21,14 @@ tape('change password', test => {
           test.ifError(error, 'no signup error')
           browser.navigateTo('http://localhost:' + port)
             // Navigate to log-in page.
-            .then(() => browser.$('a=Log In'))
+            .then(() => browser.$('#login'))
             .then(a => a.click())
             // Log in.
-            .then(() => browser.$('input[name="handle"]'))
+            .then(() => browser.$('#loginForm input[name="handle"]'))
             .then(input => input.addValue(handle))
-            .then(() => browser.$('input[name="password"]'))
+            .then(() => browser.$('#loginForm input[name="password"]'))
             .then(input => input.addValue(oldPassword))
-            .then(() => browser.$('button[type="submit"]'))
+            .then(() => browser.$('#loginForm button[type="submit"]'))
             .then(submit => submit.click())
             // Navigate to password-change page.
             .then(() => browser.$('a=Account'))
@@ -36,11 +36,11 @@ tape('change password', test => {
             .then(() => browser.$('a=Change Password'))
             .then(a => a.click())
             // Submit password-change form.
-            .then(() => browser.$('input[name="old"]'))
+            .then(() => browser.$('#passwordForm input[name="old"]'))
             .then(input => input.addValue(oldPassword))
-            .then(() => browser.$('input[name="password"]'))
+            .then(() => browser.$('#passwordForm input[name="password"]'))
             .then(input => input.addValue(newPassword))
-            .then(() => browser.$('input[name="repeat"]'))
+            .then(() => browser.$('#passwordForm input[name="repeat"]'))
             .then(input => input.addValue(newPassword))
             .then(() => {
               mail.once('sent', options => {
@@ -48,7 +48,7 @@ tape('change password', test => {
                 test.assert(options.subject.includes('Password'), 'Password')
               })
             })
-            .then(() => browser.$('button[type="submit"]'))
+            .then(() => browser.$('#passwordForm button[type="submit"]'))
             .then(submit => submit.click())
             .then(() => browser.$('p.message'))
             .then(p => p.getText())
@@ -56,16 +56,16 @@ tape('change password', test => {
               test.assert(text.includes('changed'), 'changed')
             })
             // Log out.
-            .then(() => browser.$('a=Log Out'))
+            .then(() => browser.$('#logout'))
             .then(a => a.click())
-            .then(() => browser.$('a=Log In'))
+            .then(() => browser.$('#login'))
             .then(a => a.click())
             // Log in with new password.
-            .then(() => browser.$('input[name="handle"]'))
+            .then(() => browser.$('#loginForm input[name="handle"]'))
             .then(input => input.addValue(handle))
-            .then(() => browser.$('input[name="password"]'))
+            .then(() => browser.$('#loginForm input[name="password"]'))
             .then(input => input.addValue(newPassword))
-            .then(() => browser.$('button[type="submit"]'))
+            .then(() => browser.$('#loginForm button[type="submit"]'))
             .then(submit => submit.click())
             .then(() => verifyLogin({
               browser, test, port, handle, email

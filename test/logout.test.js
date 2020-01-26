@@ -14,8 +14,7 @@ tape('GET ' + path, test => {
   server((port, done) => {
     http.request({ path, port })
       .once('response', response => {
-        test.equal(response.statusCode, 303, '303')
-        test.assert(response.headers['set-cookie'], 'Set-Cookie')
+        test.equal(response.statusCode, 405, '405')
         test.end()
         done()
       })
@@ -41,7 +40,7 @@ tape('log out', test => {
         handle: ANA.handle,
         email: ANA.email
       }))
-      .then(() => browser.$('=Log Out'))
+      .then(() => browser.$('#logout'))
       .then(element => element.click())
       .then(() => browser.navigateTo('http://localhost:' + port + '/edit'))
       .then(() => browser.$('h2'))

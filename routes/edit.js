@@ -52,7 +52,7 @@ function get (request, response, parameters) {
     <main role=main>
       <h2>Edit</h2>
       ${flash}
-      <form method=post>
+      <form id=editForm method=post>
         <textarea id=editor name=markup>${escape(markup)}</textarea>
         <button type=submit>Save</button>
       </form>

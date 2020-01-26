@@ -21,11 +21,12 @@ tape('publish', test => {
       .then(a => a.click())
       .then(() => browser.$('#editor'))
       .then(editor => editor.setValue(markup))
-      .then(() => click('button[type="submit"]'))
+      .then(() => click('#editForm button[type="submit"]'))
       .then(() => { test.pass('submitted form') })
+      .then(() => browser.pause(10000))
       // Publish.
-      .then(() => addValue('input[name="project"]', project))
-      .then(() => addValue('input[name="edition"]', edition))
+      .then(() => addValue('#publishForm input[name="project"]', project))
+      .then(() => addValue('#publishForm input[name="edition"]', edition))
       .then(() => click('#publishForm button[type="submit"]'))
       .then(() => { test.pass('submitted') })
       // Confirm

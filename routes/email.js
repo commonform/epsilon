@@ -34,7 +34,7 @@ function form (request, data) {
     ${nav(request.session)}
     <main role=main>
       <h2>Change E-Mail</h2>
-      <form method=post>
+      <form id=emailForm method=post>
         ${data.error}
         ${eMailInput({ autofocus: true })}
         ${data.email.error}

@@ -113,7 +113,7 @@ function form (request, data) {
     ${header()}
     <main role=main>
       <h2>Sign Up</h2>
-      <form method=post>
+      <form id=signupForm method=post>
         ${data.error}
         ${eMailInput({ autofocus: true, value: data.email.value })}
         ${data.email.error}

@@ -23,7 +23,7 @@ function form (request, data) {
     ${header()}
     <main role=main>
       <h2>Reset Password</h2>
-      <form method=post>
+      <form id=resetForm method=post>
         ${data.error}
         <p>
           <label for=handle>Handle</label>

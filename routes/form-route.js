@@ -13,7 +13,6 @@ module.exports = options => {
     form,
     fields,
     processBody,
-    onGet,
     onPost,
     onSuccess
   } = options
@@ -59,7 +58,6 @@ module.exports = options => {
   }
 
   function get (request, response, body, error) {
-    if (onGet) onGet(request, response)
     response.setHeader('Content-Type', 'text/html')
     const data = {}
     if (body) {
