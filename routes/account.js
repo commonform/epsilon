@@ -11,7 +11,7 @@ module.exports = (request, response) => {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
   authenticate(request, response, () => {
     const account = request.account
-    if (!account) return found(request, response, '/login')
+    if (!account) return found(request, response, '/signin')
     response.setHeader('Content-Type', 'text/html')
     response.end(html`
 <!doctype html>

@@ -34,7 +34,7 @@ function form (request, data) {
     ${header()}
     <main role=main>
       <h2>Log In</h2>
-      <form id=loginForm method=post>
+      <form id=signinForm method=post>
         ${data.error}
         <p>
           <label for=handle>Handle</label>

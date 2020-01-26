@@ -1,8 +1,8 @@
 const ANA = require('./ana')
 const BOB = require('./bob')
 const commonmark = require('commonform-commonmark')
-const login = require('./login')
-const logout = require('./logout')
+const signin = require('./signin')
+const signout = require('./signout')
 const mail = require('../mail').events
 const normalize = require('commonform-normalize')
 const saveForm = require('./save-form')
@@ -80,7 +80,7 @@ tape('reply', test => {
     let browser
     webdriver()
       .then(loaded => { browser = loaded })
-      .then(() => login({
+      .then(() => signin({
         browser,
         port,
         handle: ANA.handle,
@@ -102,10 +102,10 @@ tape('reply', test => {
       .then(ta => ta.addValue('first comment'))
       .then(() => browser.$('.commentForm button[type="submit"]'))
       .then(button => button.click())
-      // Log out.
-      .then(() => logout({ browser, port }))
-      // Log in as Bob.
-      .then(() => login({
+      // Sign out.
+      .then(() => signout({ browser, port }))
+      // Sign in as Bob.
+      .then(() => signin({
         browser,
         port,
         handle: BOB.handle,

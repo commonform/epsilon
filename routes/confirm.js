@@ -29,7 +29,7 @@ module.exports = function (request, response) {
       if (action === 'confirm') {
         request.record({ type: 'confirmAccount', handle }, error => {
           if (error) return internalError(request, response, error)
-          seeOther(request, response, '/login')
+          seeOther(request, response, '/signin')
         })
       }
       if (action === 'email') {

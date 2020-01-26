@@ -13,8 +13,8 @@ const BLACKLIST = [
   'handles',
   'forms',
   'handle',
-  'login',
-  'logout',
+  'signin',
+  'signout',
   'password',
   'reset',
   'signup'

@@ -1,9 +1,9 @@
 const ANA = require('./ana')
 const http = require('http')
-const login = require('./login')
+const signin = require('./signin')
 const server = require('./server')
 const tape = require('tape')
-const verifyLogin = require('./verify-login')
+const verifySignIn = require('./verify-signin')
 const webdriver = require('./webdriver')
 
 const path = '/account'
@@ -13,7 +13,7 @@ tape('GET ' + path, test => {
     http.request({ path, port })
       .once('response', response => {
         test.equal(response.statusCode, 302, '302')
-        test.equal(response.headers.location, '/login', 'redirect')
+        test.equal(response.headers.location, '/signin', 'redirect')
         test.end()
         done()
       })
@@ -29,8 +29,8 @@ tape('browse ' + path, test => {
     let browser
     webdriver()
       .then(loaded => { browser = loaded })
-      .then(() => login({ browser, port, handle, password }))
-      .then(() => verifyLogin({
+      .then(() => signin({ browser, port, handle, password }))
+      .then(() => verifySignIn({
         browser, test, port, email, handle
       }))
       .then(() => finish())

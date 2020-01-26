@@ -1,5 +1,5 @@
 const ANA = require('./ana')
-const login = require('./login')
+const signin = require('./signin')
 const server = require('./server')
 const tape = require('tape')
 const webdriver = require('./webdriver')
@@ -15,7 +15,7 @@ tape('publish', test => {
     let browser
     webdriver()
       .then(loaded => { browser = loaded })
-      .then(() => login({ browser, port, handle, password }))
+      .then(() => signin({ browser, port, handle, password }))
       // Save form.
       .then(() => browser.$('a=New Form'))
       .then(a => a.click())

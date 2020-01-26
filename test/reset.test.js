@@ -3,7 +3,7 @@ const mail = require('../mail').events
 const server = require('./server')
 const signup = require('./signup')
 const tape = require('tape')
-const verifyLogin = require('./verify-login')
+const verifySignIn = require('./verify-signin')
 const webdriver = require('./webdriver')
 
 const path = '/reset'
@@ -34,7 +34,7 @@ tape('reset password', test => {
         }, error => {
           test.ifError(error, 'no signup error')
           browser.navigateTo('http://localhost:' + port)
-            .then(() => browser.$('#login'))
+            .then(() => browser.$('#signin'))
             .then(a => a.click())
             .then(() => browser.$('a=Reset Password'))
             .then(a => a.click())
@@ -59,16 +59,16 @@ tape('reset password', test => {
               .then(() => browser.$('#passwordForm button[type="submit"]'))
               .then(submit => submit.click())
               // Navigate to log-in form.
-              .then(() => browser.$('#login'))
+              .then(() => browser.$('#signin'))
               .then(a => a.click())
               // Fill log-in form.
-              .then(() => browser.$('#loginForm input[name="handle"]'))
+              .then(() => browser.$('#signinForm input[name="handle"]'))
               .then(input => input.addValue(handle))
-              .then(() => browser.$('#loginForm input[name="password"]'))
+              .then(() => browser.$('#signinForm input[name="password"]'))
               .then(input => input.addValue(password))
-              .then(() => browser.$('#loginForm button[type="submit"]'))
+              .then(() => browser.$('#signinForm button[type="submit"]'))
               .then(submit => submit.click())
-              .then(() => verifyLogin({
+              .then(() => verifySignIn({
                 browser, port, test, handle, email
               }))
               .then(() => finish())

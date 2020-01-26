@@ -86,7 +86,7 @@ a[href]:hover {
   color: darkred;
 }
 
-#logoutForm {
+#signoutForm {
   display: inline;
   padding: 0;
 }

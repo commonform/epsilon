@@ -20,14 +20,14 @@ tape('change e-mail', test => {
           test.ifError(error, 'no signup error')
           browser.navigateTo('http://localhost:' + port)
             // Navigate to log-in page.
-            .then(() => browser.$('#login'))
+            .then(() => browser.$('#signin'))
             .then(a => a.click())
-            // Log in.
-            .then(() => browser.$('#loginForm input[name="handle"]'))
+            // Sign in.
+            .then(() => browser.$('#signinForm input[name="handle"]'))
             .then(input => input.addValue(handle))
-            .then(() => browser.$('#loginForm input[name="password"]'))
+            .then(() => browser.$('#signinForm input[name="password"]'))
             .then(input => input.addValue(password))
-            .then(() => browser.$('#loginForm button[type="submit"]'))
+            .then(() => browser.$('#signinForm button[type="submit"]'))
             .then(submit => submit.click())
             // Navigate to password-change page.
             .then(() => browser.$('a=Account'))

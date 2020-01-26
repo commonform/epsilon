@@ -50,7 +50,7 @@ module.exports = options => {
 
     function proceed () {
       if (requireAuthentication && !request.account) {
-        return seeOther(request, response, '/login')
+        return seeOther(request, response, '/signin')
       }
       if (isGet) return get(request, response)
       post(request, response)

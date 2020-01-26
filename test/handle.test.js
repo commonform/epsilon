@@ -27,7 +27,7 @@ tape('discover handle', test => {
     webdriver()
       .then(loaded => { browser = loaded })
       .then(() => browser.navigateTo('http://localhost:' + port))
-      .then(() => browser.$('#login'))
+      .then(() => browser.$('#signin'))
       .then(a => a.click())
       .then(() => browser.$('a=Forgot Handle'))
       .then(a => a.click())

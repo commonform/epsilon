@@ -23,7 +23,7 @@ module.exports = (request, response) => {
 }
 
 function post (request, response) {
-  if (!request.account) return found(request, response, '/login')
+  if (!request.account) return found(request, response, '/signin')
   const handle = request.account.handle
   const comment = { handle, replyTo: [] }
   const fields = ['context', 'form', 'replyTo[]', 'text']

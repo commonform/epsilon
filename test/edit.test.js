@@ -1,7 +1,7 @@
 const ANA = require('./ana')
 const commonmark = require('commonform-commonmark')
 const http = require('http')
-const login = require('./login')
+const signin = require('./signin')
 const normalize = require('commonform-normalize')
 const runParellel = require('run-parallel')
 const saveForm = require('./save-form')
@@ -135,7 +135,7 @@ tape('save invalid markup', test => {
     let browser
     webdriver()
       .then(loaded => { browser = loaded })
-      .then(() => login({ browser, port, handle, password }))
+      .then(() => signin({ browser, port, handle, password }))
       .then(() => new Promise(resolve => {
         setTimeout(resolve, 1000)
       }))

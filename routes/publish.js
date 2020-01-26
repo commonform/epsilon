@@ -22,7 +22,7 @@ module.exports = (request, response) => {
   const isPOST = method === 'POST'
   if (!isPOST) return methodNotAllowed(request, response)
   authenticate(request, response, () => {
-    if (!request.account) return found(request, response, '/login')
+    if (!request.account) return found(request, response, '/signin')
     post(request, response)
   })
 }
