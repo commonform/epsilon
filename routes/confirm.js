@@ -43,7 +43,7 @@ module.exports = function (request, response) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.account)}
+    ${nav(request)}
     <main role=main>
       <h2>E-Mail Change</h2>
       <p class=message>The e-mail address for your account was successfully changed.</p>

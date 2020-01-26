@@ -45,7 +45,7 @@ function get (request, response, parameters) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.account)}
+    ${nav(request)}
     <main role=main>
       <h2>Edit</h2>
       ${flash}

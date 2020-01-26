@@ -46,7 +46,7 @@ function getAuthenticated (request, response) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.account)}
+    ${nav(request)}
     <main role=main>
       <h2>Change Password</h2>
       ${messageParagraph}
@@ -87,7 +87,7 @@ function getWithToken (request, response) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.account)}
+    ${nav(request)}
     <main role=main>
       <h2>Change Password</h2>
       ${messageParagraph}
@@ -147,7 +147,7 @@ function post (request, response) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.account)}
+    ${nav(request)}
     <main role=main>
       <h2>Change Password</h2>
       <p class=message>Password changed.</p>

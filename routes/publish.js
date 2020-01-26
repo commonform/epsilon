@@ -56,7 +56,7 @@ function post (request, response) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.account)}
+    ${nav(request)}
     <main role=main>
       <h2>Proofread and Publish</h2>
       ${confirmationForm()}

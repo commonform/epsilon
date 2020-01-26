@@ -14,7 +14,7 @@ module.exports = (request, response) => {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.account)}
+    ${nav(request)}
     <main role=main>
       ${welcome()}
     </main>

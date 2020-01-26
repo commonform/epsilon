@@ -20,6 +20,17 @@ exports.generate = ({ action, sessionID }) => {
   }
 }
 
+exports.inputs = ({ action, sessionID }) => {
+  assert(typeof action === 'string')
+  assert(typeof sessionID === 'string')
+
+  const generated = exports.generate({ action, sessionID })
+  return `
+    <input type=hidden name=token value="${generated.token}">
+    <input type=hidden name=nonce value="${generated.nonce}">
+  `
+}
+
 exports.verify = ({ action, sessionID, token, nonce }, callback) => {
   assert(typeof action === 'string')
   assert(typeof sessionID === 'string')

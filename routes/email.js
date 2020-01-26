@@ -31,7 +31,7 @@ function form (request, data) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.account)}
+    ${nav(request)}
     <main role=main>
       <h2>Change E-Mail</h2>
       <form id=emailForm method=post>
@@ -55,7 +55,7 @@ function onSuccess (request, response, body) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.account)}
+    ${nav(request)}
     <main role=main>
       <h2>Change E-Mail</h2>
       <p class=message>Confirmation e-mail sent.</p>
