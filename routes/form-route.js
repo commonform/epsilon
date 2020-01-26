@@ -1,6 +1,7 @@
 const Busboy = require('busboy')
-const authenticate = require('./authenticate')
+const csrf = require('../util/csrf')
 const escape = require('../util/escape')
+const html = require('./html')
 const internalError = require('./internal-error')
 const methodNotAllowed = require('./method-not-allowed')
 const runSeries = require('run-series')
@@ -8,7 +9,7 @@ const seeOther = require('./see-other')
 
 module.exports = options => {
   const {
-    authenticateRequests,
+    action,
     requireAuthentication,
     form,
     fields,
@@ -45,8 +46,7 @@ module.exports = options => {
     const isGet = method === 'GET'
     const isPost = !isGet && method === 'POST'
     if (!isGet && !isPost) return methodNotAllowed(request, response)
-    if (authenticateRequests) authenticate(request, response, proceed)
-    else proceed()
+    proceed()
 
     function proceed () {
       if (requireAuthentication && !request.account) {
@@ -77,6 +77,14 @@ module.exports = options => {
     if (error && !error.fieldName) {
       data.error = `<p class=error>${escape(error.message)}</p>`
     }
+    const generated = csrf.generate({
+      action,
+      sessionID: request.session.id
+    })
+    data.csrf = html`
+      <input type=hidden name=token value="${generated.token}">
+      <input type=hidden name=nonce value="${generated.nonce}">
+    `
     response.end(form(request, data))
   }
 
@@ -106,12 +114,20 @@ module.exports = options => {
         new Busboy({
           headers: request.headers,
           limits: {
-            fieldNameSize: Math.max(fieldNames.map(n => n.length)),
-            fields: fieldNames.length,
+            fieldNameSize: Math.max(
+              fieldNames
+                .concat('token', 'nonce')
+                .map(n => n.length)
+            ),
+            fields: fieldNames.length + 2,
             parts: 1
           }
         })
           .on('field', function (name, value, truncated, encoding, mime) {
+            if (name === 'token' || name === 'nonce') {
+              body[name] = value
+              return
+            }
             const description = fields[name]
             if (!description) return
             body[name] = description.filter
@@ -132,7 +148,12 @@ module.exports = options => {
         error.statusCode = 401
         return done(error)
       }
-      done()
+      csrf.verify({
+        action,
+        sessionID: request.session.id,
+        token: body.token,
+        nonce: body.nonce
+      }, done)
     }
 
     function process (done) {

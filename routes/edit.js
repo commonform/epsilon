@@ -1,6 +1,5 @@
 const Busboy = require('busboy')
 const DIGEST_RE = require('../util/digest-re')
-const authenticate = require('./authenticate')
 const commonmark = require('commonform-commonmark')
 const escape = require('../util/escape')
 const found = require('./found')
@@ -21,11 +20,9 @@ module.exports = (request, response) => {
   const isGET = method === 'GET'
   const isPOST = method === 'POST'
   if (!isGET && !isPOST) return methodNotAllowed(request, response)
-  authenticate(request, response, () => {
-    if (!request.account) return found(request, response, '/signin')
-    if (isGET) return get(request, response, request.query)
-    post(request, response)
-  })
+  if (!request.account) return found(request, response, '/signin')
+  if (isGET) return get(request, response, request.query)
+  post(request, response)
 }
 
 function get (request, response, parameters) {
@@ -48,7 +45,7 @@ function get (request, response, parameters) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.session)}
+    ${nav(request.account)}
     <main role=main>
       <h2>Edit</h2>
       ${flash}

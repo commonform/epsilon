@@ -20,6 +20,7 @@ const fields = {
 }
 
 module.exports = formRoute({
+  action: '/signin',
   form,
   fields,
   processBody,
@@ -36,6 +37,7 @@ function form (request, data) {
       <h2>Log In</h2>
       <form id=signinForm method=post>
         ${data.error}
+        ${data.csrf}
         <p>
           <label for=handle>Handle</label>
           <input name=handle type=text required autofocus>

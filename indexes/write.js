@@ -176,7 +176,7 @@ function session (entry, callback) {
   const handle = entry.handle
   const id = entry.id
   const created = new Date().toISOString()
-  indexes.session.write(id, { handle, created }, (error, success) => {
+  indexes.session.write(id, { id, handle, created }, (error, success) => {
     if (error) return callback(error)
     if (!success) return callback(new Error('session collision'))
     callback()

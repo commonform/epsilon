@@ -32,7 +32,7 @@ module.exports = (request, response) => {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.session)}
+    ${nav(request.account)}
     <main role=main>
       <h2>${publisher} ${project}</h2>
       <ul>

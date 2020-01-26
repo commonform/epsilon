@@ -1,7 +1,7 @@
 const html = require('../html')
 
-module.exports = session => {
-  const handle = session && session.handle
+module.exports = account => {
+  const handle = account && account.handle
   return html`
 <nav role=navigation>
   ${!handle && '<a id=signin class=button href=/signin>Sign In</a>'}

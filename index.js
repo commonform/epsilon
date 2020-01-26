@@ -1,6 +1,7 @@
 const CHANNELS = require('./constants/channels')
 const MESSAGE_CHANNELS = require('./constants/message-channels')
 const async = require('async')
+const authenticate = require('./routes/authenticate')
 const notFound = require('./routes/not-found')
 const parseURL = require('url-parse')
 const pinoHTTP = require('pino-http')
@@ -46,38 +47,40 @@ module.exports = configuration => {
   return (request, response) => {
     pinoHTTP({ logger: log, genReqId: uuid.v4 })(request, response)
     request.record = record
-    const parsed = parseURL(request.url, true)
-    const pathname = parsed.pathname
-    request.pathname = pathname
-    request.query = parsed.query
-    const route = routes.get(pathname)
-    request.parameters = route.params
-    if (route.handler) return route.handler(request, response)
-    let match = PUBLICATION_PATH.exec(pathname)
-    if (match) {
-      request.parameters = {
-        publisher: match[1],
-        project: match[2],
-        edition: match[3]
+    authenticate(request, response, () => {
+      const parsed = parseURL(request.url, true)
+      const pathname = parsed.pathname
+      request.pathname = pathname
+      request.query = parsed.query
+      const route = routes.get(pathname)
+      request.parameters = route.params
+      if (route.handler) return route.handler(request, response)
+      let match = PUBLICATION_PATH.exec(pathname)
+      if (match) {
+        request.parameters = {
+          publisher: match[1],
+          project: match[2],
+          edition: match[3]
+        }
+        return publications(request, response)
       }
-      return publications(request, response)
-    }
-    match = PROJECT_PATH.exec(pathname)
-    if (match) {
-      request.parameters = {
-        publisher: match[1],
-        project: match[2]
+      match = PROJECT_PATH.exec(pathname)
+      if (match) {
+        request.parameters = {
+          publisher: match[1],
+          project: match[2]
+        }
+        return projects(request, response)
       }
-      return projects(request, response)
-    }
-    match = PUBLISHER_PATH.exec(pathname)
-    if (match) {
-      request.parameters = {
-        publisher: match[1]
+      match = PUBLISHER_PATH.exec(pathname)
+      if (match) {
+        request.parameters = {
+          publisher: match[1]
+        }
+        return publishers(request, response)
       }
-      return publishers(request, response)
-    }
-    notFound(request, response)
+      notFound(request, response)
+    })
   }
 
   function record (entry, callback) {

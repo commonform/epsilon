@@ -25,6 +25,7 @@ function form (request, data) {
       <h2>Reset Password</h2>
       <form id=resetForm method=post>
         ${data.error}
+        ${data.csrf}
         <p>
           <label for=handle>Handle</label>
           <input
@@ -89,4 +90,10 @@ function onSuccess (request, response) {
   `)
 }
 
-module.exports = formRoute({ form, fields, processBody, onSuccess })
+module.exports = formRoute({
+  action: '/reset',
+  form,
+  fields,
+  processBody,
+  onSuccess
+})

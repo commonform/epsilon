@@ -1,4 +1,3 @@
-const authenticate = require('./authenticate')
 const escape = require('../util/escape')
 const found = require('./found')
 const head = require('./partials/head')
@@ -9,17 +8,16 @@ const nav = require('./partials/nav')
 
 module.exports = (request, response) => {
   if (request.method !== 'GET') return methodNotAllowed(request, response)
-  authenticate(request, response, () => {
-    const account = request.account
-    if (!account) return found(request, response, '/signin')
-    response.setHeader('Content-Type', 'text/html')
-    response.end(html`
+  const account = request.account
+  if (!account) return found(request, response, '/signin')
+  response.setHeader('Content-Type', 'text/html')
+  response.end(html`
 <!doctype html>
 <html lang=en-US>
   ${head()}
   <body>
     ${header()}
-    ${nav(request.session)}
+    ${nav(request.account)}
     <main role=main>
       <h2>Account</h2>
       <table>
@@ -41,6 +39,5 @@ module.exports = (request, response) => {
     </main>
   </body>
 </html>
-    `)
-  })
+  `)
 }

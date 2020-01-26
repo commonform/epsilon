@@ -1,6 +1,5 @@
 const Busboy = require('busboy')
 const DIGEST_RE = require('../util/digest-re')
-const authenticate = require('./authenticate')
 const editionValidator = require('../validators/edition')
 const escape = require('../util/escape')
 const found = require('./found')
@@ -21,10 +20,8 @@ module.exports = (request, response) => {
   const method = request.method
   const isPOST = method === 'POST'
   if (!isPOST) return methodNotAllowed(request, response)
-  authenticate(request, response, () => {
-    if (!request.account) return found(request, response, '/signin')
-    post(request, response)
-  })
+  if (!request.account) return found(request, response, '/signin')
+  post(request, response)
 }
 
 function post (request, response) {
@@ -59,7 +56,7 @@ function post (request, response) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.session)}
+    ${nav(request.account)}
     <main role=main>
       <h2>Proofread and Publish</h2>
       ${confirmationForm()}

@@ -4,6 +4,7 @@ const MESSAGE_CHANNELS = require('../constants/message-channels')
 const NDA = require('./nda')
 const STAN = require('node-nats-streaming')
 const assert = require('assert')
+const csrf = require('../util/csrf')
 const fs = require('fs')
 const hashPassword = require('../util/hash-password')
 const http = require('http')
@@ -22,6 +23,7 @@ module.exports = callback => {
   const log = pino({}, fs.createWriteStream('test-server.log'))
   let directory
   const cluster = process.env.NATSS_CLUSTER = 'commonform-test'
+  process.env.CSRF_KEY = csrf.randomKey()
   let nats
   let fixtureClient
   let serverClient

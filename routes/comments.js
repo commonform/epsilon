@@ -1,7 +1,6 @@
 const Busboy = require('busboy')
 const DIGEST_RE = require('../util/digest-re')
 const UUID_RE = require('../util/uuid-re')
-const authenticate = require('./authenticate')
 const found = require('./found')
 const indexes = require('../indexes')
 const internalError = require('./internal-error')
@@ -17,9 +16,7 @@ const watchedCommentNotification = require('../notifications/watched-comment')
 
 module.exports = (request, response) => {
   if (request.method !== 'POST') return methodNotAllowed(request, response)
-  authenticate(request, response, () => {
-    post(request, response)
-  })
+  post(request, response)
 }
 
 function post (request, response) {

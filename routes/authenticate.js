@@ -2,17 +2,25 @@ const cookie = require('cookie')
 const indexes = require('../indexes')
 const internalError = require('./internal-error')
 const runParallel = require('run-parallel')
+const setCookie = require('./set-cookie')
+const uuid = require('uuid')
 
 module.exports = function (request, response, handler) {
   const header = request.headers.cookie
-  if (!header) return proceed()
+  if (!header) {
+    createGuestSession()
+    return proceed()
+  }
   const parsed = cookie.parse(header)
   const sessionID = parsed.commonform
-  if (!sessionID) return proceed()
+  if (!sessionID) {
+    createGuestSession()
+    return proceed()
+  }
   indexes.session.read(sessionID, function (error, session) {
     if (error) return internalError(request, response, error)
     if (!session) {
-      request.log.info({ id: sessionID }, 'expired session')
+      request.session = { id: sessionID }
       return proceed()
     }
     const handle = session.handle
@@ -37,5 +45,14 @@ module.exports = function (request, response, handler) {
 
   function proceed () {
     handler(request, response)
+  }
+
+  function createGuestSession () {
+    const id = uuid.v4()
+    const expires = new Date(
+      Date.now() + (30 * 24 * 60 * 60 * 1000)
+    )
+    setCookie(response, id, expires)
+    request.session = { id, expires }
   }
 }

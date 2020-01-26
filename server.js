@@ -13,6 +13,7 @@ const log = pino({ server: serverID })
 requireEnvironmentVariable('BASE_HREF')
 requireEnvironmentVariable('DIRECTORY')
 requireEnvironmentVariable('NATSS_CLUSTER')
+requireEnvironmentVariable('CSRF_KEY')
 
 if (process.env.NODE_ENV !== 'test') {
   requireEnvironmentVariable('ADMIN_EMAIL')

@@ -32,7 +32,13 @@ const fields = {
   }
 }
 
-module.exports = formRoute({ form, fields, processBody, onSuccess })
+module.exports = formRoute({
+  action: '/signup',
+  form,
+  fields,
+  processBody,
+  onSuccess
+})
 
 function processBody (request, body, done) {
   const { handle, email, password } = body
@@ -115,6 +121,7 @@ function form (request, data) {
       <h2>Sign Up</h2>
       <form id=signupForm method=post>
         ${data.error}
+        ${data.csrf}
         ${eMailInput({ autofocus: true, value: data.email.value })}
         ${data.email.error}
         <p>

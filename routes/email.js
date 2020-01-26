@@ -16,7 +16,7 @@ const fields = {
 }
 
 module.exports = formRoute({
-  authenticateRequests: true,
+  action: '/email',
   requireAuthentication: true,
   form,
   fields,
@@ -31,11 +31,12 @@ function form (request, data) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.session)}
+    ${nav(request.account)}
     <main role=main>
       <h2>Change E-Mail</h2>
       <form id=emailForm method=post>
         ${data.error}
+        ${data.csrf}
         ${eMailInput({ autofocus: true })}
         ${data.email.error}
         <button type=submit>Change E-Mail</button>
@@ -54,7 +55,7 @@ function onSuccess (request, response, body) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.session)}
+    ${nav(request.account)}
     <main role=main>
       <h2>Change E-Mail</h2>
       <p class=message>Confirmation e-mail sent.</p>

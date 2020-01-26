@@ -13,7 +13,13 @@ const fields = {
   }
 }
 
-module.exports = formRoute({ form, fields, processBody, onSuccess })
+module.exports = formRoute({
+  action: '/handle',
+  form,
+  fields,
+  processBody,
+  onSuccess
+})
 
 function form (request, data) {
   return html`
@@ -26,6 +32,7 @@ function form (request, data) {
       <h2>Forgot Handle</h2>
       <form id=handleForm method=post>
         ${data.error}
+        ${data.csrf}
         <p>
           <label for=email>E-Mail</label>
           <input

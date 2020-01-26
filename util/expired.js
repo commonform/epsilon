@@ -1,3 +1,8 @@
+exports.csrfToken = (dateString) => expired({
+  dateString,
+  lifetime: days(7)
+})
+
 exports.accountLock = (dateString) => expired({
   dateString,
   lifetime: days(1)

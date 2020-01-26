@@ -1,3 +1,4 @@
+const csrf = require('../util/csrf')
 const fs = require('fs')
 const rimraf = require('rimraf')
 const runSeries = require('run-series')
@@ -27,6 +28,7 @@ tape('server', test => {
             BASE_HREF: 'http://localhost:' + serverPort + '/',
             NATSS_CLUSTER,
             NATSS_STREAM,
+            CSRF_KEY: csrf.randomKey(),
             DIRECTORY: directory
           }
         })

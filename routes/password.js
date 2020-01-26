@@ -1,6 +1,5 @@
 const Busboy = require('busboy')
 const UUID_RE = require('../util/uuid-re')
-const authenticate = require('./authenticate')
 const escape = require('../util/escape')
 const hashPassword = require('../util/hash-password')
 const head = require('./partials/head')
@@ -26,13 +25,11 @@ module.exports = function (request, response) {
 
 function get (request, response) {
   if (request.query.token) return getWithToken(request, response)
-  authenticate(request, response, () => {
-    getAuthenticated(request, response)
-  })
+  getAuthenticated(request, response)
 }
 
 function getAuthenticated (request, response) {
-  const handle = request.session && request.session.handle
+  const handle = request.account && request.account.handle
   if (!handle) {
     response.statusCode = 401
     response.end()
@@ -49,7 +46,7 @@ function getAuthenticated (request, response) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.session)}
+    ${nav(request.account)}
     <main role=main>
       <h2>Change Password</h2>
       ${messageParagraph}
@@ -90,7 +87,7 @@ function getWithToken (request, response) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.session)}
+    ${nav(request.account)}
     <main role=main>
       <h2>Change Password</h2>
       ${messageParagraph}
@@ -150,7 +147,7 @@ function post (request, response) {
   ${head()}
   <body>
     ${header()}
-    ${nav(request.session)}
+    ${nav(request.account)}
     <main role=main>
       <h2>Change Password</h2>
       <p class=message>Password changed.</p>
@@ -208,21 +205,19 @@ function post (request, response) {
 
   function checkOldPassword (done) {
     if (token) return done()
-    authenticate(request, response, () => {
-      if (!request.account) {
-        const unauthorized = new Error('unauthorized')
-        unauthorized.statusCode = 401
-        return done(unauthorized)
+    if (!request.account) {
+      const unauthorized = new Error('unauthorized')
+      unauthorized.statusCode = 401
+      return done(unauthorized)
+    }
+    handle = request.account.handle
+    verifyPassword(handle, oldPassword, error => {
+      if (error) {
+        const invalidOldPassword = new Error('invalid password')
+        invalidOldPassword.statusCode = 400
+        return done(invalidOldPassword)
       }
-      handle = request.account.handle
-      verifyPassword(handle, oldPassword, error => {
-        if (error) {
-          const invalidOldPassword = new Error('invalid password')
-          invalidOldPassword.statusCode = 400
-          return done(invalidOldPassword)
-        }
-        return done()
-      })
+      return done()
     })
   }
 
