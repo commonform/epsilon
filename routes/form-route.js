@@ -12,6 +12,7 @@ module.exports = ({
   requireAuthentication,
   form,
   fields,
+  fieldSizeLimit = 512000,
   processBody,
   onPost,
   onSuccess
@@ -118,6 +119,7 @@ module.exports = ({
                 .map(n => n.length)
             ),
             fields: fieldNames.length + 2,
+            fieldSizeLimit,
             parts: 1
           }
         })
