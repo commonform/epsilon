@@ -1,5 +1,6 @@
 const Busboy = require('busboy')
 const DIGEST_RE = require('../util/digest-re')
+const csrf = require('../util/csrf')
 const editionValidator = require('../validators/edition')
 const escape = require('../util/escape')
 const found = require('./found')
@@ -28,6 +29,7 @@ function post (request, response) {
   const handle = request.account.handle
   const body = {}
   const fields = ['form', 'project', 'edition', 'proofed']
+    .concat('csrftoken', 'csrfnonce')
   let form
   runSeries([
     readPostBody,
@@ -74,8 +76,13 @@ function post (request, response) {
   })
 
   function confirmationForm () {
+    const csrfInputs = csrf.inputs({
+      action: '/publications',
+      sessionID: request.session.id
+    })
     return html`
 <form id=publishForm method=post>
+  ${csrfInputs}
   <table>
     <tr>
       <td>Handle</td>
@@ -129,7 +136,12 @@ function post (request, response) {
     if (edition && !editionValidator.valid(edition)) return done('invalid edition')
     if (project && !edition) return done('missing edition')
     if (edition && !project) return done('missing project name')
-    done()
+    csrf.verify({
+      action: '/publications',
+      sessionID: request.session.id,
+      token: body.csrftoken,
+      nonce: body.csrfnonce
+    }, done)
   }
 
   function verifyForm (done) {

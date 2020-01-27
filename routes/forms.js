@@ -1,4 +1,5 @@
 const DIGEST_RE = require('../util/digest-re')
+const csrf = require('../util/csrf')
 const editionValidator = require('../validators/edition')
 const escape = require('../util/escape')
 const head = require('./partials/head')
@@ -77,7 +78,7 @@ module.exports = (request, response) => {
         loaded: results.loaded.form,
         resolutions: results.loaded.resolutions
       })}
-      ${request.account ? publishForm(digest) : ''}
+      ${request.account ? publishForm(request, digest) : ''}
     </main>
   </body>
   <script src=/comments.js></script>
@@ -86,9 +87,10 @@ module.exports = (request, response) => {
   })
 }
 
-function publishForm (digest) {
+function publishForm (request, digest) {
   return html`
 <form id=publishForm action=/publications method=post>
+  ${csrf.inputs({ action: '/publications', sessionID: request.session.id })}
   <input type=hidden name=form value="${escape(digest)}">
   <label for=project>Project Name</label>
   <input name=project type=text>
