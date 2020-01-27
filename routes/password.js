@@ -1,5 +1,6 @@
 const Busboy = require('busboy')
 const UUID_RE = require('../util/uuid-re')
+const csrf = require('../util/csrf')
 const escape = require('../util/escape')
 const hashPassword = require('../util/hash-password')
 const head = require('./partials/head')
@@ -14,6 +15,8 @@ const passwordRepeatInput = require('./partials/password-repeat-input')
 const passwordValidator = require('../validators/password')
 const runSeries = require('run-series')
 const verifyPassword = require('../util/verify-password')
+
+const action = '/password'
 
 module.exports = function (request, response) {
   const method = request.method
@@ -51,6 +54,7 @@ function getAuthenticated (request, response) {
       <h2>Change Password</h2>
       ${messageParagraph}
       <form id=passwordForm method=post>
+        ${csrf.inputs({ action, sessionID: request.session.id })}
         <p>
           <label for=old>Old Password</label>
           <input name=old type=password required autofocus autocomplete=off>
@@ -92,6 +96,7 @@ function getWithToken (request, response) {
       <h2>Change Password</h2>
       ${messageParagraph}
       <form id=passwordForm method=post>
+        ${csrf.inputs({ action, sessionID: request.session.id })}
         <input type=hidden name=token value="${token}">
         ${passwordInput({ label: 'New Password', autofocus: true })}
         ${passwordRepeatInput()}
@@ -123,7 +128,12 @@ function invalidToken (request, response) {
 }
 
 function post (request, response) {
-  let password, repeat, token, oldPassword, handle
+  let handle
+  const body = {}
+  const fieldNames = [
+    'password', 'repeat', 'token', 'old',
+    'csrftoken', 'csrfnonce'
+  ]
   runSeries([
     readPostBody,
     validateInputs,
@@ -162,17 +172,13 @@ function post (request, response) {
       new Busboy({
         headers: request.headers,
         limits: {
-          fieldNameSize: 8,
-          fieldSize: 64,
-          fields: 4,
+          fieldNameSize: Math.max(fieldNames.map(x => x.length)),
+          fields: fieldNames.length,
           parts: 1
         }
       })
         .on('field', function (name, value, truncated, encoding, mime) {
-          if (name === 'password') password = value
-          else if (name === 'repeat') repeat = value
-          else if (name === 'token') token = value
-          else if (name === 'old') oldPassword = value
+          if (fieldNames.includes(name)) body[name] = value
         })
         .once('finish', done)
     )
@@ -180,11 +186,14 @@ function post (request, response) {
 
   function validateInputs (done) {
     let error
+    const token = body.token
     if (token && !UUID_RE.test(token)) {
       error = new Error('invalid token')
       error.fieldName = 'token'
       return done(error)
     }
+    const password = body.password
+    const repeat = body.repeat
     if (password !== repeat) {
       error = new Error('passwords did not match')
       error.fieldName = 'repeat'
@@ -195,15 +204,22 @@ function post (request, response) {
       error.fieldName = 'password'
       return done(error)
     }
-    if (!token && !oldPassword) {
+    const old = body.old
+    if (!token && !old) {
       error = new Error('missing old password')
       error.fieldName = 'old'
       return done(error)
     }
-    done()
+    csrf.verify({
+      action: '/password',
+      sessionID: request.session.id,
+      token: body.csrftoken,
+      nonce: body.csrfnonce
+    }, done)
   }
 
   function checkOldPassword (done) {
+    const token = body.token
     if (token) return done()
     if (!request.account) {
       const unauthorized = new Error('unauthorized')
@@ -211,7 +227,7 @@ function post (request, response) {
       return done(unauthorized)
     }
     handle = request.account.handle
-    verifyPassword(handle, oldPassword, error => {
+    verifyPassword(handle, body.old, error => {
       if (error) {
         const invalidOldPassword = new Error('invalid password')
         invalidOldPassword.statusCode = 400
@@ -222,6 +238,7 @@ function post (request, response) {
   }
 
   function changePassword (done) {
+    const token = body.token
     if (token) {
       return indexes.token.read(token, (error, tokenData) => {
         if (error) return done(error)
@@ -241,7 +258,7 @@ function post (request, response) {
     recordChange()
 
     function recordChange () {
-      hashPassword(password, (error, passwordHash) => {
+      hashPassword(body.password, (error, passwordHash) => {
         if (error) return done(error)
         request.record({
           type: 'changePassword',

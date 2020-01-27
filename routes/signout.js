@@ -12,7 +12,7 @@ module.exports = function (request, response) {
 
 function post (request, response) {
   const body = {}
-  const fields = ['token', 'nonce']
+  const fields = ['csrftoken', 'csrfnonce']
   request.pipe(
     new Busboy({
       headers: request.headers,
@@ -32,8 +32,8 @@ function post (request, response) {
     csrf.verify({
       action: '/signout',
       sessionID: request.session.id,
-      token: body.token,
-      nonce: body.nonce
+      token: body.csrftoken,
+      nonce: body.csrfnonce
     }, error => {
       if (error) return redirect()
       clearCookie(response)

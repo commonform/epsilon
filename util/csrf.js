@@ -26,8 +26,8 @@ exports.inputs = ({ action, sessionID }) => {
 
   const generated = exports.generate({ action, sessionID })
   return `
-    <input type=hidden name=token value="${generated.token}">
-    <input type=hidden name=nonce value="${generated.nonce}">
+    <input type=hidden name=csrftoken value="${generated.token}">
+    <input type=hidden name=csrfnonce value="${generated.nonce}">
   `
 }
 

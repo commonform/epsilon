@@ -26,7 +26,7 @@ function post (request, response) {
   const body = { handle, replyTo: [] }
   const fields = [
     'context', 'form', 'replyTo[]', 'text',
-    'token', 'nonce'
+    'csrftoken', 'csrfnonce'
   ]
   let id
   runSeries([
@@ -90,8 +90,8 @@ function post (request, response) {
     csrf.verify({
       action: '/comments',
       sessionID: request.session.id,
-      token: body.token,
-      nonce: body.nonce
+      token: body.csrftoken,
+      nonce: body.csrfnonce
     }, done)
   }
 

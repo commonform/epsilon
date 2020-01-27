@@ -75,14 +75,10 @@ module.exports = ({
     if (error && !error.fieldName) {
       data.error = `<p class=error>${escape(error.message)}</p>`
     }
-    const generated = csrf.generate({
+    data.csrf = csrf.inputs({
       action,
       sessionID: request.session.id
     })
-    data.csrf = html`
-      <input type=hidden name=token value="${generated.token}">
-      <input type=hidden name=nonce value="${generated.nonce}">
-    `
     response.end(form(request, data))
   }
 
@@ -114,7 +110,7 @@ module.exports = ({
           limits: {
             fieldNameSize: Math.max(
               fieldNames
-                .concat('token', 'nonce')
+                .concat('csrftoken', 'csrfnonce')
                 .map(n => n.length)
             ),
             fields: fieldNames.length + 2,
@@ -123,7 +119,7 @@ module.exports = ({
           }
         })
           .on('field', function (name, value, truncated, encoding, mime) {
-            if (name === 'token' || name === 'nonce') {
+            if (name === 'csrftoken' || name === 'csrfnonce') {
               body[name] = value
               return
             }
@@ -150,8 +146,8 @@ module.exports = ({
       csrf.verify({
         action,
         sessionID: request.session.id,
-        token: body.token,
-        nonce: body.nonce
+        token: body.csrftoken,
+        nonce: body.csrfnonce
       }, done)
     }
 
