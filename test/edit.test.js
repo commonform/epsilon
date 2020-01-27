@@ -18,7 +18,7 @@ tape('GET ' + path, test => {
   server((port, done) => {
     http.request({ path, port })
       .once('response', response => {
-        test.equal(response.statusCode, 302, '302')
+        test.equal(response.statusCode, 303, '303')
         test.end()
         done()
       })

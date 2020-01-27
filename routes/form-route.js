@@ -9,6 +9,7 @@ const seeOther = require('./see-other')
 module.exports = ({
   action,
   requireAuthentication,
+  loadGETData,
   form,
   fields,
   fieldSizeLimit = 512000,
@@ -79,6 +80,12 @@ module.exports = ({
       action,
       sessionID: request.session.id
     })
+    if (loadGETData) {
+      return loadGETData(request, data, error => {
+        if (error) return internalError(error)
+        response.end(form(request, data))
+      })
+    }
     response.end(form(request, data))
   }
 
