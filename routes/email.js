@@ -5,6 +5,7 @@ const formRoute = require('./form-route')
 const head = require('./partials/head')
 const header = require('./partials/header')
 const html = require('./html')
+const indexes = require('../indexes')
 const nav = require('./partials/nav')
 const uuid = require('uuid')
 
@@ -68,19 +69,28 @@ function onSuccess (request, response, body) {
 function processBody (request, body, done) {
   const handle = request.account.handle
   const email = body.email
-  const token = uuid.v4()
-  request.record({
-    type: 'changeEMailToken',
-    token,
-    created: new Date().toISOString(),
-    handle,
-    email
-  }, error => {
+  indexes.email.read(email, (error, existingHandle) => {
     if (error) return done(error)
-    request.log.info({ token }, 'e-mail change token')
-    confirmEMailNotification({
-      to: email,
-      url: `${process.env.BASE_HREF}/confirm?token=${token}`
-    }, done)
+    if (existingHandle) {
+      const error = new Error('e-mail already has an account')
+      error.fieldName = 'email'
+      error.statusCode = 400
+      return done(error)
+    }
+    const token = uuid.v4()
+    request.record({
+      type: 'changeEMailToken',
+      token,
+      created: new Date().toISOString(),
+      handle,
+      email
+    }, error => {
+      if (error) return done(error)
+      request.log.info({ token }, 'e-mail change token')
+      confirmEMailNotification({
+        to: email,
+        url: `${process.env.BASE_HREF}/confirm?token=${token}`
+      }, done)
+    })
   })
 }
