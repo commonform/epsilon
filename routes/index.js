@@ -20,6 +20,7 @@ routes.set('/password', require('./password'))
 routes.set('/publications', require('./publish'))
 routes.set('/reset', require('./reset'))
 routes.set('/signup', require('./signup'))
+routes.set('/compare', require('./compare'))
 
 const STATIC_FILES = [
   'comments.js',

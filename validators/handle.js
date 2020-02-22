@@ -6,6 +6,7 @@ const RE = new RegExp(PATTERN)
 const BLACKLIST = [
   'account',
   'commonform',
+  'compare',
   'confirm',
   'edit',
   'email',
