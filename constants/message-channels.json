@@ -8,6 +8,7 @@
   "confirmAccountToken": "tokens",
   "form": "forms",
   "lockAccount": "accounts",
+  "draft": "drafts",
   "publication": "publications",
   "resetPasswordToken": "tokens",
   "session": "sessions",

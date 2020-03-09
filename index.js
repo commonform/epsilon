@@ -8,6 +8,7 @@ const pinoHTTP = require('pino-http')
 const projects = require('./routes/projects')
 const publications = require('./routes/publications')
 const publishers = require('./routes/publishers')
+const drafts = require('./routes/drafts')
 const routes = require('./routes')
 const uuid = require('uuid')
 const validate = require('./indexes/validate')
@@ -16,6 +17,7 @@ const write = require('./indexes/write')
 const PUBLISHER_PATH = /^\/([a-z0-9]+)$/
 const PROJECT_PATH = /^\/([a-z0-9]+)\/([a-z0-9]+)$/
 const PUBLICATION_PATH = /^\/([a-z0-9]+)\/([a-z0-9]+)\/([0-9eucd]+)$/
+const DRAFT_PATH = /^\/([a-z0-9]+)\/drafts\/([a-z0-9]+)$/
 
 module.exports = configuration => {
   const { log, stream } = configuration
@@ -55,7 +57,15 @@ module.exports = configuration => {
       const route = routes.get(pathname)
       request.parameters = route.params
       if (route.handler) return route.handler(request, response)
-      let match = PUBLICATION_PATH.exec(pathname)
+      let match = DRAFT_PATH.exec(pathname)
+      if (match) {
+        request.parameters = {
+          publisher: match[1],
+          draft: match[2]
+        }
+        return drafts(request, response)
+      }
+      match = PUBLICATION_PATH.exec(pathname)
       if (match) {
         request.parameters = {
           publisher: match[1],

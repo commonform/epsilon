@@ -44,6 +44,9 @@ module.exports = (request, response) => {
         done(null, form)
       })
     },
+    drafts: done => {
+      indexes.formDraft.read(digest, done)
+    },
     loaded: ['form', (results, done) => {
       loadComponents(results.form, {}, (error, form, resolutions) => {
         if (error) return done(error)
@@ -70,6 +73,7 @@ module.exports = (request, response) => {
     ${nav(request)}
     <main role=main>
       <a class=button href=/edit?digest=${escape(digest)}>Edit this Form</a>
+      ${renderDrafts(results.drafts)}
       ${renderForm({
         session: request.session,
         account: request.account,
@@ -78,6 +82,7 @@ module.exports = (request, response) => {
         loaded: results.loaded.form,
         resolutions: results.loaded.resolutions
       })}
+      ${request.account ? draftForm(request, digest) : ''}
       ${request.account ? publishForm(request, digest) : ''}
     </main>
   </body>
@@ -87,9 +92,38 @@ module.exports = (request, response) => {
   })
 }
 
+function renderDrafts (drafts) {
+  if (!drafts || drafts.length === 0) return ''
+  let items = ''
+  const seen = new Set()
+  drafts.forEach(entry => {
+    if (seen.has(entry)) return
+    const [publisher, draft] = entry.split('/')
+    seen.add(entry)
+    const text = escape(publisher) + '’s ' + escape(draft)
+    const url = `/${publisher}/drafts/${draft}`
+    items += `<li><a href="${url}">${text}</a></li>`
+  })
+  return `<h2>Drafts</h2><ul id=drafts>${items}</ul>`
+}
+
+function draftForm (request, digest) {
+  return html`
+<form id=draftForm action=/drafts method=post>
+  <h2>Save Draft</h2>
+  ${csrf.inputs({ action: '/drafts', sessionID: request.session.id })}
+  <input type=hidden name=form value="${escape(digest)}">
+  <label for=draft>Draft Name</label>
+  <input type=text name=draft pattern="${projectValidator.pattern}">
+  <button type=submit>Save Draft</button>
+</form>
+  `
+}
+
 function publishForm (request, digest) {
   return html`
 <form id=publishForm action=/publications method=post>
+  <h2>Publish Form</h2>
   ${csrf.inputs({ action: '/publications', sessionID: request.session.id })}
   <input type=hidden name=form value="${escape(digest)}">
   <label for=project>Project Name</label>

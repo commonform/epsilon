@@ -12,6 +12,7 @@ const writers = {
   changeEMail,
   changePassword,
   comment,
+  draft,
   form,
   lockAccount,
   publication,
@@ -65,6 +66,29 @@ function mapAllForms (form) {
       }
     })
   }
+}
+
+function draft (entry, callback) {
+  const publisher = entry.publisher
+  const draft = entry.draft
+  const date = entry.date
+  const form = entry.form || ''
+
+  runSeries([
+    done => indexes.draft.append(
+      publisher + '/' + draft,
+      date + '/' + form,
+      done
+    ),
+    done => indexes.formDraft.append(
+      form,
+      publisher + '/' + draft,
+      done
+    ),
+    done => indexes.publisherDraft.append(
+      publisher, draft, done
+    )
+  ], callback)
 }
 
 function publication (entry, callback) {

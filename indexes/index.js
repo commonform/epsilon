@@ -13,10 +13,12 @@ module.exports = {
   email: simpleFiles('emails'),
   token: simpleFiles('tokens'),
   session: simpleFiles('sessions'),
+  draft: appendOnlyLists('drafts'),
   form: simpleFiles('forms', { serialization: serialize }),
   comment: simpleFiles('comments'),
   commentWatchers: appendOnlyLists('commentWatchers'),
   formComment: appendOnlyLists('formComments'),
+  formDraft: appendOnlyLists('formDraft'),
   publication: simpleFiles('publications', {
     complexID: argument => path.join(
       argument.publisher,
@@ -25,6 +27,7 @@ module.exports = {
     )
   }),
   projectEdition: appendOnlyLists('projectEditions'),
+  publisherDraft: appendOnlyLists('publisherDrafts'),
   publisherPublication: appendOnlyLists('publisherPublications'),
   lock
 }
